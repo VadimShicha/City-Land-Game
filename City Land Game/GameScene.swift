@@ -23,6 +23,16 @@ class GameScene: SKScene {
             self.addChild(generatedLandNodes[i]); //add the land node to the view
         }
         
+        for x in 0...3 {
+            for y in -2...1 {
+                GameTools.capturedLands[GameTools.mapSpawnX + x][GameTools.mapSpawnY + y].captured = true;
+            }
+        }
+        let generatedBorderNodes = LandGenerator.generateCapturedBorders();
+        for i in 0..<generatedBorderNodes.count {
+            self.addChild(generatedBorderNodes[i]);
+        }
+        
         let cityHall = SKSpriteNode(imageNamed: "CityHall");
         cityHall.position = CGPoint(x: (GameTools.mapSpawnX * GameTools.landTileSize) + (GameTools.landTileSize / 2), y: (GameTools.mapSpawnY * GameTools.landTileSize) + (GameTools.landTileSize / 2));
         cityHall.size = CGSize(width: 512, height: 512);
