@@ -5,105 +5,56 @@
 //  Created by Vadim Shicha on 1/18/24.
 //
 
-import SpriteKit
-import GameplayKit
-
-func clamp(value: CGFloat, min: CGFloat, max: CGFloat) -> CGFloat {
-    if(value > max) { return max; }
-    if(value < min) { return min; }
-    return value;
-}
+import SpriteKit;
+import GameplayKit;
 
 class GameScene: SKScene {
     
-    var player: SKSpriteNode!
-    var cameraNode = SKCameraNode()
+    var cameraNode = SKCameraNode();
     
-    var lastTouch: CGPoint? //the point of where the last touch happened. nil if there isn't any touches
+    var lastTouch: CGPoint?; //the point of where the last touch happened. nil if there isn't any touches
     
-    let minCameraScale: CGFloat = 0.3;
-    let maxCameraScale: CGFloat = 8;
-    
-    let mapWidth: Int = 30;
-    let mapHeight: Int = 30;
+    let minCameraScale: CGFloat = 0.5; //the minimum you can zoom the camera out
+    let maxCameraScale: CGFloat = 15; //the maximum you can zoom the camera out/
     
     override func didMove(to view: SKView) {
-        //create the player node
-        let noiseMap = createNoiseMap(width: CGFloat(mapWidth), height: CGFloat(mapHeight), persistance: 0.65);
-        
-        for x in 0..<mapWidth {
-            for y in 0..<mapHeight {
-                let noisePosition = vector2(Int32(x), Int32(y));
-                let noiseValue = noiseMap.value(at: noisePosition);
-                
-                var tileColor = SKColor.brown;
-                
-                print(noiseValue);
-                if(noiseValue > 0.85) {
-                    tileColor = SKColor.blue;
-                }
-                else if(noiseValue > 0.75) {
-                    tileColor = SKColor.yellow;
-                }
-                else if(noiseValue > 0.05) {
-                    tileColor = SKColor.green;
-                }
-                else if(noiseValue > -0.3) {
-                    tileColor = SKColor.gray;
-                }
-                else if(noiseValue > -0.7) {
-                    tileColor = SKColor.white;
-                }
-                else {
-                    tileColor = SKColor.cyan;
-                }
-                
-                
-                
-                if(x == 0 || x == mapWidth - 1 || y == 0 || y == mapHeight - 1) {
-                    tileColor = SKColor.brown;
-                }
-                
-                let landNode = SKSpriteNode(color: tileColor, size: CGSize(width: 100, height: 100));
-                landNode.position = CGPoint(x: x * 100, y: y * 100);
-                self.addChild(landNode);
-            }
+        let generatedLandNodes = LandGenerator.generateLandMap(); //generate the land map
+        for i in 0..<generatedLandNodes.count {
+            self.addChild(generatedLandNodes[i]); //add the land node to the view
         }
-        cameraNode.position = CGPoint.zero;
+        
+        let cityHall = SKSpriteNode(imageNamed: "CityHall");
+        cityHall.position = CGPoint(x: (GameTools.mapSpawnX * GameTools.landTileSize) + (GameTools.landTileSize / 2), y: (GameTools.mapSpawnY * GameTools.landTileSize) + (GameTools.landTileSize / 2));
+        cityHall.size = CGSize(width: 512, height: 512);
+        cityHall.zPosition = 1;
+        self.addChild(cityHall);
+        
+        cameraNode.position = CGPoint(x: GameTools.mapWidth * (GameTools.landTileSize / 2), y: GameTools.mapHeight * (GameTools.landTileSize / 2));
+        cameraNode.setScale(maxCameraScale / 4);
         self.camera = cameraNode;
         self.addChild(cameraNode);
         
+        //setup the pinch gesture that is used for zooming
         let pinchGesture = UIPinchGestureRecognizer();
         pinchGesture.addTarget(self, action: #selector(pinchGestureAction(_:)));
         view.addGestureRecognizer(pinchGesture);
     }
     
-    func createNoiseMap(width: CGFloat, height: CGFloat, persistance: CGFloat = 0.9) -> GKNoiseMap {
-        let source = GKPerlinNoiseSource();
-        source.persistence = persistance; //how likely the noise values are to change. The higher the more often
-        
-        let noise = GKNoise(source);
-        let size = vector2(1.0, 1.0);
-        let origin = vector2(0.0, 0.0);
-        let sampleCount = vector2(Int32(width), Int32(height))
-        
-        return GKNoiseMap(noise, size: size, origin: origin, sampleCount: sampleCount, seamless: true);
-    }
-    
-    var lastCameraScale: CGFloat = 0
+    var lastCameraScale: CGFloat = 0; //the camera scale when the pinch gesture began
     
     @objc func pinchGestureAction(_ sender: UIPinchGestureRecognizer) {
         if(sender.state == .began) {
             lastCameraScale = cameraNode.xScale;
         }
         
-        let cameraScale = clamp(value: lastCameraScale / sender.scale, min: minCameraScale, max: maxCameraScale);
+        let cameraScale = Tools.clamp(value: lastCameraScale / sender.scale, min: minCameraScale, max: maxCameraScale);
         cameraNode.setScale(cameraScale);
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         let totalTouchCount = event?.allTouches?.count ?? 0;
         
+        //if there is only 1 touch then move the camera
         if(totalTouchCount == 1) {
             let location = touches[touches.index(touches.startIndex, offsetBy: 0)].location(in: self);
             

@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9A3F47232B5B89770069BBED /* LandGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3F47222B5B89770069BBED /* LandGenerator.swift */; };
+		9A3F47252B5B96260069BBED /* GameTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3F47242B5B96260069BBED /* GameTools.swift */; };
+		9A3F47272B5BA0E80069BBED /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3F47262B5BA0E80069BBED /* Tools.swift */; };
 		9A6CD0302B59E7420028A5DA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CD02F2B59E7420028A5DA /* AppDelegate.swift */; };
 		9A6CD0342B59E7420028A5DA /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 9A6CD0332B59E7420028A5DA /* Actions.sks */; };
 		9A6CD0362B59E7420028A5DA /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CD0352B59E7420028A5DA /* GameScene.swift */; };
@@ -38,6 +41,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9A3F47222B5B89770069BBED /* LandGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandGenerator.swift; sourceTree = "<group>"; };
+		9A3F47242B5B96260069BBED /* GameTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTools.swift; sourceTree = "<group>"; };
+		9A3F47262B5BA0E80069BBED /* Tools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
 		9A6CD02C2B59E7420028A5DA /* City Land Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "City Land Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A6CD02F2B59E7420028A5DA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9A6CD0332B59E7420028A5DA /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
@@ -110,6 +116,9 @@
 				9A6CD03C2B59E7450028A5DA /* Assets.xcassets */,
 				9A6CD03E2B59E7450028A5DA /* LaunchScreen.storyboard */,
 				9A6CD0622B59F21E0028A5DA /* MainMenuScene.swift */,
+				9A3F47222B5B89770069BBED /* LandGenerator.swift */,
+				9A3F47242B5B96260069BBED /* GameTools.swift */,
+				9A3F47262B5BA0E80069BBED /* Tools.swift */,
 			);
 			path = "City Land Game";
 			sourceTree = "<group>";
@@ -264,8 +273,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A6CD0362B59E7420028A5DA /* GameScene.swift in Sources */,
+				9A3F47252B5B96260069BBED /* GameTools.swift in Sources */,
 				9A6CD0382B59E7420028A5DA /* GameViewController.swift in Sources */,
 				9A6CD0632B59F21E0028A5DA /* MainMenuScene.swift in Sources */,
+				9A3F47272B5BA0E80069BBED /* Tools.swift in Sources */,
+				9A3F47232B5B89770069BBED /* LandGenerator.swift in Sources */,
 				9A6CD0302B59E7420028A5DA /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -456,7 +468,8 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationLandscapeRight;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -486,7 +499,8 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationLandscapeRight;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

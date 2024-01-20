@@ -11,35 +11,9 @@ import UIKit
 
 class MainMenuScene: SKScene {
 
-//    override func didMove(to view: SKView) {
-//        let
-//        
-//    }
-    var previousCameraPoint = CGPoint.zero
-
-  override func didMove(to view: SKView) {
-    let panGesture = UIPanGestureRecognizer()
-    panGesture.addTarget(self, action: #selector(panGestureAction(_:)))
-    view.addGestureRecognizer(panGesture)
-  }
-
-  @objc func panGestureAction(_ sender: UIPanGestureRecognizer) {
-    // The camera has a weak reference, so test it
-    guard let camera = self.camera else {
-      return
+    override func didMove(to view: SKView) {
+        
     }
-    // If the movement just began, save the first camera position
-    if sender.state == .began {
-      previousCameraPoint = camera.position
-    }
-    // Perform the translation
-    let translation = sender.translation(in: self.view)
-    let newPosition = CGPoint(
-      x: previousCameraPoint.x + translation.x * -1,
-      y: previousCameraPoint.y + translation.y
-    )
-    camera.position = newPosition
-  }
     
 //    let settingsButton = UIButton()
 //    settingsButton.frame = Tools.instance.createCenteredRect(
