@@ -6,6 +6,7 @@
 //
 
 import Foundation;
+import SpriteKit;
 
 //struct for holding an x and y value
 struct GameVector2 {
@@ -27,10 +28,38 @@ struct GameVector2Int {
 
 //class used to bring useful functions throughout the app
 class Tools {
+    enum SceneType {
+        case Village, Battle
+    }
+    
     //clamps a number between two numbers (a number range). (Ex: 10 clamped in a 0 and 5 range would return 5)
     static func clamp(value: CGFloat, min: CGFloat, max: CGFloat) -> CGFloat {
         if(value > max) { return max; }
         if(value < min) { return min; }
         return value;
+    }
+    
+    static func changeScenes(fromScene: SKScene, toSceneType: SceneType) {
+        let scene = getScene(sceneType: toSceneType); //get the SKScene from the to-scene
+        scene.scaleMode = .aspectFill; //set the scene scale mode
+        
+        //remove all subviews from view (removes UI elements that are attached)
+        if(fromScene.view != nil) {
+            //loop through all subviews in view
+            for subView in fromScene.view!.subviews {
+                subView.removeFromSuperview();
+            }
+        }
+        fromScene.view?.presentScene(scene); //present the scene using the currently-renderering scene's view
+    }
+    
+    //get the scene with a scene type
+    static func getScene(sceneType: SceneType) -> SKScene {
+        switch(sceneType) {
+            case SceneType.Village:
+                return GameScene(size: CGSize(width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.height));
+            case SceneType.Battle:
+                return BattleScene(size: CGSize(width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.height));
+        }
     }
 }

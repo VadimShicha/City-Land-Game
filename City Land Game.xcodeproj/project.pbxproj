@@ -21,6 +21,7 @@
 		9A6CD0542B59E7460028A5DA /* City_Land_GameUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CD0532B59E7460028A5DA /* City_Land_GameUITests.swift */; };
 		9A6CD0562B59E7460028A5DA /* City_Land_GameUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CD0552B59E7460028A5DA /* City_Land_GameUITestsLaunchTests.swift */; };
 		9A6CD0632B59F21E0028A5DA /* MainMenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CD0622B59F21E0028A5DA /* MainMenuScene.swift */; };
+		9AC9487C2B5C916C00886A68 /* BattleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC9487B2B5C916C00886A68 /* BattleScene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +59,7 @@
 		9A6CD0532B59E7460028A5DA /* City_Land_GameUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City_Land_GameUITests.swift; sourceTree = "<group>"; };
 		9A6CD0552B59E7460028A5DA /* City_Land_GameUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City_Land_GameUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		9A6CD0622B59F21E0028A5DA /* MainMenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuScene.swift; sourceTree = "<group>"; };
+		9AC9487B2B5C916C00886A68 /* BattleScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +121,7 @@
 				9A6CD0332B59E7420028A5DA /* Actions.sks */,
 				9A6CD0392B59E7420028A5DA /* Main.storyboard */,
 				9A6CD03E2B59E7450028A5DA /* LaunchScreen.storyboard */,
+				9AC9487B2B5C916C00886A68 /* BattleScene.swift */,
 			);
 			path = "City Land Game";
 			sourceTree = "<group>";
@@ -278,6 +281,7 @@
 				9A6CD0632B59F21E0028A5DA /* MainMenuScene.swift in Sources */,
 				9A3F47272B5BA0E80069BBED /* Tools.swift in Sources */,
 				9A3F47232B5B89770069BBED /* LandGenerator.swift in Sources */,
+				9AC9487C2B5C916C00886A68 /* BattleScene.swift in Sources */,
 				9A6CD0302B59E7420028A5DA /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

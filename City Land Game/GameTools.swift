@@ -13,6 +13,10 @@ struct LandTileData {
     var captured: Bool = false;
 }
 
+enum BattleType {
+    case GrassLands, Sand, StoneyHills
+}
+
 //class for managing all the game variables and functions
 class GameTools {
     static let mapWidth: Int = 100; //the width of the map
@@ -24,4 +28,8 @@ class GameTools {
     static let landTileSize: Int = 256; //size of the land tile texture
     
     static var capturedLands = [[LandTileData]](repeating: [LandTileData](repeating: LandTileData(), count: 100), count: 100);
+    
+    static var borderNodesParent: SKSpriteNode = SKSpriteNode();
+    
+    static var currentBattleType: BattleType = BattleType.GrassLands;
 }

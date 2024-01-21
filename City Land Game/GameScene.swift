@@ -28,10 +28,18 @@ class GameScene: SKScene {
                 GameTools.capturedLands[GameTools.mapSpawnX + x][GameTools.mapSpawnY + y].captured = true;
             }
         }
-        let generatedBorderNodes = LandGenerator.generateCapturedBorders();
-        for i in 0..<generatedBorderNodes.count {
-            self.addChild(generatedBorderNodes[i]);
+//        borderNodes = LandGenerator.generateCapturedBorders();
+//        for i in 0..<borderNodes.count {
+//            self.addChild(borderNodes[i]);
+//        }
+        
+        GameTools.borderNodesParent = SKSpriteNode(color: SKColor.red, size: CGSize(width: 0, height: 0));
+        let borderNodes = LandGenerator.generateCapturedBorders();
+        for i in 0..<borderNodes.count {
+            GameTools.borderNodesParent.addChild(borderNodes[i]);
         }
+        
+        self.addChild(GameTools.borderNodesParent);
         
         let cityHall = SKSpriteNode(imageNamed: "CityHall");
         cityHall.position = CGPoint(x: (GameTools.mapSpawnX * GameTools.landTileSize) + (GameTools.landTileSize / 2), y: (GameTools.mapSpawnY * GameTools.landTileSize) + (GameTools.landTileSize / 2));
@@ -59,6 +67,36 @@ class GameScene: SKScene {
         
         let cameraScale = Tools.clamp(value: lastCameraScale / sender.scale, min: minCameraScale, max: maxCameraScale);
         cameraNode.setScale(cameraScale);
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        let touchingNodes = self.nodes(at: touches[touches.index(touches.startIndex, offsetBy: 0)].location(in: self));
+        
+        for i in 0..<touchingNodes.count {
+            if(touchingNodes[i].name != nil) {
+                if(touchingNodes[i].name!.hasPrefix("LandNode:")) {
+                    let positionsArray = touchingNodes[i].name!.dropFirst(9).components(separatedBy: ",");
+                    if(positionsArray.count != 2) {
+                        print("LandNode name doesn't contain position");
+                        return;
+                    }
+                    let posX = Int(positionsArray[0])!;
+                    let posY = Int(positionsArray[1])!;
+                    GameTools.capturedLands[posX][posY].captured = true;
+                    
+                    GameTools.borderNodesParent.removeAllChildren();
+                    let borderNodes = LandGenerator.generateCapturedBorders();
+                    for i in 0..<borderNodes.count {
+                        GameTools.borderNodesParent.addChild(borderNodes[i]);
+                    }
+                    
+                    if(event?.allTouches?.count == 1) {
+                        Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Battle);
+                    }
+                }
+            }
+        }
+        
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
