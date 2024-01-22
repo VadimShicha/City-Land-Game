@@ -11,8 +11,11 @@ import SpriteKit;
 class BattleScene: SKScene {
     var cameraNode = SKCameraNode();
     
-    let lightTileColor = UIColor(red: 92 / 255, green: 161 / 255, blue: 63 / 255, alpha: 60 / 255);
-    let darkTileColor = UIColor(red: 67 / 255, green: 130 / 255, blue: 40 / 255, alpha: 60 / 255);
+    //let lightTileColor = UIColor(red: 92 / 255, green: 161 / 255, blue: 63 / 255, alpha: 60 / 255);
+    //let darkTileColor = UIColor(red: 67 / 255, green: 130 / 255, blue: 40 / 255, alpha: 60 / 255);
+    
+    let lightTileColor = UIColor(red: 128 / 255, green: 128 / 255, blue: 128 / 255, alpha: 15 / 255);
+    let darkTileColor = UIColor(red: 128 / 255, green: 128 / 255, blue: 128 / 255, alpha: 45 / 255);
     
     override func didMove(to view: SKView) {
         let backgroundNode = SKSpriteNode(imageNamed: "GreenLandsBackground");
@@ -37,12 +40,17 @@ class BattleScene: SKScene {
             for x in -14...14 {
                 
                 let stonePathTile = SKSpriteNode(color: lightColor ? lightTileColor : darkTileColor, size: CGSize(width: tileSize, height: tileSize));
-                //stonePathTile.size = CGSize(width: 32, height: 32);
                 stonePathTile.position = CGPoint(x: CGFloat(x) * tileSize, y: CGFloat(y) * tileSize);
+                stonePathTile.zRotation = 45 * .pi / 180;
                 self.addChild(stonePathTile);
                 lightColor = !lightColor;
             }
         }
+        
+        let spearTower = SKSpriteNode(imageNamed: "SpearTower");
+        spearTower.size = CGSize(width: tileSize * 3, height: tileSize * 3);
+        spearTower.position = CGPoint(x: 0, y: -5 * tileSize);
+        self.addChild(spearTower);
         
         cameraNode.position = CGPoint.zero;
         self.camera = cameraNode;
@@ -55,13 +63,7 @@ class BattleScene: SKScene {
             width: 50,
             height: 50
         );
-        addDefenseButton.setTitle("+", for: .normal);
-        addDefenseButton.titleLabel?.font = UIFont(name: "ChalkboardSE-Bold", size: 25);
-        addDefenseButton.titleLabel?.baselineAdjustment = .none;
-        addDefenseButton.titleLabel?.adjustsFontSizeToFitWidth = true;
-        addDefenseButton.titleLabel?.numberOfLines = 1;
-        addDefenseButton.layer.cornerRadius = 5;
-        addDefenseButton.backgroundColor = #colorLiteral(red: 0.7370413554, green: 0.3761309979, blue: 0.1578397769, alpha: 1);
+        addDefenseButton.setBackgroundImage(UIImage(named: "AddButton"), for: .normal);
         self.view?.addSubview(addDefenseButton);
     }
 }
