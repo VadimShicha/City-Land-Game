@@ -21,7 +21,7 @@ class BattleScene: SKScene {
     let lightTileColor = UIColor(red: 128 / 255, green: 128 / 255, blue: 128 / 255, alpha: 15 / 255);
     let darkTileColor = UIColor(red: 128 / 255, green: 128 / 255, blue: 128 / 255, alpha: 45 / 255);
     
-    var addDefenseParent = SKNode();
+    var addDefenseParent = SKSpriteNode();
     var addDefenseNodes: [SKSpriteNode] = [];
     
     var placedDefenseNodes: [SKSpriteNode] = [];
@@ -29,7 +29,7 @@ class BattleScene: SKScene {
     var showAddDefenseButton = SKSpriteNode();
     
     let availableDefenses: [DefenseData] = [
-        DefenseData(name: "Catapult", sizeTiles: 4, texture: SKTexture(imageNamed: "Catapult"))
+        DefenseData(name: "Catapult", sizeTiles: 3, texture: SKTexture(imageNamed: "Catapult"))
     ];
     
     var tileSize: CGFloat = 0; //size of each tile based on screen size
@@ -37,6 +37,7 @@ class BattleScene: SKScene {
     var stonePathTiles: [SKSpriteNode] = [];
     var stonePathTilesParent = SKSpriteNode();
     
+    //checks if two frames are inside of each other (touching each other)
     func framesTouching(frame1: CGRect, frame2: CGRect) -> Bool {
         let xDistance = abs(frame1.midX - frame2.midX);
         let yDistance = abs(frame1.midY - frame2.midY);
@@ -48,64 +49,154 @@ class BattleScene: SKScene {
         return false;
     }
     
-    override func didMove(to view: SKView) {
-        tileSize = CGFloat(self.size.width / 30);
+    //rounds the given number value to the nearest step amount
+    //(value: 65, stepAmount: 20) -> 60
+    //(value: 70, stepAmount: 20) -> 80
+    //(value: 75, stepAmount: 20) -> 80
+    func roundToStepAmount(value: CGFloat, stepAmount: CGFloat) -> CGFloat {
+        //((69 + 10) - ((69 + 10) % 20)) / 20
         
-        let backgroundNode = SKSpriteNode(imageNamed: "GreenLandsBackground");
-        backgroundNode.size = CGSize(width: 1024, height: 512);
-        backgroundNode.position = CGPoint.zero;
-        backgroundNode.zPosition = -10;
-        self.addChild(backgroundNode);
+        let newValue = value + (stepAmount / 2);
         
-        //generate the stone path where attacks come from
-        for i in -15...15 {
-            let stonePathTile = SKSpriteNode(imageNamed: "StonePathTile");
-            stonePathTile.size = CGSize(width: 45, height: 45);
-            stonePathTile.position = CGPoint(x: i * 45, y: 0);
-            stonePathTiles.append(stonePathTile);
-            stonePathTilesParent.addChild(stonePathTile);
-        }
-        self.addChild(stonePathTilesParent);
+        return (newValue - (newValue.truncatingRemainder(dividingBy: stepAmount)));
+    }
+    
+    //adds the metal image and metal label display to the scene
+    func addMetalDisplay() {
+        let metalNode = SKSpriteNode(imageNamed: "Metal");
+        metalNode.size = CGSize(width: self.size.width / 15, height: self.size.width / 15);
+        metalNode.position = CGPoint(
+            x: -(self.size.width / 2) + (self.size.width / 30),
+            y: (self.size.height / 2) - (self.size.height / 30)
+        );
+        metalNode.zPosition = 100;
+        self.addChild(metalNode);
         
-        var lightColorGridTile = true;
-        for y in -7...7 {
-            if(y == -1 || y == 0 || y == 1) { continue; }
-            for x in -14...14 {
-                let gridTileNode = SKSpriteNode(color: lightColorGridTile ? lightTileColor : darkTileColor, size: CGSize(width: tileSize, height: tileSize));
-                gridTileNode.position = CGPoint(x: CGFloat(x) * tileSize, y: CGFloat(y) * tileSize);
-                self.addChild(gridTileNode);
-                lightColorGridTile = !lightColorGridTile;
-            }
-        }
+        let metalAmountText = UILabel();
+        metalAmountText.frame = CGRect(
+            x: (self.size.width / 15) + 5,
+            y: 3,
+            width: self.size.width / 6,
+            height: self.size.height / 15
+        );
+        metalAmountText.layer.zPosition = 100;
+        metalAmountText.text = "1000";
+        metalAmountText.textAlignment = .left;
+        metalAmountText.font = UIFont(name: "ChalkboardSE-Bold", size: 20);
+        self.view?.addSubview(metalAmountText);
+    }
+    
+    func addDefenseMenu() {
         
-        cameraNode.position = CGPoint.zero;
-        self.camera = cameraNode;
-        self.addChild(cameraNode);
+        let negativeCenterWidth = -(self.size.width / 2);
+        let negativeCenterHeight = -(self.size.height / 2);
         
         let addDefenseNodeSize = self.size.width / 16;
         showAddDefenseButton = SKSpriteNode(imageNamed: "AddButton");
         showAddDefenseButton.size = CGSize(width: addDefenseNodeSize, height: addDefenseNodeSize);
-        let showAddDefenseButtonPositionX = -(self.size.width / 2) + (addDefenseNodeSize / 2) + 5;
-        let showAddDefenseButtonPositionY = -(self.size.height / 2) + (addDefenseNodeSize / 2) + 5
-        showAddDefenseButton.position = CGPoint(x: showAddDefenseButtonPositionX, y: showAddDefenseButtonPositionY);
+        
+        let showAddDefenseButtonPositionX = negativeCenterWidth + (addDefenseNodeSize / 2);
+        let showAddDefenseButtonPositionY = negativeCenterHeight + (addDefenseNodeSize / 2);
+        
+        showAddDefenseButton.position = CGPoint(x: showAddDefenseButtonPositionX + 5, y: showAddDefenseButtonPositionY + 5);
+        showAddDefenseButton.zPosition = 100;
         self.addChild(showAddDefenseButton);
 
+        //display all the dragable defenses
         for i in 0..<availableDefenses.count {
             let defenseNode = SKSpriteNode(texture: availableDefenses[i].texture)
             defenseNode.size = CGSize(width: addDefenseNodeSize, height: addDefenseNodeSize);
-            defenseNode.zPosition = 5;
-            let defenseNodeWidth = CGFloat(i * (Int(addDefenseNodeSize) + 5))
+            defenseNode.zPosition = 95;
+            let defenseNodeWidth = CGFloat(i * (Int(addDefenseNodeSize) + 5));
+            
+            let defenseNodePositionX = negativeCenterWidth + defenseNodeWidth + (addDefenseNodeSize * 1.5);
+            let defenseNodePositionY = negativeCenterHeight + (addDefenseNodeSize / 2);
+            
             defenseNode.position = CGPoint(
-                x: -(self.size.width / 2) + defenseNodeWidth + (addDefenseNodeSize * 1.5) + 5,
-                y: -(self.size.height / 2) + (addDefenseNodeSize / 2) + 5
+                x: defenseNodePositionX + 5,
+                y: defenseNodePositionY + 5
             );
             
             addDefenseNodes.append(defenseNode);
             addDefenseParent.addChild(defenseNode);
         }
         
+        let addDefenseBackgroundNode = SKSpriteNode(color: .brown, size: CGSize(width: self.size.width, height: addDefenseNodeSize + 10));
+        addDefenseBackgroundNode.position = CGPoint(
+            x: 0,
+            y: negativeCenterHeight + (addDefenseNodeSize / 2) + 5
+        );
+        addDefenseBackgroundNode.zPosition = 90;
+        addDefenseParent.addChild(addDefenseBackgroundNode);
+        
         addDefenseParent.isHidden = true;
         self.addChild(addDefenseParent);
+    }
+    
+    //generate the stone path where attacks come from
+    func addStonePath() {
+        for i in -15...15 {
+            let stonePathTile = SKSpriteNode(imageNamed: "StonePathTile");
+            stonePathTile.size = CGSize(width: tileSize * 2, height: tileSize * 2);
+            stonePathTile.position = CGPoint(x: i * Int(tileSize) * 2, y: 0);
+            stonePathTiles.append(stonePathTile);
+            stonePathTilesParent.addChild(stonePathTile);
+        }
+        self.addChild(stonePathTilesParent);
+    }
+    
+    //add the background node to the scene
+    func addBackgroundNode() {
+        let backgroundNode = SKSpriteNode(imageNamed: "GreenLandsBackground");
+        backgroundNode.size = CGSize(width: 1024, height: 512);
+        backgroundNode.position = CGPoint.zero;
+        backgroundNode.zPosition = -10;
+        self.addChild(backgroundNode);
+    }
+    
+    //adds the background grid nodes to the scene
+    func addBackgroundGrid() {
+        var lightColorGridTile = true;
+        
+        for y in -7...7 {
+            if(y == -1 || y == 0 || y == 1) { continue; }
+            for x in -14...14 {
+                let gridTileNode = SKSpriteNode(
+                    color: lightColorGridTile ? lightTileColor : darkTileColor,
+                    size: CGSize(width: tileSize, height: tileSize)
+                );
+                gridTileNode.position = CGPoint(
+                    x: CGFloat(x) * tileSize,
+                    y: CGFloat(y) * tileSize
+                );
+                self.addChild(gridTileNode);
+                lightColorGridTile = !lightColorGridTile; //toggle the tile color bool for next cycle
+            }
+        }
+    }
+    
+    override func didMove(to view: SKView) {
+        tileSize = CGFloat(self.size.width / 30);
+        
+        addBackgroundNode();
+        addBackgroundGrid();
+        addStonePath();
+        
+        addMetalDisplay();
+        addDefenseMenu();
+        
+        let tank = SKSpriteNode(imageNamed: "Tank");
+        tank.position = CGPoint(x: -(self.size.width / 2), y: 10);
+        tank.size = CGSize(width: (tileSize * 3) + 16, height: (tileSize * 3) + 16);
+        tank.zPosition = 95;
+        self.addChild(tank);
+        
+        let tankMove = SKAction.moveBy(x: 1000, y: 0, duration: 5);
+        tank.run(tankMove);
+        
+        cameraNode.position = CGPoint.zero;
+        self.camera = cameraNode;
+        self.addChild(cameraNode);
     }
     
     var movableDefenseNode = SKSpriteNode();
@@ -125,6 +216,8 @@ class BattleScene: SKScene {
                     movableDefenseNode.size = CGSize(width: movableDefenseNodeSize, height: movableDefenseNodeSize);
                     moveableDefenseNodeExists = true;
                     self.addChild(movableDefenseNode);
+                    
+                    setAddDefenseMenuHidden(true);
                 }
             }
         }
@@ -133,7 +226,9 @@ class BattleScene: SKScene {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if(moveableDefenseNodeExists) {
             let location = touches[touches.index(touches.startIndex, offsetBy: 0)].location(in: self);
-            movableDefenseNode.position = location;
+            let movePositionX = roundToStepAmount(value: location.x, stepAmount: tileSize);
+            let movePositionY = roundToStepAmount(value: location.y, stepAmount: tileSize);
+            movableDefenseNode.position = CGPoint(x: movePositionX, y: movePositionY);
             
             if(self.nodes(at: location).contains(movableDefenseNode)) {
                 var defenseTouchingPath = false;
@@ -158,16 +253,27 @@ class BattleScene: SKScene {
         if(touches.count == 1) {
             let location = touches[touches.index(touches.startIndex, offsetBy: 0)].location(in: self);
             
-            if(self.nodes(at: location).contains(movableDefenseNode)) {
-                var defenseTouchingPath = false;
-                
-                for i in 0..<stonePathTiles.count {
-                    if(framesTouching(frame1: movableDefenseNode.frame, frame2: stonePathTiles[i].frame)) { defenseTouchingPath = true; }
-                }
-                
-                if(!defenseTouchingPath) {
-                    placedDefenseNodes.append(movableDefenseNode);
-                    moveableDefenseNodeExists = false;
+            if(moveableDefenseNodeExists) {
+                if(self.nodes(at: location).contains(movableDefenseNode)) {
+                    var defenseTouchingPath = false;
+                    
+                    for i in 0..<stonePathTiles.count {
+                        if(framesTouching(frame1: movableDefenseNode.frame, frame2: stonePathTiles[i].frame)) { defenseTouchingPath = true; }
+                    }
+                    
+                    if(!defenseTouchingPath) {
+                        movableDefenseNode.zPosition = 50;
+                        placedDefenseNodes.append(movableDefenseNode);
+                        moveableDefenseNodeExists = false;
+                        
+                        movableDefenseNode.color = .green;
+                        movableDefenseNode.colorBlendFactor = 0.5;
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [self] in
+                            self.movableDefenseNode.color = .clear;
+                            self.movableDefenseNode.colorBlendFactor = 0.0;
+                        }
+                    }
                 }
             }
         }
@@ -179,7 +285,13 @@ class BattleScene: SKScene {
         }
     }
     
+    //sets hidden value for the add defense menu
+    func setAddDefenseMenuHidden(_ value: Bool) {
+        addDefenseParent.isHidden = value;
+        showAddDefenseButton.texture = SKTexture(imageNamed: addDefenseParent.isHidden ? "AddButton" : "CloseButton");
+    }
+    
     @objc func showAddDefenseMenu() {
-        addDefenseParent.isHidden = !addDefenseParent.isHidden;
+        setAddDefenseMenuHidden(!addDefenseParent.isHidden);
     }
 }
