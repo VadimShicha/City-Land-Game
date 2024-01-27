@@ -32,4 +32,10 @@ class GameTools {
     static var borderNodesParent: SKSpriteNode = SKSpriteNode();
     
     static var currentBattleType: BattleType = BattleType.GrassLands;
+    
+    //variables for scaling nodes to fit screen size
+    static let leftCenterWidth = -(UIScreen.main.bounds.size.width / 2);
+    static let rightCenterWidth = UIScreen.main.bounds.size.width / 2;
+    static let topCenterHeight = UIScreen.main.bounds.size.height / 2;
+    static let bottomCenterHeight = -(UIScreen.main.bounds.size.height / 2);
 }
