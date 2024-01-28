@@ -12,6 +12,7 @@ import SpriteKit;
 struct DefenseData {
     var name: String = "Defense";
     var sizeTiles: Int = 3;
+    var targetRadius: CGFloat = 3;
     var cost: Int = 100;
     var texture = SKTexture();
 }
@@ -52,6 +53,7 @@ class BattleScene: SKScene {
         case PlacedDefense = 45
         case ItemMenuBackground = 50
         case ItemMenuItem = 55
+        case DraggedDefenseRadius = 59
         case DraggedDefense = 60
         case UI = 100
     }
@@ -61,6 +63,8 @@ class BattleScene: SKScene {
     
     let greenMenuItemColor = #colorLiteral(red: 0.2745098174, green: 0.4862745106, blue: 0.1411764771, alpha: 1);
     let redMenuItemColor = #colorLiteral(red: 0.521568656, green: 0.1098039225, blue: 0.05098039284, alpha: 1);
+    
+    let defenseRadiusColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 0.503757399);
     
     var metalAmountText = SKLabelNode();
     var roundAmountText = SKLabelNode();
@@ -81,9 +85,11 @@ class BattleScene: SKScene {
     
     var isPlaying = false;
     
+    var defenseRadiusNode = SKShapeNode();
+    
     let availableDefenses: [DefenseData] = [
-        DefenseData(name: "Catapult", sizeTiles: 3, cost: 100, texture: SKTexture(imageNamed: "Defenses/Catapult")),
-        DefenseData(name: "Cannon", sizeTiles: 3, cost: 250, texture: SKTexture(imageNamed: "Defenses/Cannon"))
+        DefenseData(name: "Catapult", sizeTiles: 3, targetRadius: 8, cost: 100, texture: SKTexture(imageNamed: "Defenses/Catapult")),
+        DefenseData(name: "Cannon", sizeTiles: 3, targetRadius: 5, cost: 250, texture: SKTexture(imageNamed: "Defenses/Cannon"))
     ];
     
     let availableTanks: [TankData] = [
@@ -156,6 +162,7 @@ class BattleScene: SKScene {
         roundAmountText.horizontalAlignmentMode = .left;
         roundAmountText.fontName = "ChalkboardSE-Bold";
         roundAmountText.fontSize = 16;
+        roundAmountText.fontColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1);
         updateRoundDisplay();
         self.addChild(roundAmountText);
     }
@@ -386,6 +393,12 @@ class BattleScene: SKScene {
         
         GameTools.currentBattleRound = -1;
         
+        defenseRadiusNode = SKShapeNode(circleOfRadius: 50);
+        defenseRadiusNode.zPosition = ZLayers.DraggedDefense.rawValue;
+        
+        defenseRadiusNode.isHidden = true;
+        self.addChild(defenseRadiusNode);
+        
         cameraNode.position = CGPoint.zero;
         self.camera = cameraNode;
         self.addChild(cameraNode);
@@ -438,12 +451,21 @@ class BattleScene: SKScene {
             let movePositionY = roundToStepAmount(value: location.y, stepAmount: tileSize);
             movableDefenseNode.position = CGPoint(x: movePositionX, y: movePositionY);
             
+            self.removeChildren(in: [defenseRadiusNode]);
+            defenseRadiusNode = SKShapeNode(circleOfRadius: tileSize * movableDefenseData.targetRadius);
+            defenseRadiusNode.fillColor = defenseRadiusColor;
+            defenseRadiusNode.lineWidth = 0;
+            defenseRadiusNode.zPosition = ZLayers.DraggedDefenseRadius.rawValue;
+            defenseRadiusNode.position = CGPoint(x: movePositionX, y: movePositionY);
+            self.addChild(defenseRadiusNode);
+            
             if(self.nodes(at: location).contains(movableDefenseNode)) {
                 var defenseTouchingPath = false;
                 
                 for i in 0..<stonePathTiles.count {
                     if(framesTouching(frame1: movableDefenseNode.frame, frame2: stonePathTiles[i].frame)) { defenseTouchingPath = true; }
                 }
+
                 
                 if(defenseTouchingPath) {
                     movableDefenseNode.color = .red;
@@ -476,6 +498,8 @@ class BattleScene: SKScene {
                         
                         movableDefenseNode.color = .green;
                         movableDefenseNode.colorBlendFactor = 0.5;
+                        
+                        defenseRadiusNode.isHidden = true;
                         
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [self] in
                             self.movableDefenseNode.color = .clear;
