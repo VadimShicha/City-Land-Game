@@ -21,6 +21,26 @@ struct TankData {
     var name: String = "Tank";
     var sizeTiles: Int = 3;
     var texture = SKTexture();
+    
+    static func getTank(_ tank: TankDataEnum) -> TankData {
+        switch(tank.rawValue) {
+            case 1:
+                return TankData(name: "BlueTank", sizeTiles: 3, texture: SKTexture(imageNamed: "Tanks/BlueTank"))
+            case 2:
+                return TankData(name: "RedTank", sizeTiles: 3, texture: SKTexture(imageNamed: "Tanks/RedTank"))
+            case 3:
+                return TankData(name: "BigTank", sizeTiles: 6, texture: SKTexture(imageNamed: "Tanks/Tank"))
+            default:
+                return TankData(name: "Tank", sizeTiles: 3, texture: SKTexture(imageNamed: "Tanks/Tank"))
+        }
+    }
+}
+
+enum TankDataEnum: Int, CaseIterable {
+    case Tank = 0
+    case BlueTank = 1
+    case RedTank = 2
+    case BigTank = 3
 }
 
 class BattleScene: SKScene {
@@ -43,6 +63,7 @@ class BattleScene: SKScene {
     let redMenuItemColor = #colorLiteral(red: 0.521568656, green: 0.1098039225, blue: 0.05098039284, alpha: 1);
     
     var metalAmountText = SKLabelNode();
+    var roundAmountText = SKLabelNode();
     var metalAmount = 1000;
     
     var addDefenseParent = SKSpriteNode();
@@ -56,16 +77,20 @@ class BattleScene: SKScene {
     
     var addDefenseButton = SKSpriteNode();
     var spawnTankButton = SKSpriteNode();
+    var playButton = SKSpriteNode();
+    
+    var isPlaying = false;
     
     let availableDefenses: [DefenseData] = [
-        DefenseData(name: "Catapult", sizeTiles: 3, cost: 100, texture: SKTexture(imageNamed: "Catapult"))
+        DefenseData(name: "Catapult", sizeTiles: 3, cost: 100, texture: SKTexture(imageNamed: "Defenses/Catapult")),
+        DefenseData(name: "Cannon", sizeTiles: 3, cost: 250, texture: SKTexture(imageNamed: "Defenses/Cannon"))
     ];
     
     let availableTanks: [TankData] = [
-        TankData(name: "Tank", sizeTiles: 3, texture: SKTexture(imageNamed: "Tank")),
-        TankData(name: "BlueTank", sizeTiles: 3, texture: SKTexture(imageNamed: "BlueTank")),
-        TankData(name: "RedTank", sizeTiles: 5, texture: SKTexture(imageNamed: "RedTank")),
-        TankData(name: "BigTank", sizeTiles: 6, texture: SKTexture(imageNamed: "Tank"))
+        TankData.getTank(TankDataEnum.Tank),
+        TankData.getTank(TankDataEnum.BlueTank),
+        TankData.getTank(TankDataEnum.RedTank),
+        TankData.getTank(TankDataEnum.BigTank)
     ];
     
     var tileSize: CGFloat = 0; //size of each tile based on screen size
@@ -99,28 +124,57 @@ class BattleScene: SKScene {
     
     //adds the metal image and metal label display to the scene
     func addMetalDisplay() {
-        let negativeCenterWidth = -(self.size.width / 2);
-        let centerHeight = self.size.height / 2;
         
         let metalNode = SKSpriteNode(imageNamed: "Metal");
         metalNode.size = CGSize(width: self.size.width / 15, height: self.size.width / 15);
         metalNode.position = CGPoint(
-            x: negativeCenterWidth + (self.size.width / 30),
-            y: centerHeight - (self.size.height / 30)
+            x: GameTools.leftCenterWidth + (self.size.width / 30),
+            y: GameTools.topCenterHeight - (self.size.height / 30)
         );
         metalNode.zPosition = ZLayers.UI.rawValue;
         self.addChild(metalNode);
         
         metalAmountText = SKLabelNode(text: String(metalAmount));
         metalAmountText.position = CGPoint(
-            x: negativeCenterWidth + (self.size.width / 15) + 5,
-            y: centerHeight - metalAmountText.frame.height - 3
+            x: GameTools.leftCenterWidth + (self.size.width / 15) + 5,
+            y: GameTools.topCenterHeight - metalAmountText.frame.height - 3
         );
         metalAmountText.zPosition = ZLayers.UI.rawValue;
         metalAmountText.horizontalAlignmentMode = .left;
         metalAmountText.fontName = "ChalkboardSE-Bold";
         metalAmountText.fontSize = 20;
         self.addChild(metalAmountText);
+    }
+    
+    func addRoundDisplay() {
+        roundAmountText = SKLabelNode(text: "Round 0 of 0");
+        roundAmountText.position = CGPoint(
+            x: GameTools.leftCenterWidth + 5,
+            y: GameTools.topCenterHeight - metalAmountText.frame.height - roundAmountText.frame.height - 6
+        );
+        roundAmountText.zPosition = ZLayers.UI.rawValue;
+        roundAmountText.horizontalAlignmentMode = .left;
+        roundAmountText.fontName = "ChalkboardSE-Bold";
+        roundAmountText.fontSize = 16;
+        updateRoundDisplay();
+        self.addChild(roundAmountText);
+    }
+    
+    func updateRoundDisplay() {
+        roundAmountText.text = "Round " + String(GameTools.currentBattleRound + 1) + " of " + String(GameTools.currentBattleData.roundAmount);
+    }
+    
+    func addPlayRoundButton() {
+        let nodeSize = self.size.width / 16;
+        playButton = SKSpriteNode(imageNamed: "PlayButton");
+        playButton.size = CGSize(width: nodeSize, height: nodeSize);
+        
+        let buttonPosX = GameTools.rightCenterWidth - (nodeSize / 2);
+        let buttonPosY = GameTools.topCenterHeight - (nodeSize / 2);
+        
+        playButton.position = CGPoint(x: buttonPosX - 5, y: buttonPosY - 5);
+        playButton.zPosition = ZLayers.UI.rawValue;
+        self.addChild(playButton);
     }
     
     func createDefenseNode(nodeSize: CGFloat, defenseData: DefenseData, position: CGPoint) {
@@ -131,7 +185,7 @@ class BattleScene: SKScene {
 
         defenseNode.position = CGPoint(
             x: position.x + 5,
-            y: position.y + 5 + 2.5
+            y: position.y + 5 + 4
         );
         
         addDefenseNodes.append(defenseNode);
@@ -152,7 +206,7 @@ class BattleScene: SKScene {
         let metalAmountText = SKLabelNode(text: String(defenseData.cost));
         metalAmountText.position = CGPoint(
             x: position.x + 5,
-            y: position.y + 5 - (nodeSize / 2) + 2
+            y: position.y + 5 - (nodeSize / 2) + 1
         );
         metalAmountText.zPosition = ZLayers.UI.rawValue;
         metalAmountText.horizontalAlignmentMode = .center;
@@ -165,6 +219,10 @@ class BattleScene: SKScene {
         for i in 0..<addDefenseBackgroundNodes.count {
             addDefenseBackgroundNodes[i].fillColor = (metalAmount >= availableDefenses[i].cost ? greenMenuItemColor : redMenuItemColor);
         }
+    }
+    
+    func updatePlayButton() {
+        playButton.texture = (isPlaying ? SKTexture(imageNamed: "PlayingButton") : SKTexture(imageNamed: "PlayButton"));
     }
     
     func addDefenseMenu() {
@@ -219,7 +277,7 @@ class BattleScene: SKScene {
     //add the background node to the scene
     func addBackgroundNode() {
         let backgroundNode = SKSpriteNode(imageNamed: "GreenLandsBackground");
-        backgroundNode.size = CGSize(width: 1024, height: 512);
+        backgroundNode.size = CGSize(width: self.size.height * 2, height: self.size.height);
         backgroundNode.position = CGPoint.zero;
         backgroundNode.zPosition = ZLayers.SceneBackground.rawValue;
         self.addChild(backgroundNode);
@@ -250,43 +308,58 @@ class BattleScene: SKScene {
         let negativeCenterWidth = -(self.size.width / 2);
         let negativeCenterHeight = -(self.size.height / 2);
         
-        let spawnTankButtonSize = self.size.width / 16;
+        let nodeSize = self.size.width / 16;
         spawnTankButton = SKSpriteNode(imageNamed: "TankButton");
-        spawnTankButton.size = CGSize(width: spawnTankButtonSize, height: spawnTankButtonSize);
+        spawnTankButton.size = CGSize(width: nodeSize, height: nodeSize);
         
-        let spawnTankButtonPositionX = negativeCenterWidth + (spawnTankButtonSize / 2);
-        let spawnTankButtonPositionY = negativeCenterHeight + (spawnTankButtonSize / 2);
+        let spawnTankButtonPositionX = negativeCenterWidth + (nodeSize / 2);
+        let spawnTankButtonPositionY = negativeCenterHeight + (nodeSize / 2);
         
-        spawnTankButton.position = CGPoint(x: spawnTankButtonPositionX + 5, y: spawnTankButtonPositionY + 5 + spawnTankButtonSize + 5);
+        spawnTankButton.position = CGPoint(x: spawnTankButtonPositionX + 5, y: spawnTankButtonPositionY + 5 + nodeSize + 5);
         spawnTankButton.zPosition = ZLayers.UI.rawValue;
         self.addChild(spawnTankButton);
 
         //display all the clickable tanks
         for i in 0..<availableTanks.count {
             let tankNode = SKSpriteNode(texture: availableTanks[i].texture)
-            tankNode.size = CGSize(width: spawnTankButtonSize, height: spawnTankButtonSize);
+            tankNode.size = CGSize(width: nodeSize, height: nodeSize);
             tankNode.zPosition = ZLayers.ItemMenuItem.rawValue;
-            let tankNodeWidth = CGFloat(i * (Int(spawnTankButtonSize) + 5));
+            let tankNodeWidth = CGFloat(i * (Int(nodeSize) + 5));
             
-            let tankNodePositionX = negativeCenterWidth + tankNodeWidth + (spawnTankButtonSize * 1.5);
-            let tankNodePositionY = negativeCenterHeight + (spawnTankButtonSize / 2);
+            let tankNodePositionX = negativeCenterWidth + tankNodeWidth + (nodeSize * 1.5);
+            let tankNodePositionY = negativeCenterHeight + (nodeSize / 2);
             
             tankNode.position = CGPoint(
-                x: tankNodePositionX + 5,
+                x: tankNodePositionX + 5 + 5,
                 y: tankNodePositionY + 5
             );
             
             spawnTankNodes.append(tankNode);
             spawnTankParent.addChild(tankNode);
+            
+            let nodePosXOffset = i * (Int(nodeSize) + 5);
+            let nodePosX = nodePosXOffset + Int((nodeSize * 1.5)) + 5;
+            let nodePosY = nodeSize / 2;
+            
+            let tankBackgroundNode = SKShapeNode(rect: CGRect(
+                x: GameTools.leftCenterWidth + CGFloat(nodePosX + 5) - (nodeSize / 2),
+                y: GameTools.bottomCenterHeight + nodePosY + 5 - (nodeSize / 2),
+                width: nodeSize,
+                height: nodeSize
+            ), cornerRadius: 6);
+            tankBackgroundNode.lineWidth = 0;
+            tankBackgroundNode.fillColor = .brown;
+            tankBackgroundNode.zPosition = ZLayers.ItemMenuBackground.rawValue;
+            spawnTankParent.addChild(tankBackgroundNode);
         }
         
-        let spawnTankBackgroundNode = SKSpriteNode(color: .brown, size: CGSize(width: self.size.width, height: spawnTankButtonSize + 10));
-        spawnTankBackgroundNode.position = CGPoint(
-            x: 0,
-            y: negativeCenterHeight + (spawnTankButtonSize / 2) + 5
-        );
-        spawnTankBackgroundNode.zPosition = ZLayers.ItemMenuBackground.rawValue;
-        spawnTankParent.addChild(spawnTankBackgroundNode);
+//        let spawnTankBackgroundNode = SKSpriteNode(color: .brown, size: CGSize(width: self.size.width, height: spawnTankButtonSize + 10));
+//        spawnTankBackgroundNode.position = CGPoint(
+//            x: 0,
+//            y: negativeCenterHeight + (spawnTankButtonSize / 2) + 5
+//        );
+//        spawnTankBackgroundNode.zPosition = ZLayers.ItemMenuBackground.rawValue;
+        //spawnTankParent.addChild(spawnTankBackgroundNode);
         
         spawnTankParent.isHidden = true;
         self.addChild(spawnTankParent);
@@ -305,8 +378,13 @@ class BattleScene: SKScene {
         addStonePath();
         
         addMetalDisplay();
+        addRoundDisplay();
+        addPlayRoundButton();
+        
         addDefenseMenu();
         addTankSpawnMenu();
+        
+        GameTools.currentBattleRound = -1;
         
         cameraNode.position = CGPoint.zero;
         self.camera = cameraNode;
@@ -324,6 +402,7 @@ class BattleScene: SKScene {
             
             for i in 0..<addDefenseNodes.count {
                 if(self.nodes(at: location).contains(addDefenseNodes[i])) {
+                    if(metalAmount < availableDefenses[i].cost) { break; } //if the defense can't be afforded, break out
                     movableDefenseData = availableDefenses[i];
                     movableDefenseNode = addDefenseNodes[i].copy() as! SKSpriteNode;
                     let movableDefenseNodeSize = tileSize * CGFloat(availableDefenses[i].sizeTiles);
@@ -414,7 +493,62 @@ class BattleScene: SKScene {
             else if(self.nodes(at: touch.location(in: self)).contains(spawnTankButton)) {
                 showSpawnTankMenu();
             }
+            else if(self.nodes(at: touch.location(in: self)).contains(playButton)) {
+                if(!isPlaying && GameTools.currentBattleRound + 1 < GameTools.currentBattleData.roundAmount) {
+                    isPlaying = true;
+                    updatePlayButton();
+                    
+                    GameTools.currentBattleRound = GameTools.currentBattleRound + 1;
+                    updateRoundDisplay();
+                    
+                    currentTankIndex = 0;
+                    timeRoundStarted = Date().timeIntervalSince1970;
+                }
+            }
         }
+    }
+    
+    var lastUpdateTime: TimeInterval = -1;
+    
+    var timeRoundStarted: TimeInterval = -1;
+    
+    var currentTankIndex: Int = 0;
+
+    
+    override func update(_ currentTime: TimeInterval) {
+        if(lastUpdateTime == -1) { lastUpdateTime = currentTime; }
+        
+        //let secondsBetweenFrames = currentTime - lastUpdateTime; //time (in seconds) that passed between this and last update frame
+        
+        if(isPlaying && GameTools.currentBattleRound != -1 && GameTools.currentBattleRound < GameTools.currentBattleData.rounds.count) {
+            let currentRoundTanks = GameTools.currentBattleData.rounds[GameTools.currentBattleRound].tanks;
+            
+            if(Date().timeIntervalSince1970 >= timeRoundStarted + Double(currentRoundTanks[currentTankIndex].time)) {
+                
+                let tankData = TankData.getTank(currentRoundTanks[currentTankIndex].tank);
+                
+                GameTools.currentBattleData.rounds[GameTools.currentBattleRound].tanks[currentTankIndex].spawned = true;
+                
+                let tank = SKSpriteNode(texture: tankData.texture);
+                tank.position = CGPoint(x: -(self.size.width / 2), y: 10);
+                tank.size = CGSize(width: (Int(tileSize) * tankData.sizeTiles) + 16, height: (Int(tileSize) * tankData.sizeTiles) + 16);
+                tank.zPosition = ZLayers.Tank.rawValue;
+                self.addChild(tank);
+
+                let tankMove = SKAction.moveBy(x: 1000, y: 0, duration: 5);
+                tank.run(tankMove);
+                
+                if(currentTankIndex + 1 >= currentRoundTanks.count) {
+                    isPlaying = false;
+                    updatePlayButton();
+                }
+                else {
+                    currentTankIndex += 1;
+                }
+            }
+        }
+        
+        lastUpdateTime = currentTime; //update the last time for next update frame
     }
     
     //sets hidden value for the add defense menu
@@ -430,11 +564,11 @@ class BattleScene: SKScene {
         spawnTankButton.texture = SKTexture(imageNamed: spawnTankParent.isHidden ? "TankButton" : "CloseButton");
     }
     
-    @objc func showAddDefenseMenu() {
+    func showAddDefenseMenu() {
         setAddDefenseMenuHidden(!addDefenseParent.isHidden);
     }
     
-    @objc func showSpawnTankMenu() {
+    func showSpawnTankMenu() {
         setSpawnTankMenuHidden(!spawnTankParent.isHidden);
     }
 }

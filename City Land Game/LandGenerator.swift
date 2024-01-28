@@ -36,32 +36,32 @@ class LandGenerator {
                 let noiseValue = noiseMap.value(at: noisePosition);
                 
                 var tileTexture = SKTexture();
-                tileTexture = SKTexture(imageNamed: "GrassLand");
+                tileTexture = SKTexture(imageNamed: "Land/GrassLand");
                 
                 if(noiseValue > 0.85) {
-                    tileTexture = SKTexture(imageNamed: "WaterLand");
+                    tileTexture = SKTexture(imageNamed: "Land/WaterLand");
                 }
                 else if(noiseValue > 0.75) {
-                    tileTexture = SKTexture(imageNamed: "SandLand");
+                    tileTexture = SKTexture(imageNamed: "Land/SandLand");
                 }
                 else if(noiseValue > 0.07) {
-                    tileTexture = SKTexture(imageNamed: "GrassLand"); //other option: "GrassLandWithBorder"
+                    tileTexture = SKTexture(imageNamed: "Land/GrassLand"); //other option: "Land/GrassLandWithBorder"
                 }
                 else if(noiseValue > 0.01) {
-                    tileTexture = SKTexture(imageNamed: "ForestLand");
+                    tileTexture = SKTexture(imageNamed: "Land/ForestLand");
                 }
                 else if(noiseValue > -0.3) {
-                    tileTexture = SKTexture(imageNamed: "MountainLand");
+                    tileTexture = SKTexture(imageNamed: "Land/MountainLand");
                 }
                 else if(noiseValue > -0.7) {
-                    tileTexture = SKTexture(imageNamed: "SnowLand");
+                    tileTexture = SKTexture(imageNamed: "Land/SnowLand");
                 }
                 else {
-                    tileTexture = SKTexture(imageNamed: "IceLand");
+                    tileTexture = SKTexture(imageNamed: "Land/IceLand");
                 }
                 
                 if(x == 0 || x == GameTools.mapWidth - 1 || y == 0 || y == GameTools.mapHeight - 1) {
-                    tileTexture = SKTexture(imageNamed: "BorderLand");
+                    tileTexture = SKTexture(imageNamed: "Land/BorderLand");
                 }
                 
                 if((x == GameTools.mapSpawnX || x == GameTools.mapSpawnX + 1) && (y == GameTools.mapSpawnY || y == GameTools.mapSpawnY + 1)) {
