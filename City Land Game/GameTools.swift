@@ -18,9 +18,11 @@ enum BattleType {
 }
 
 struct BattleRoundTank {
-    var tank: TankDataEnum = TankDataEnum.Tank;
+    var tank: TankDataEnum = TankDataEnum.GreenTank;
+    var node = SKSpriteNode();
     var time: CGFloat = 1; //at what time of the round does this tank spawn
     var spawned = false;
+    var health: Int = 100;
 }
 
 struct BattleRoundData {
@@ -55,32 +57,51 @@ class GameTools {
     static var currentBattleData: BattleData = BattleData(
         rounds: [
             BattleRoundData(roundLength: 3, tanks: [
-                BattleRoundTank(tank: TankDataEnum.Tank, time: 0),
-                BattleRoundTank(tank: TankDataEnum.Tank, time: 0.5),
-                BattleRoundTank(tank: TankDataEnum.BigTank, time: 3)
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 0),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 0.5),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 1.5),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 2),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 3)
             ]),
-            BattleRoundData(roundLength: 3, tanks: [
-                BattleRoundTank(tank: TankDataEnum.RedTank, time: 0),
-                BattleRoundTank(tank: TankDataEnum.RedTank, time: 0.5),
-                BattleRoundTank(tank: TankDataEnum.RedTank, time: 1),
-                BattleRoundTank(tank: TankDataEnum.RedTank, time: 1.5),
-                BattleRoundTank(tank: TankDataEnum.RedTank, time: 2),
-                BattleRoundTank(tank: TankDataEnum.RedTank, time: 2.5),
-                BattleRoundTank(tank: TankDataEnum.RedTank, time: 3)
+            BattleRoundData(roundLength: 4, tanks: [
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 0),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 0.5),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 1),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 1.5),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 2),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 2.5),
+                BattleRoundTank(tank: TankDataEnum.TanTank, time: 4)
             ]),
             BattleRoundData(roundLength: 7, tanks: [
-                BattleRoundTank(tank: TankDataEnum.BigTank, time: 0),
-                BattleRoundTank(tank: TankDataEnum.BigTank, time: 3),
-                BattleRoundTank(tank: TankDataEnum.RedTank, time: 4),
-                BattleRoundTank(tank: TankDataEnum.RedTank, time: 4.5),
-                BattleRoundTank(tank: TankDataEnum.RedTank, time: 5),
-                BattleRoundTank(tank: TankDataEnum.RedTank, time: 5.5),
-                BattleRoundTank(tank: TankDataEnum.RedTank, time: 6),
-                BattleRoundTank(tank: TankDataEnum.RedTank, time: 6.5),
-                BattleRoundTank(tank: TankDataEnum.RedTank, time: 7)
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 0),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 3),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 4),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 4.5),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 5),
+                BattleRoundTank(tank: TankDataEnum.TanTank, time: 5.5),
+                BattleRoundTank(tank: TankDataEnum.TanTank, time: 6),
+                BattleRoundTank(tank: TankDataEnum.TanTank, time: 6.5),
+                BattleRoundTank(tank: TankDataEnum.TanTank, time: 7)
+            ]),
+            BattleRoundData(roundLength: 7, tanks: [
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 0),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 0.5),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 1),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 1.5),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 2),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 2.5),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 3),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 3.5),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 4),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 4.5),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 5),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 5.5),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 6),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 6.5),
+                BattleRoundTank(tank: TankDataEnum.GreenTank, time: 7)
             ])
         ],
-        roundAmount: 3
+        roundAmount: 4
     );
     
     //variables for scaling nodes to fit screen size

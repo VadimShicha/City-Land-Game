@@ -466,7 +466,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YX6HQPQFG5;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "City Game";
+				INFOPLIST_KEY_CFBundleDisplayName = "Tank Game";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -497,7 +497,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YX6HQPQFG5;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "City Game";
+				INFOPLIST_KEY_CFBundleDisplayName = "Tank Game";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;

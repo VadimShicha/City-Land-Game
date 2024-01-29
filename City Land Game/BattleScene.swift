@@ -9,15 +9,6 @@ import Foundation;
 import SpriteKit;
 
 //struct for holding all the data for the defenses you could use
-struct DefenseData {
-    var name: String = "Defense";
-    var sizeTiles: Int = 3;
-    var targetRadius: CGFloat = 3;
-    var cost: Int = 100;
-    var texture = SKTexture();
-}
-
-//struct for holding all the data for the defenses you could use
 struct TankData {
     var name: String = "Tank";
     var sizeTiles: Int = 3;
@@ -25,23 +16,59 @@ struct TankData {
     
     static func getTank(_ tank: TankDataEnum) -> TankData {
         switch(tank.rawValue) {
+            case 0:
+                return TankData(name: "GreenTank", sizeTiles: 3, texture: SKTexture(imageNamed: "Tanks/Tank"))
             case 1:
-                return TankData(name: "BlueTank", sizeTiles: 3, texture: SKTexture(imageNamed: "Tanks/BlueTank"))
+                return TankData(name: "TanTank", sizeTiles: 3, texture: SKTexture(imageNamed: "Tanks/TanTank"))
             case 2:
                 return TankData(name: "RedTank", sizeTiles: 3, texture: SKTexture(imageNamed: "Tanks/RedTank"))
             case 3:
-                return TankData(name: "BigTank", sizeTiles: 6, texture: SKTexture(imageNamed: "Tanks/Tank"))
+                return TankData(name: "BlueTank", sizeTiles: 3, texture: SKTexture(imageNamed: "Tanks/BlueTank"))
             default:
-                return TankData(name: "Tank", sizeTiles: 3, texture: SKTexture(imageNamed: "Tanks/Tank"))
+                return getTank(TankDataEnum.GreenTank);
         }
     }
 }
 
 enum TankDataEnum: Int, CaseIterable {
-    case Tank = 0
-    case BlueTank = 1
+    case GreenTank = 0
+    case TanTank = 1
     case RedTank = 2
-    case BigTank = 3
+    case BlueTank = 3
+}
+
+//struct for holding all the data for the defenses you could use
+struct DefenseData {
+    var name: String = "Defense";
+    var sizeTiles: Int = 3;
+    var targetRadius: CGFloat = 3;
+    var attackDamage = 50; //amount of damage each attack does
+    var attackSpeed = 1; //attack speed per second
+    var cost: Int = 100;
+    var texture = SKTexture();
+    
+    var lastAttackTime: TimeInterval = 0;
+    
+    static func getDefense(_ defense: DefenseDataEnum) -> DefenseData {
+        switch(defense.rawValue) {
+            case 0:
+                return DefenseData(name: "Catapult", sizeTiles: 3, targetRadius: 8, attackDamage: 50, cost: 100, texture: SKTexture(imageNamed: "Defenses/Catapult"));
+            case 1:
+                return DefenseData(name: "Cannon", sizeTiles: 3, targetRadius: 5, attackDamage: 100, cost: 250, texture: SKTexture(imageNamed: "Defenses/Cannon"))
+            default:
+                return getDefense(DefenseDataEnum.Catapult);
+        }
+    }
+}
+
+enum DefenseDataEnum: Int, CaseIterable {
+    case Catapult = 0
+    case Cannon = 1
+}
+
+struct PlacedDefense {
+    var node = SKSpriteNode();
+    var defenseData = DefenseData.getDefense(DefenseDataEnum.Catapult);
 }
 
 class BattleScene: SKScene {
@@ -77,7 +104,9 @@ class BattleScene: SKScene {
     var spawnTankParent = SKSpriteNode();
     var spawnTankNodes: [SKSpriteNode] = [];
     
-    var placedDefenseNodes: [SKSpriteNode] = [];
+    //var placedDefenseNodes: [SKSpriteNode] = [];
+    
+    var placedDefenses: [PlacedDefense] = [];
     
     var addDefenseButton = SKSpriteNode();
     var spawnTankButton = SKSpriteNode();
@@ -88,15 +117,15 @@ class BattleScene: SKScene {
     var defenseRadiusNode = SKShapeNode();
     
     let availableDefenses: [DefenseData] = [
-        DefenseData(name: "Catapult", sizeTiles: 3, targetRadius: 8, cost: 100, texture: SKTexture(imageNamed: "Defenses/Catapult")),
-        DefenseData(name: "Cannon", sizeTiles: 3, targetRadius: 5, cost: 250, texture: SKTexture(imageNamed: "Defenses/Cannon"))
+        DefenseData.getDefense(DefenseDataEnum.Catapult),
+        DefenseData.getDefense(DefenseDataEnum.Cannon)
     ];
     
     let availableTanks: [TankData] = [
-        TankData.getTank(TankDataEnum.Tank),
-        TankData.getTank(TankDataEnum.BlueTank),
+        TankData.getTank(TankDataEnum.GreenTank),
+        TankData.getTank(TankDataEnum.TanTank),
         TankData.getTank(TankDataEnum.RedTank),
-        TankData.getTank(TankDataEnum.BigTank)
+        TankData.getTank(TankDataEnum.BlueTank)
     ];
     
     var tileSize: CGFloat = 0; //size of each tile based on screen size
@@ -114,6 +143,14 @@ class BattleScene: SKScene {
         
         if(xDistance <= framesXWidth && yDistance <= framesXHeight) { return true; }
         return false;
+    }
+    
+    //returns the distance between two points
+    func distanceBetweenPoints(_ point1: CGPoint, _ point2: CGPoint) -> CGFloat {
+        let xDistanceSqrd = pow(point2.x - point1.x, 2);
+        let yDistanceSqrd = pow(point2.y - point1.y, 2);
+
+        return sqrt(xDistanceSqrd + yDistanceSqrd);
     }
     
     //rounds the given number value to the nearest step amount
@@ -377,6 +414,36 @@ class BattleScene: SKScene {
         metalAmountText.text = String(value);
     }
     
+    func findNearestTankToDefense(defense: PlacedDefense, checkDefenseRadius: Bool) -> Int {
+        var shortestDistance: CGFloat = -1;
+        var shortestDistanceTankIndex = -1;
+        
+        let currentRoundTanks = GameTools.currentBattleData.rounds[GameTools.currentBattleRound].tanks;
+        
+        for i in 0..<currentRoundTanks.count {
+            //if the tank is broken don't check it
+            if(currentRoundTanks[i].health == 0) { continue; }
+            
+            //distance between the defense and tank based on center point
+            let distance = distanceBetweenPoints(defense.node.position, currentRoundTanks[i].node.position);
+            //distance between the defense and tank accounting for the node sizes
+            let newDistance = distance - (defense.node.size.width / 2) - (currentRoundTanks[i].node.size.width / 2)
+            
+            if(checkDefenseRadius && newDistance > defense.defenseData.targetRadius * tileSize) { continue; }
+            
+            if(shortestDistance == -1 || newDistance < shortestDistance) {
+                shortestDistance = newDistance;
+                //shortestDistanceTank = currentRoundTanks[i];
+                shortestDistanceTankIndex = i;
+            }
+        }
+        
+        //if(shortestDistance == -1) {return nil; }
+        
+        //return shortestDistanceTank;
+        return shortestDistanceTankIndex;
+    }
+    
     override func didMove(to view: SKView) {
         tileSize = CGFloat(self.size.width / 30);
         
@@ -493,7 +560,10 @@ class BattleScene: SKScene {
                     
                     if(!defenseTouchingPath) {
                         movableDefenseNode.zPosition = ZLayers.PlacedDefense.rawValue;
-                        placedDefenseNodes.append(movableDefenseNode);
+
+                        placedDefenses.append(PlacedDefense(node: movableDefenseNode, defenseData: movableDefenseData));
+                        
+                        //placedDefenseNodes.append(movableDefenseNode);
                         moveableDefenseNodeExists = false;
                         
                         movableDefenseNode.color = .green;
@@ -537,39 +607,72 @@ class BattleScene: SKScene {
     var timeRoundStarted: TimeInterval = -1;
     
     var currentTankIndex: Int = 0;
-
     
+    var tankMoveWorkItem: DispatchWorkItem?;
+
     override func update(_ currentTime: TimeInterval) {
         if(lastUpdateTime == -1) { lastUpdateTime = currentTime; }
         
         //let secondsBetweenFrames = currentTime - lastUpdateTime; //time (in seconds) that passed between this and last update frame
         
+        if(GameTools.currentBattleRound != -1) {
+            for i in 0..<placedDefenses.count {
+                let tankResultIndex = findNearestTankToDefense(defense: placedDefenses[i], checkDefenseRadius: true);
+                
+                if(tankResultIndex != -1) {
+                    
+                    if(Date().timeIntervalSince1970 >= placedDefenses[i].defenseData.lastAttackTime + Double(placedDefenses[i].defenseData.attackSpeed)) {
+                        GameTools.currentBattleData.rounds[GameTools.currentBattleRound].tanks[tankResultIndex].health -= placedDefenses[i].defenseData.attackDamage;
+                        placedDefenses[i].defenseData.lastAttackTime = Date().timeIntervalSince1970;
+                        
+                        if(GameTools.currentBattleData.rounds[GameTools.currentBattleRound].tanks[tankResultIndex].health <= 0) { GameTools.currentBattleData.rounds[GameTools.currentBattleRound].tanks[tankResultIndex].health = 0;
+                            self.removeChildren(in: [GameTools.currentBattleData.rounds[GameTools.currentBattleRound].tanks[tankResultIndex].node]);
+                        }
+                    }
+                }
+            }
+        }
+        
         if(isPlaying && GameTools.currentBattleRound != -1 && GameTools.currentBattleRound < GameTools.currentBattleData.rounds.count) {
             let currentRoundTanks = GameTools.currentBattleData.rounds[GameTools.currentBattleRound].tanks;
             
-            if(Date().timeIntervalSince1970 >= timeRoundStarted + Double(currentRoundTanks[currentTankIndex].time)) {
-                
-                let tankData = TankData.getTank(currentRoundTanks[currentTankIndex].tank);
-                
-                GameTools.currentBattleData.rounds[GameTools.currentBattleRound].tanks[currentTankIndex].spawned = true;
-                
-                let tank = SKSpriteNode(texture: tankData.texture);
-                tank.position = CGPoint(x: -(self.size.width / 2), y: 10);
-                tank.size = CGSize(width: (Int(tileSize) * tankData.sizeTiles) + 16, height: (Int(tileSize) * tankData.sizeTiles) + 16);
-                tank.zPosition = ZLayers.Tank.rawValue;
-                self.addChild(tank);
+            //check if the there are anymore tank indices to spawn
+            if(currentTankIndex + 1 <= currentRoundTanks.count) {
+                if(Date().timeIntervalSince1970 >= timeRoundStarted + Double(currentRoundTanks[currentTankIndex].time)) {
+                    
+                    let tankData = TankData.getTank(currentRoundTanks[currentTankIndex].tank);
+                    
+                    GameTools.currentBattleData.rounds[GameTools.currentBattleRound].tanks[currentTankIndex].spawned = true;
+                    
+                    let tank = SKSpriteNode(texture: tankData.texture);
+                    tank.position = CGPoint(x: -(self.size.width / 2), y: 10);
+                    tank.size = CGSize(width: (Int(tileSize) * tankData.sizeTiles) + 16, height: (Int(tileSize) * tankData.sizeTiles) + 16);
+                    tank.zPosition = ZLayers.Tank.rawValue;
+                    self.addChild(tank);
+                    
+                    GameTools.currentBattleData.rounds[GameTools.currentBattleRound].tanks[currentTankIndex].node = tank;
 
-                let tankMove = SKAction.moveBy(x: 1000, y: 0, duration: 5);
-                tank.run(tankMove);
-                
-                if(currentTankIndex + 1 >= currentRoundTanks.count) {
-                    isPlaying = false;
-                    updatePlayButton();
-                }
-                else {
+                    let tankMove = SKAction.moveBy(x: 1000, y: 0, duration: 5);
+                    tank.run(tankMove);
+                    
+                    //check if there are more tanks to come
+                    if(currentTankIndex + 1 >= currentRoundTanks.count) {
+                        //wait for tanks to fully leave before you could start the next round
+                        tankMoveWorkItem = DispatchWorkItem { [self] in
+                            isPlaying = false;
+                            updatePlayButton();
+                        }
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: tankMoveWorkItem!)
+                    }
+                    
                     currentTankIndex += 1;
                 }
             }
+        }
+        
+        for i in 0..<placedDefenses.count {
+            
         }
         
         lastUpdateTime = currentTime; //update the last time for next update frame
