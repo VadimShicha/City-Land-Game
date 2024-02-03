@@ -23,9 +23,9 @@ struct TankData {
             case 1:
                 return TankData(name: "TanTank", sizeTiles: 3, baseHealth: 100, metal: 4, texture: SKTexture(imageNamed: "Tanks/TanTank"))
             case 2:
-                return TankData(name: "RedTank", sizeTiles: 3, baseHealth: 200, metal: 6, texture: SKTexture(imageNamed: "Tanks/RedTank"))
+                return TankData(name: "RedTank", sizeTiles: 3, baseHealth: 500, metal: 6, texture: SKTexture(imageNamed: "Tanks/RedTank"))
             case 3:
-                return TankData(name: "BlueTank", sizeTiles: 3, baseHealth: 500, metal: 10, texture: SKTexture(imageNamed: "Tanks/BlueTank"))
+                return TankData(name: "BlueTank", sizeTiles: 3, baseHealth: 1000, metal: 10, texture: SKTexture(imageNamed: "Tanks/BlueTank"))
             default:
                 return getTank(TankDataEnum.GreenTank);
         }
@@ -136,14 +136,15 @@ class BattleScene: SKScene {
     var stonePathTilesParent = SKSpriteNode(); //parent of the stone path nodes
     
     //checks if two frames are inside of each other (touching each other)
-    func framesTouching(frame1: CGRect, frame2: CGRect) -> Bool {
+    //tolerance is an optional argument that allowes the frames to be touching by that value (default is 0, none)
+    func framesTouching(frame1: CGRect, frame2: CGRect, tolerance: CGFloat = 0) -> Bool {
         let xDistance = abs(frame1.midX - frame2.midX);
         let yDistance = abs(frame1.midY - frame2.midY);
         
         let framesXWidth = (frame1.width / 2) + (frame2.width / 2);
         let framesXHeight = (frame1.height / 2) + (frame2.height / 2);
         
-        if(xDistance <= framesXWidth && yDistance <= framesXHeight) { return true; }
+        if(xDistance <= framesXWidth - tolerance && yDistance <= framesXHeight - tolerance) { return true; }
         return false;
     }
     
@@ -470,7 +471,7 @@ class BattleScene: SKScene {
         addPlayRoundButton();
         
         addDefenseMenu();
-        addTankSpawnMenu();
+        //addTankSpawnMenu();
         
         GameTools.currentBattleRound = -1;
         
@@ -547,6 +548,9 @@ class BattleScene: SKScene {
                     if(framesTouching(frame1: movableDefenseNode.frame, frame2: stonePathTiles[i].frame)) { defenseTouchingPath = true; }
                 }
 
+                for i in 0..<placedDefenses.count {
+                    if(framesTouching(frame1: movableDefenseNode.frame, frame2: placedDefenses[i].node.frame, tolerance: tileSize / 2)) { defenseTouchingPath = true; }
+                }
                 
                 if(defenseTouchingPath) {
                     movableDefenseNode.color = .red;
@@ -570,6 +574,10 @@ class BattleScene: SKScene {
                     
                     for i in 0..<stonePathTiles.count {
                         if(framesTouching(frame1: movableDefenseNode.frame, frame2: stonePathTiles[i].frame)) { defenseTouchingPath = true; }
+                    }
+                    
+                    for i in 0..<placedDefenses.count {
+                        if(framesTouching(frame1: movableDefenseNode.frame, frame2: placedDefenses[i].node.frame, tolerance: tileSize / 2)) { defenseTouchingPath = true; }
                     }
                     
                     if(!defenseTouchingPath) {
@@ -646,14 +654,14 @@ class BattleScene: SKScene {
                         
                         
                         if(placedDefenses[i].defenseData.name == "Catapult") {
-                            //placedDefenses[i].node.texture = SKTexture(imageNamed: "Defenses/CannonFire");
+                            placedDefenses[i].node.texture = SKTexture(imageNamed: "Defenses/CatapultFire");
                             
                             let soundEffect = SKAction.playSoundFileNamed("NailFire.mp3", waitForCompletion: false);
                             cameraNode.run(soundEffect);
                             
-                            //DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [self] in
-                                //placedDefenses[i].node.texture = SKTexture(imageNamed: "Defenses/Cannon");
-                            //}
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [self] in
+                                placedDefenses[i].node.texture = SKTexture(imageNamed: "Defenses/Catapult");
+                            }
                         }
                         else if(placedDefenses[i].defenseData.name == "Cannon") {
                             placedDefenses[i].node.texture = SKTexture(imageNamed: "Defenses/CannonFire");
