@@ -10,8 +10,6 @@
 		9A3F47232B5B89770069BBED /* LandGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3F47222B5B89770069BBED /* LandGenerator.swift */; };
 		9A3F47252B5B96260069BBED /* GameTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3F47242B5B96260069BBED /* GameTools.swift */; };
 		9A3F47272B5BA0E80069BBED /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3F47262B5BA0E80069BBED /* Tools.swift */; };
-		9A4D63562B6CC487001B9E49 /* NailFire.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9A4D63552B6CC487001B9E49 /* NailFire.mp3 */; };
-		9A4D635C2B6CD39C001B9E49 /* CannonFire.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9A4D635B2B6CD39C001B9E49 /* CannonFire.mp3 */; };
 		9A6CD0302B59E7420028A5DA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CD02F2B59E7420028A5DA /* AppDelegate.swift */; };
 		9A6CD0342B59E7420028A5DA /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 9A6CD0332B59E7420028A5DA /* Actions.sks */; };
 		9A6CD0362B59E7420028A5DA /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CD0352B59E7420028A5DA /* GameScene.swift */; };
@@ -23,6 +21,9 @@
 		9A6CD0542B59E7460028A5DA /* City_Land_GameUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CD0532B59E7460028A5DA /* City_Land_GameUITests.swift */; };
 		9A6CD0562B59E7460028A5DA /* City_Land_GameUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CD0552B59E7460028A5DA /* City_Land_GameUITestsLaunchTests.swift */; };
 		9A6CD0632B59F21E0028A5DA /* MainMenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CD0622B59F21E0028A5DA /* MainMenuScene.swift */; };
+		9AC7630D2B70AC7A0038C257 /* CannonFire.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9AC7630B2B70AC790038C257 /* CannonFire.mp3 */; };
+		9AC7630E2B70AC7A0038C257 /* CatapultFire.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9AC7630C2B70AC7A0038C257 /* CatapultFire.mp3 */; };
+		9AC763102B70ACBD0038C257 /* Wind.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9AC7630F2B70ACBC0038C257 /* Wind.mp3 */; };
 		9AC9487C2B5C916C00886A68 /* BattleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC9487B2B5C916C00886A68 /* BattleScene.swift */; };
 /* End PBXBuildFile section */
 
@@ -47,8 +48,6 @@
 		9A3F47222B5B89770069BBED /* LandGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandGenerator.swift; sourceTree = "<group>"; };
 		9A3F47242B5B96260069BBED /* GameTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTools.swift; sourceTree = "<group>"; };
 		9A3F47262B5BA0E80069BBED /* Tools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
-		9A4D63552B6CC487001B9E49 /* NailFire.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = NailFire.mp3; path = ../../../Downloads/NailFire.mp3; sourceTree = "<group>"; };
-		9A4D635B2B6CD39C001B9E49 /* CannonFire.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = CannonFire.mp3; path = ../../../Downloads/CannonFire.mp3; sourceTree = "<group>"; };
 		9A6CD02C2B59E7420028A5DA /* City Land Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "City Land Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A6CD02F2B59E7420028A5DA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9A6CD0332B59E7420028A5DA /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
@@ -63,6 +62,9 @@
 		9A6CD0532B59E7460028A5DA /* City_Land_GameUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City_Land_GameUITests.swift; sourceTree = "<group>"; };
 		9A6CD0552B59E7460028A5DA /* City_Land_GameUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City_Land_GameUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		9A6CD0622B59F21E0028A5DA /* MainMenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuScene.swift; sourceTree = "<group>"; };
+		9AC7630B2B70AC790038C257 /* CannonFire.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = CannonFire.mp3; sourceTree = "<group>"; };
+		9AC7630C2B70AC7A0038C257 /* CatapultFire.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = CatapultFire.mp3; sourceTree = "<group>"; };
+		9AC7630F2B70ACBC0038C257 /* Wind.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Wind.mp3; sourceTree = "<group>"; };
 		9AC9487B2B5C916C00886A68 /* BattleScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -114,6 +116,7 @@
 		9A6CD02E2B59E7420028A5DA /* City Land Game */ = {
 			isa = PBXGroup;
 			children = (
+				9AC763112B70ACCC0038C257 /* Sounds */,
 				9A6CD02F2B59E7420028A5DA /* AppDelegate.swift */,
 				9A6CD0352B59E7420028A5DA /* GameScene.swift */,
 				9A6CD0372B59E7420028A5DA /* GameViewController.swift */,
@@ -122,8 +125,6 @@
 				9A3F47242B5B96260069BBED /* GameTools.swift */,
 				9A3F47262B5BA0E80069BBED /* Tools.swift */,
 				9A6CD03C2B59E7450028A5DA /* Assets.xcassets */,
-				9A4D63552B6CC487001B9E49 /* NailFire.mp3 */,
-				9A4D635B2B6CD39C001B9E49 /* CannonFire.mp3 */,
 				9A6CD0332B59E7420028A5DA /* Actions.sks */,
 				9A6CD0392B59E7420028A5DA /* Main.storyboard */,
 				9A6CD03E2B59E7450028A5DA /* LaunchScreen.storyboard */,
@@ -147,6 +148,16 @@
 				9A6CD0552B59E7460028A5DA /* City_Land_GameUITestsLaunchTests.swift */,
 			);
 			path = "City Land GameUITests";
+			sourceTree = "<group>";
+		};
+		9AC763112B70ACCC0038C257 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				9AC7630B2B70AC790038C257 /* CannonFire.mp3 */,
+				9AC7630C2B70AC7A0038C257 /* CatapultFire.mp3 */,
+				9AC7630F2B70ACBC0038C257 /* Wind.mp3 */,
+			);
+			path = Sounds;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -253,8 +264,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9A4D63562B6CC487001B9E49 /* NailFire.mp3 in Resources */,
-				9A4D635C2B6CD39C001B9E49 /* CannonFire.mp3 in Resources */,
+				9AC7630E2B70AC7A0038C257 /* CatapultFire.mp3 in Resources */,
+				9AC7630D2B70AC7A0038C257 /* CannonFire.mp3 in Resources */,
+				9AC763102B70ACBD0038C257 /* Wind.mp3 in Resources */,
 				9A6CD03B2B59E7420028A5DA /* Main.storyboard in Resources */,
 				9A6CD03D2B59E7450028A5DA /* Assets.xcassets in Resources */,
 				9A6CD0402B59E7450028A5DA /* LaunchScreen.storyboard in Resources */,

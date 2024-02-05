@@ -38,11 +38,11 @@ struct BattleData {
 
 //class for managing all the game variables and functions
 class GameTools {
-    static let mapWidth: Int = 100; //the width of the map
-    static let mapHeight: Int = 100; //the height of the map/
+    static let mapWidth: Int = 50; //the width of the map
+    static let mapHeight: Int = 50; //the height of the map/
     
-    static let mapSpawnX: Int = 50; //x-position of spawn tile
-    static let mapSpawnY: Int = 50; //y-position of spawn tile/
+    static let mapSpawnX: Int = 25; //x-position of spawn tile
+    static let mapSpawnY: Int = 25; //y-position of spawn tile/
     
     static let landTileSize: Int = 256; //size of the land tile texture
     
@@ -53,6 +53,7 @@ class GameTools {
     static var currentBattleType: BattleType = BattleType.GrassLands;
     
     static var currentBattleRound: Int = -1; //-1 if not in battle
+    static var currentBattleLives: Int = 3;
     
     static var currentBattleData: BattleData = BattleData(
         rounds: [

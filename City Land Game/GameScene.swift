@@ -69,34 +69,20 @@ class GameScene: SKScene {
         cameraNode.setScale(cameraScale);
     }
     
+    var touchBeganLandPosition: CGPoint = CGPoint.zero; //the last touch position
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let touchingNodes = self.nodes(at: touches[touches.index(touches.startIndex, offsetBy: 0)].location(in: self));
-        
-        for i in 0..<touchingNodes.count {
-            if(touchingNodes[i].name != nil) {
-                if(touchingNodes[i].name!.hasPrefix("LandNode:")) {
-                    let positionsArray = touchingNodes[i].name!.dropFirst(9).components(separatedBy: ",");
-                    if(positionsArray.count != 2) {
-                        print("LandNode name doesn't contain position");
-                        return;
-                    }
-                    let posX = Int(positionsArray[0])!;
-                    let posY = Int(positionsArray[1])!;
-                    GameTools.capturedLands[posX][posY].captured = true;
-                    
-                    GameTools.borderNodesParent.removeAllChildren();
-                    let borderNodes = LandGenerator.generateCapturedBorders();
-                    for i in 0..<borderNodes.count {
-                        GameTools.borderNodesParent.addChild(borderNodes[i]);
-                    }
-                    
-                    if(event?.allTouches?.count == 1) {
-                        Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Battle);
-                    }
+
+        for i in 0..<touches.count {
+            let touchingNodes = self.nodes(at: touches[touches.index(touches.startIndex, offsetBy: i)].location(in: self));
+            
+            for j in 0..<touchingNodes.count {
+                if(touchingNodes[j].name != nil && touchingNodes[j].name!.hasPrefix("LandNode:")) {
+                    touchBeganLandPosition = touches[touches.index(touches.startIndex, offsetBy: i)].location(in: self);
                 }
             }
         }
-        
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -121,6 +107,36 @@ class GameScene: SKScene {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         lastTouch = nil;
+        
+        for i in 0..<touches.count {
+            let touchingNodes = self.nodes(at: touches[touches.index(touches.startIndex, offsetBy: i)].location(in: self));
+            
+            for j in 0..<touchingNodes.count {
+                if(touchingNodes[j].name != nil && touchingNodes[j].name!.hasPrefix("LandNode:")) {
+                    let newTouchBeganPosition = touches[touches.index(touches.startIndex, offsetBy: i)].location(in: self);
+                    if(abs(touchBeganLandPosition.x - newTouchBeganPosition.x) <= 10 && abs(touchBeganLandPosition.y - newTouchBeganPosition.y) <= 10) {
+                        
+                        let positionsArray = touchingNodes[i].name!.dropFirst(9).components(separatedBy: ",");
+                        if(positionsArray.count != 2) {
+                            print("LandNode name doesn't contain position");
+                            return;
+                        }
+                        let posX = Int(positionsArray[0])!;
+                        let posY = Int(positionsArray[1])!;
+                        GameTools.capturedLands[posX][posY].captured = true;
+
+                        GameTools.borderNodesParent.removeAllChildren();
+                        let borderNodes = LandGenerator.generateCapturedBorders();
+                        
+                        for i in 0..<borderNodes.count {
+                            GameTools.borderNodesParent.addChild(borderNodes[i]);
+                        }
+                        
+                        Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Battle);
+                    }
+                }
+            }
+        }
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {

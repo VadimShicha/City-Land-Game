@@ -88,6 +88,11 @@ class BattleScene: SKScene {
         case UI = 100
     }
     
+    enum SoundEffectType: Int, CaseIterable {
+        case CatapultFire = 0
+        case CannonFire = 1
+    }
+    
     let lightTileColor = UIColor(red: 128 / 255, green: 128 / 255, blue: 128 / 255, alpha: 15 / 255);
     let darkTileColor = UIColor(red: 128 / 255, green: 128 / 255, blue: 128 / 255, alpha: 45 / 255);
     
@@ -96,8 +101,9 @@ class BattleScene: SKScene {
     
     let defenseRadiusColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 0.503757399);
     
-    var metalAmountText = SKLabelNode();
-    var roundAmountText = SKLabelNode();
+    var metalAmountLabel = SKLabelNode();
+    var roundAmountLabel = SKLabelNode();
+    var roundPercentLabel = SKLabelNode();
     var metalAmount = 1000;
     
     var addDefenseParent = SKSpriteNode();
@@ -112,6 +118,8 @@ class BattleScene: SKScene {
     var addDefenseButton = SKSpriteNode(); //button to open the defense menu
     var spawnTankButton = SKSpriteNode(); //button to open the tank menu
     var playButton = SKSpriteNode(); //button to start the next round
+    
+    var battleHallNode = SKSpriteNode();
     
     var isPlaying = false; //state of the battle
     
@@ -169,7 +177,7 @@ class BattleScene: SKScene {
     }
     
     //adds the metal image and metal label display to the scene
-    func addMetalDisplay() {
+    func addMetalLabel() {
         
         let metalNode = SKSpriteNode(imageNamed: "Metal");
         metalNode.size = CGSize(width: self.size.width / 15, height: self.size.width / 15);
@@ -180,37 +188,59 @@ class BattleScene: SKScene {
         metalNode.zPosition = ZLayers.UI.rawValue;
         self.addChild(metalNode);
         
-        metalAmountText = SKLabelNode(text: String(metalAmount));
-        metalAmountText.position = CGPoint(
+        metalAmountLabel = SKLabelNode(text: String(metalAmount));
+        metalAmountLabel.position = CGPoint(
             x: GameTools.leftCenterWidth + (self.size.width / 15) + 5,
-            y: GameTools.topCenterHeight - metalAmountText.frame.height - 3
+            y: GameTools.topCenterHeight - metalAmountLabel.frame.height - 3
         );
-        metalAmountText.zPosition = ZLayers.UI.rawValue;
-        metalAmountText.horizontalAlignmentMode = .left;
-        metalAmountText.fontName = "ChalkboardSE-Bold";
-        metalAmountText.fontSize = 20;
-        self.addChild(metalAmountText);
+        metalAmountLabel.zPosition = ZLayers.UI.rawValue;
+        metalAmountLabel.horizontalAlignmentMode = .left;
+        metalAmountLabel.fontName = "ChalkboardSE-Bold";
+        metalAmountLabel.fontSize = 20;
+        self.addChild(metalAmountLabel);
     }
     
     //adds the text that keeps track of the rounds
-    func addRoundDisplay() {
-        roundAmountText = SKLabelNode(text: "Round 0 of 0");
-        roundAmountText.position = CGPoint(
+    func addRoundLabel() {
+        roundAmountLabel = SKLabelNode(text: "Round 0 of 0");
+        roundAmountLabel.position = CGPoint(
             x: GameTools.leftCenterWidth + 5,
-            y: GameTools.topCenterHeight - metalAmountText.frame.height - roundAmountText.frame.height - 6
+            y: GameTools.topCenterHeight - metalAmountLabel.frame.height - roundAmountLabel.frame.height - 6
         );
-        roundAmountText.zPosition = ZLayers.UI.rawValue;
-        roundAmountText.horizontalAlignmentMode = .left;
-        roundAmountText.fontName = "ChalkboardSE-Bold";
-        roundAmountText.fontSize = 16;
-        roundAmountText.fontColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1);
-        updateRoundDisplay();
-        self.addChild(roundAmountText);
+        roundAmountLabel.zPosition = ZLayers.UI.rawValue;
+        roundAmountLabel.horizontalAlignmentMode = .left;
+        roundAmountLabel.fontName = "ChalkboardSE-Bold";
+        roundAmountLabel.fontSize = 16;
+        roundAmountLabel.fontColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1);
+        self.addChild(roundAmountLabel);
+        updateRoundLabel();
+        
+        roundPercentLabel = SKLabelNode(text: "0%");
+        roundPercentLabel.position = CGPoint(
+            x: GameTools.leftCenterWidth + 5,
+            y: GameTools.topCenterHeight - metalAmountLabel.frame.height - roundAmountLabel.frame.height - roundPercentLabel.frame.height - 7
+        );
+        roundPercentLabel.zPosition = ZLayers.UI.rawValue;
+        roundPercentLabel.horizontalAlignmentMode = .left;
+        roundPercentLabel.fontName = "ChalkboardSE-Bold";
+        roundPercentLabel.fontSize = 14;
+        roundPercentLabel.fontColor = #colorLiteral(red: 0.7732875163, green: 0.7732875163, blue: 0.7732875163, alpha: 1);
+        self.addChild(roundPercentLabel);
+        updateRoundTanksLabel();
     }
     
     //updates the round number text
-    func updateRoundDisplay() {
-        roundAmountText.text = "Round " + String(GameTools.currentBattleRound + 1) + " of " + String(GameTools.currentBattleData.roundAmount);
+    func updateRoundLabel() {
+        roundAmountLabel.text = "Round " + String(GameTools.currentBattleRound + 1) + " of " + String(GameTools.currentBattleData.roundAmount);
+    }
+    
+    func updateRoundTanksLabel() {
+        if(currentTankIndex != 0) {
+            roundPercentLabel.text = String(currentTankIndex) + " of " + String(currentRoundTanks.count) + " tanks";
+        }
+        else {
+            roundPercentLabel.text = "";
+        }
     }
     
     func addPlayRoundButton() {
@@ -252,16 +282,16 @@ class BattleScene: SKScene {
         addDefenseBackgroundNodes.append(defenseBackgroundNode);
         addDefenseParent.addChild(defenseBackgroundNode);
         
-        let metalAmountText = SKLabelNode(text: String(defenseData.cost));
-        metalAmountText.position = CGPoint(
+        let metalLabel = SKLabelNode(text: String(defenseData.cost));
+        metalLabel.position = CGPoint(
             x: position.x + 5,
             y: position.y + 5 - (nodeSize / 2) + 1
         );
-        metalAmountText.zPosition = ZLayers.UI.rawValue;
-        metalAmountText.horizontalAlignmentMode = .center;
-        metalAmountText.fontName = "ChalkboardSE-Bold";
-        metalAmountText.fontSize = 12;
-        addDefenseParent.addChild(metalAmountText);
+        metalLabel.zPosition = ZLayers.UI.rawValue;
+        metalLabel.horizontalAlignmentMode = .center;
+        metalLabel.fontName = "ChalkboardSE-Bold";
+        metalLabel.fontSize = 12;
+        addDefenseParent.addChild(metalLabel);
     }
     
     func updateDefenseMenu() {
@@ -355,12 +385,29 @@ class BattleScene: SKScene {
     }
     
     func addBattleHall() {
-        let battleHall = SKSpriteNode(imageNamed: "BattleHall");
-        battleHall.colorBlendFactor = 0.2;
-        battleHall.size = CGSize(width: tileSize * 6, height: tileSize * 6);
-        battleHall.position = CGPoint(x: self.size.width / 2 - (tileSize * 1.5), y: tileSize * 1.5);
-        battleHall.zPosition = ZLayers.BattleHall.rawValue;
-        self.addChild(battleHall);
+        battleHallNode = SKSpriteNode(imageNamed: "BattleHalls/BattleHall");
+        battleHallNode.colorBlendFactor = 0.2;
+        battleHallNode.size = CGSize(width: tileSize * 6, height: tileSize * 6);
+        battleHallNode.position = CGPoint(x: self.size.width / 2 - (tileSize * 1.5), y: tileSize * 1.5);
+        battleHallNode.zPosition = ZLayers.BattleHall.rawValue;
+        self.addChild(battleHallNode);
+    }
+    
+    func updateBattleHall() {
+        switch(GameTools.currentBattleLives) {
+            case 3:
+                battleHallNode.texture = SKTexture(imageNamed: "BattleHalls/BattleHall");
+                break;
+            case 2:
+                battleHallNode.texture = SKTexture(imageNamed: "BattleHalls/BattleHallBroken1");
+                break;
+            case 1:
+                battleHallNode.texture = SKTexture(imageNamed: "BattleHalls/BattleHallBroken2");
+                break;
+            default:
+                battleHallNode.texture = SKTexture(imageNamed: "BattleHalls/BattleHallBroken3");
+                break;
+        }
     }
     
     func addTankSpawnMenu() {
@@ -427,15 +474,40 @@ class BattleScene: SKScene {
     //sets the amount of metal the user has with a UI update
     func setMetalAmount(_ value: Int) {
         metalAmount = value;
-        metalAmountText.text = String(value);
+        metalAmountLabel.text = String(value);
+    }
+    
+    //plays a sound effect based on the SoundEffectType enum
+    func playSoundEffect(_ soundEffectType: SoundEffectType) {
+        var soundNames: [String] = []; //array of all the names of the sound effects
+        var delayBetweenSounds: CGFloat = 0.2; //the delay between each sound (only matters when there is more than 1)
+        
+        switch(soundEffectType) {
+            case SoundEffectType.CatapultFire:
+                soundNames = ["Wind.mp3", "CatapultFire.mp3"];
+                delayBetweenSounds = 0.2;
+                break;
+            case SoundEffectType.CannonFire:
+                soundNames = ["CannonFire.mp3"];
+                break;
+        }
+        
+        if(soundNames.count == 0) { return; } //don't play a sound if a SoundEffectType wasn't provided
+        
+        cameraNode.run(SKAction.playSoundFileNamed(soundNames[0], waitForCompletion: false)); //play the first sound instantly
+        
+        //play the next sounds based on the delay between sounds variable
+        for i in 1..<soundNames.count {
+            DispatchQueue.main.asyncAfter(deadline: .now() + (CGFloat(i) * delayBetweenSounds)) { [self] in
+                cameraNode.run(SKAction.playSoundFileNamed(soundNames[i], waitForCompletion: false));
+            }
+        }
     }
     
     //finds the nearest tank to a placed defense. If none could be found -1 is returned
     func findNearestTankToDefense(defense: PlacedDefense, checkDefenseRadius: Bool) -> Int {
         var shortestDistance: CGFloat = -1;
         var shortestDistanceTankIndex = -1;
-        
-        //let currentRoundTanks = GameTools.currentBattleData.rounds[GameTools.currentBattleRound].tanks;
         
         for i in 0..<currentRoundTanks.count {
             //if the tank is broken don't check it
@@ -466,8 +538,8 @@ class BattleScene: SKScene {
         
         addBattleHall();
         
-        addMetalDisplay();
-        addRoundDisplay();
+        addMetalLabel();
+        addRoundLabel();
         addPlayRoundButton();
         
         addDefenseMenu();
@@ -615,7 +687,7 @@ class BattleScene: SKScene {
                     updatePlayButton();
                     
                     GameTools.currentBattleRound = GameTools.currentBattleRound + 1;
-                    updateRoundDisplay();
+                    updateRoundLabel();
                     
                     currentRoundTanks = GameTools.currentBattleData.rounds[GameTools.currentBattleRound].tanks;
                     
@@ -634,6 +706,21 @@ class BattleScene: SKScene {
     
     var tankMoveWorkItem: DispatchWorkItem?; //this work item stops the round
 
+    
+    //called when a tank has completed the SKAction move
+    func tankMoveCompleted(tankIndex: Int) {
+        //ensure the tank is still alive
+        if(currentRoundTanks[tankIndex].health > 0 && currentRoundTanks[tankIndex].spawned) {
+            currentRoundTanks[tankIndex].health = 0;
+            self.removeChildren(in: [currentRoundTanks[tankIndex].node]);
+            GameTools.currentBattleLives -= 1;
+            updateBattleHall();
+            
+            if(GameTools.currentBattleLives <= 0) {
+                Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Village);
+            }
+        }
+    }
     
     var lastUpdateTime: TimeInterval = -1; //the time of when the last update frame happened
     
@@ -656,22 +743,20 @@ class BattleScene: SKScene {
                         if(placedDefenses[i].defenseData.name == "Catapult") {
                             placedDefenses[i].node.texture = SKTexture(imageNamed: "Defenses/CatapultFire");
                             
-                            let soundEffect = SKAction.playSoundFileNamed("NailFire.mp3", waitForCompletion: false);
-                            cameraNode.run(soundEffect);
-                            
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [self] in
                                 placedDefenses[i].node.texture = SKTexture(imageNamed: "Defenses/Catapult");
                             }
+                            
+                            playSoundEffect(SoundEffectType.CatapultFire);
                         }
                         else if(placedDefenses[i].defenseData.name == "Cannon") {
                             placedDefenses[i].node.texture = SKTexture(imageNamed: "Defenses/CannonFire");
                             
-                            let soundEffect = SKAction.playSoundFileNamed("CannonFire.mp3", waitForCompletion: false);
-                            cameraNode.run(soundEffect);
-                            
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [self] in
                                 placedDefenses[i].node.texture = SKTexture(imageNamed: "Defenses/Cannon");
                             }
+                            
+                            playSoundEffect(SoundEffectType.CannonFire);
                         }
                         
                         setMetalAmount(metalAmount + TankData.getTank(currentRoundTanks[tankResultIndex].tank).metal);
@@ -723,8 +808,13 @@ class BattleScene: SKScene {
                     GameTools.currentBattleData.rounds[GameTools.currentBattleRound].tanks[currentTankIndex].node = tank;
                     currentRoundTanks[currentTankIndex].node = tank;
 
+                    
+                    let thisTankIndex = currentTankIndex; //create a constant to ensure the tank index won't change
+                    
                     let tankMove = SKAction.moveBy(x: self.size.width, y: 0, duration: 5);
-                    tank.run(tankMove);
+                    tank.run(tankMove, completion: {
+                        self.tankMoveCompleted(tankIndex: thisTankIndex)
+                    });
                     
                     //check if there are more tanks to come
                     if(currentTankIndex + 1 >= currentRoundTanks.count) {
@@ -738,10 +828,12 @@ class BattleScene: SKScene {
                     }
                     
                     currentTankIndex += 1;
+                    
+                    updateRoundTanksLabel(); //update the tanks left label
                 }
             }
         }
-        
+    
         lastUpdateTime = currentTime; //update the last time for next update frame
     }
     
