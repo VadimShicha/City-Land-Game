@@ -10,11 +10,12 @@ import SpriteKit;
 
 struct LandTileData {
     var texture: SKTexture = SKTexture(imageNamed: "NoLandData");
+    var landType: BattleLandType = BattleLandType.GrassLands;
     var captured: Bool = false;
 }
 
-enum BattleType {
-    case GrassLands, Sand, StoneyHills
+enum BattleLandType {
+    case GrassLands, Ocean, Sand, StoneyHills, CannonValley
 }
 
 struct BattleRoundTank {
@@ -36,6 +37,13 @@ struct BattleData {
     var roundAmount: Int = 3;
 }
 
+//struct for holding data for a special land that will be the same for each map
+struct SpecialLandData {
+    var landData: LandTileData;
+    var x: Int = 0;
+    var y: Int = 0;
+}
+
 //class for managing all the game variables and functions
 class GameTools {
     static let mapWidth: Int = 50; //the width of the map
@@ -44,13 +52,22 @@ class GameTools {
     static let mapSpawnX: Int = 25; //x-position of spawn tile
     static let mapSpawnY: Int = 25; //y-position of spawn tile/
     
+    //list of all the special levels on the map (they will spawn no matter what happens with generation)
+    static let mapSpecialLands: [SpecialLandData] = [
+        SpecialLandData(
+            landData: LandTileData(texture: SKTexture(imageNamed: "Land/CannonValleyLand"), landType: BattleLandType.CannonValley, captured: false),
+            x: mapSpawnX + 6,
+            y: mapSpawnY + 3
+        )
+    ];
+    
     static let landTileSize: Int = 256; //size of the land tile texture
     
     static var capturedLands = [[LandTileData]](repeating: [LandTileData](repeating: LandTileData(), count: 100), count: 100);
     
     static var borderNodesParent: SKSpriteNode = SKSpriteNode();
     
-    static var currentBattleType: BattleType = BattleType.GrassLands;
+    static var currentBattleLandType: BattleLandType = BattleLandType.GrassLands;
     
     static var currentBattleRound: Int = -1; //-1 if not in battle
     static var currentBattleLives: Int = 3;

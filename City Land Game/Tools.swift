@@ -39,6 +39,10 @@ class Tools {
         return value;
     }
     
+    static func degToRad(_ value: CGFloat) -> CGFloat {
+        return value * .pi / 180;
+    }
+    
     static func changeScenes(fromScene: SKScene, toSceneType: SceneType) {
         let scene = getScene(sceneType: toSceneType); //get the SKScene from the to-scene
         scene.scaleMode = .aspectFill; //set the scene scale mode

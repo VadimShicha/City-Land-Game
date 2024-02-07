@@ -93,9 +93,6 @@ class BattleScene: SKScene {
         case CannonFire = 1
     }
     
-    let lightTileColor = UIColor(red: 128 / 255, green: 128 / 255, blue: 128 / 255, alpha: 15 / 255);
-    let darkTileColor = UIColor(red: 128 / 255, green: 128 / 255, blue: 128 / 255, alpha: 45 / 255);
-    
     let greenMenuItemColor = #colorLiteral(red: 0.2745098174, green: 0.4862745106, blue: 0.1411764771, alpha: 1);
     let redMenuItemColor = #colorLiteral(red: 0.521568656, green: 0.1098039225, blue: 0.05098039284, alpha: 1);
     
@@ -343,9 +340,25 @@ class BattleScene: SKScene {
     }
     
     //generate the stone path where attacks come from
-    func addStonePath() {
+    func addTankPathTiles() {
+        var pathImageName = "BattlePathTiles/StonePathTile";
+        
+        switch(GameTools.currentBattleLandType) {
+            case BattleLandType.GrassLands:
+                pathImageName = "BattlePathTiles/StonePathTile";
+                break;
+            case BattleLandType.Sand:
+                pathImageName = "BattlePathTiles/SandPathTile";
+                break;
+            case BattleLandType.Ocean:
+                pathImageName = "BattlePathTiles/WaterPathTile";
+                break;
+            default:
+                break;
+        }
+        
         for i in -15...15 {
-            let stonePathTile = SKSpriteNode(imageNamed: "StonePathTile");
+            let stonePathTile = SKSpriteNode(imageNamed: pathImageName);
             stonePathTile.size = CGSize(width: tileSize * 2, height: tileSize * 2);
             stonePathTile.position = CGPoint(x: i * Int(tileSize) * 2, y: 0);
             stonePathTiles.append(stonePathTile);
@@ -356,7 +369,28 @@ class BattleScene: SKScene {
     
     //add the background node to the scene
     func addBackgroundNode() {
-        let backgroundNode = SKSpriteNode(imageNamed: "GreenLandsBackground");
+        
+        var backgroundImageName = "";
+        
+        switch(GameTools.currentBattleLandType) {
+            case BattleLandType.GrassLands:
+                backgroundImageName = "BattleBackgrounds/GrassLandBackground";
+                break;
+            case BattleLandType.Sand:
+                backgroundImageName = "BattleBackgrounds/SandLandBackground";
+                break;
+            case BattleLandType.Ocean:
+                backgroundImageName = "BattleBackgrounds/OceanLandBackground";
+                break;
+            case BattleLandType.CannonValley:
+                backgroundImageName = "BattleBackgrounds/CannonValleyBackground";
+                break;
+            default:
+                backgroundImageName = "BattleBackgrounds/GrassLandBackground";
+                break;
+        }
+        
+        let backgroundNode = SKSpriteNode(imageNamed: backgroundImageName);
         backgroundNode.size = CGSize(width: self.size.height * 2, height: self.size.height);
         backgroundNode.position = CGPoint.zero;
         backgroundNode.zPosition = ZLayers.SceneBackground.rawValue;
@@ -365,13 +399,32 @@ class BattleScene: SKScene {
     
     //adds the background grid nodes to the scene
     func addBackgroundGrid() {
+        //let lightTileColor = UIColor(red: 128 / 255, green: 128 / 255, blue: 128 / 255, alpha: 15 / 255);
+        //let darkTileColor = UIColor(red: 128 / 255, green: 128 / 255, blue: 128 / 255, alpha: 45 / 255);
+        
+        var lightColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 0.05);
+        var darkColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 0.18);
+        
+        switch(GameTools.currentBattleLandType) {
+            case BattleLandType.Sand:
+                lightColor = #colorLiteral(red: 0.750787807, green: 0.7548250808, blue: 0.6804467487, alpha: 0.05);
+                darkColor = #colorLiteral(red: 0.750787807, green: 0.7548250808, blue: 0.6804467487, alpha: 0.14);
+                break;
+            case BattleLandType.Ocean:
+                lightColor = #colorLiteral(red: 0.2572673366, green: 0.5381632205, blue: 0.7548250808, alpha: 0.05);
+                darkColor = #colorLiteral(red: 0.2572673366, green: 0.5381632205, blue: 0.7548250808, alpha: 0.18);
+                break;
+            default:
+                break;
+        }
+        
         var lightColorGridTile = true;
         
         for y in -7...7 {
             if(y == -1 || y == 0 || y == 1) { continue; }
             for x in -14...14 {
                 let gridTileNode = SKSpriteNode(
-                    color: lightColorGridTile ? lightTileColor : darkTileColor,
+                    color: lightColorGridTile ? lightColor : darkColor,
                     size: CGSize(width: tileSize, height: tileSize)
                 );
                 gridTileNode.position = CGPoint(
@@ -533,8 +586,8 @@ class BattleScene: SKScene {
         tileSize = CGFloat(self.size.width / 30);
         
         addBackgroundNode();
-        addBackgroundGrid();
-        addStonePath();
+        //addBackgroundGrid();
+        addTankPathTiles();
         
         addBattleHall();
         

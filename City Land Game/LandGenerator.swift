@@ -35,17 +35,22 @@ class LandGenerator {
                 let noisePosition = vector2(Int32(x), Int32(y));
                 let noiseValue = noiseMap.value(at: noisePosition);
                 
+                var landType = BattleLandType.GrassLands;
+                
                 var tileTexture = SKTexture();
                 tileTexture = SKTexture(imageNamed: "Land/GrassLand");
                 
                 if(noiseValue > 0.85) {
                     tileTexture = SKTexture(imageNamed: "Land/WaterLand");
+                    landType = BattleLandType.Ocean;
                 }
                 else if(noiseValue > 0.75) {
                     tileTexture = SKTexture(imageNamed: "Land/SandLand");
+                    landType = BattleLandType.Sand;
                 }
                 else if(noiseValue > 0.07) {
                     tileTexture = SKTexture(imageNamed: "Land/GrassLand"); //other option: "Land/GrassLandWithBorder"
+                    landType = BattleLandType.GrassLands;
                 }
                 else if(noiseValue > 0.01) {
                     tileTexture = SKTexture(imageNamed: "Land/ForestLand");
@@ -68,9 +73,15 @@ class LandGenerator {
                     //tileTexture = SKTexture(imageNamed: "IceLand");
                 }
                 
-                
+                for i in 0..<GameTools.mapSpecialLands.count {
+                    if(x == GameTools.mapSpecialLands[i].x && y == GameTools.mapSpecialLands[i].y) {
+                        tileTexture = GameTools.mapSpecialLands[i].landData.texture;
+                        landType = GameTools.mapSpecialLands[i].landData.landType;
+                    }
+                }
                 
                 GameTools.capturedLands[x][y].texture = tileTexture;
+                GameTools.capturedLands[x][y].landType = landType;
                 
                 let landNode = SKSpriteNode(texture: tileTexture, size: CGSize(width: GameTools.landTileSize, height: GameTools.landTileSize));
                 landNode.position = CGPoint(x: x * GameTools.landTileSize, y: y * GameTools.landTileSize);
@@ -83,77 +94,47 @@ class LandGenerator {
         return landNodes;
     }
     
+    //generates an array of border nodes for the captured lands
     static func generateCapturedBorders() -> [SKSpriteNode] {
         var borderNodes: [SKSpriteNode] = [];
         
         for x in 0..<GameTools.capturedLands.count {
             for y in 0..<GameTools.capturedLands[x].count {
                 if(GameTools.capturedLands[x][y].captured) {
+                    //top wall
                     if(!GameTools.capturedLands[x][y + 1].captured) {
-                        let borderNode = SKSpriteNode(imageNamed: "WallTop");
-                        borderNode.size = CGSize(width: GameTools.landTileSize, height: GameTools.landTileSize / 4);
-                        borderNode.position = CGPoint(x: x * GameTools.landTileSize, y: y * GameTools.landTileSize + (GameTools.landTileSize / 2) - (GameTools.landTileSize / 8));
+                        let borderNode = SKSpriteNode(imageNamed: "CloudWallSide");
+                        borderNode.zRotation = Tools.degToRad(90);
+                        borderNode.size = CGSize(width: GameTools.landTileSize / 2, height: GameTools.landTileSize);
+                        borderNode.position = CGPoint(x: x * GameTools.landTileSize, y: y * GameTools.landTileSize + (GameTools.landTileSize / 2));
                         borderNode.zPosition = 0;
                         borderNodes.append(borderNode);
                     }
+                    //bottom wall
                     if(!GameTools.capturedLands[x][y - 1].captured) {
-                        let borderNode = SKSpriteNode(imageNamed: "WallTop");
-                        borderNode.size = CGSize(width: GameTools.landTileSize, height: GameTools.landTileSize / 4);
-                        borderNode.position = CGPoint(x: x * GameTools.landTileSize, y: y * GameTools.landTileSize - (GameTools.landTileSize / 2) + (GameTools.landTileSize / 8));
+                        let borderNode = SKSpriteNode(imageNamed: "CloudWallSide");
+                        borderNode.zRotation = Tools.degToRad(90);
+                        borderNode.size = CGSize(width: GameTools.landTileSize / 2, height: GameTools.landTileSize);
+                        borderNode.position = CGPoint(x: x * GameTools.landTileSize, y: y * GameTools.landTileSize - (GameTools.landTileSize / 2));
                         borderNode.zPosition = 5;
                         borderNodes.append(borderNode);
                     }
+                    //right wall
                     if(!GameTools.capturedLands[x + 1][y].captured) {
-                        let borderNode = SKSpriteNode(imageNamed: "WallSide");
-                        borderNode.size = CGSize(width: GameTools.landTileSize / 16, height: GameTools.landTileSize);
-                        borderNode.position = CGPoint(x: x * GameTools.landTileSize + (GameTools.landTileSize / 2) - (GameTools.landTileSize / 32), y: y * GameTools.landTileSize);
+                        let borderNode = SKSpriteNode(imageNamed: "CloudWallSide");
+                        borderNode.size = CGSize(width: GameTools.landTileSize / 2, height: GameTools.landTileSize);
+                        borderNode.position = CGPoint(x: x * GameTools.landTileSize + (GameTools.landTileSize / 2), y: y * GameTools.landTileSize);
                         borderNode.zPosition = 3;
                         borderNodes.append(borderNode);
-                        
-                        if(GameTools.capturedLands[x + 1][y - 1].captured) {
-                            let borderNode2 = SKSpriteNode(imageNamed: "WallCorner");
-                            borderNode2.size = CGSize(width: GameTools.landTileSize / 16, height: GameTools.landTileSize / 4);
-                            borderNode2.position = CGPoint(x: (x + 1) * GameTools.landTileSize - (GameTools.landTileSize / 2) - (GameTools.landTileSize / 32), y: y * GameTools.landTileSize - (GameTools.landTileSize / 2) - (GameTools.landTileSize / 8));
-                            borderNode2.zPosition = 0;
-                            borderNodes.append(borderNode2);
-                        }
-                        if(GameTools.capturedLands[x + 1][y + 1].captured) {
-                            let borderNode2 = SKSpriteNode(imageNamed: "WallCorner");
-                            borderNode2.size = CGSize(width: GameTools.landTileSize / 16, height: GameTools.landTileSize / 4);
-                            borderNode2.position = CGPoint(x: (x + 1) * GameTools.landTileSize - (GameTools.landTileSize / 2) - (GameTools.landTileSize / 32), y: (y + 1) * GameTools.landTileSize - (GameTools.landTileSize / 2) + (GameTools.landTileSize / 8));
-                            borderNode2.zPosition = 0;
-                            borderNodes.append(borderNode2);
-                        }
                     }
+                    //left wall
                     if(!GameTools.capturedLands[x - 1][y].captured) {
-                        let borderNode = SKSpriteNode(imageNamed: "WallSide");
-                        borderNode.size = CGSize(width: GameTools.landTileSize / 16, height: GameTools.landTileSize);
-                        borderNode.position = CGPoint(x: x * GameTools.landTileSize - (GameTools.landTileSize / 2) + (GameTools.landTileSize / 32), y: y * GameTools.landTileSize);
+                        let borderNode = SKSpriteNode(imageNamed: "CloudWallSide");
+                        borderNode.size = CGSize(width: GameTools.landTileSize / 2, height: GameTools.landTileSize);
+                        borderNode.position = CGPoint(x: x * GameTools.landTileSize - (GameTools.landTileSize / 2), y: y * GameTools.landTileSize);
                         borderNode.zPosition = 3;
                         borderNodes.append(borderNode);
-                        
-                        if(GameTools.capturedLands[x - 1][y - 1].captured) {
-                            let borderNode2 = SKSpriteNode(imageNamed: "WallCorner");
-                            borderNode2.size = CGSize(width: GameTools.landTileSize / 16, height: GameTools.landTileSize / 4);
-                            borderNode2.position = CGPoint(x: x * GameTools.landTileSize - (GameTools.landTileSize / 2) + (GameTools.landTileSize / 32), y: y * GameTools.landTileSize - (GameTools.landTileSize / 2) - (GameTools.landTileSize / 8));
-                            borderNode2.zPosition = 0;
-                            borderNodes.append(borderNode2);
-                        }
-                        if(GameTools.capturedLands[x - 1][y + 1].captured) {
-                            let borderNode2 = SKSpriteNode(imageNamed: "WallCorner");
-                            borderNode2.size = CGSize(width: GameTools.landTileSize / 16, height: GameTools.landTileSize / 4);
-                            borderNode2.position = CGPoint(x: x * GameTools.landTileSize - (GameTools.landTileSize / 2) + (GameTools.landTileSize / 32), y: (y + 1) * GameTools.landTileSize - (GameTools.landTileSize / 2) + (GameTools.landTileSize / 8));
-                            borderNode2.zPosition = 0;
-                            borderNodes.append(borderNode2);
-                        }
                     }
-//                    if(!GameTools.capturedLands[x + 1][y + 1].captured) {
-//                        let borderNode = SKSpriteNode(imageNamed: "WallCorner");
-//                        borderNode.size = CGSize(width: GameTools.landTileSize / 16, height: GameTools.landTileSize / 4);
-//                        borderNode.position = CGPoint(x: x * GameTools.landTileSize - (GameTools.landTileSize / 2) + (GameTools.landTileSize / 32), y: y * GameTools.landTileSize - (GameTools.landTileSize / 2) + (GameTools.landTileSize / 32));
-//                        borderNode.zPosition = 3;
-//                        borderNodes.append(borderNode);
-//                    }
                 }
                 
             }
