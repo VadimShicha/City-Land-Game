@@ -15,8 +15,12 @@ struct LandTileData {
     var captured: Bool = false;
 }
 
-enum BattleLandType {
-    case GrassLands, Ocean, Sand, StoneyHills, CannonValley
+enum BattleLandType: String {
+    case GrassLands = "Grasslands"
+    case Ocean = "Water Lands"
+    case Sand = "Sand Lands"
+    case StoneyHills = "Stoney Hills"
+    case CannonValley = "Cannon Valley"
 }
 
 struct BattleRoundTank {
@@ -47,6 +51,8 @@ struct SpecialLandData {
 
 //class for managing all the game variables and functions
 class GameTools {
+    
+    static let uiColor = #colorLiteral(red: 0.5717771864, green: 0.393343057, blue: 0.1795284801, alpha: 1);
     static let mapWidth: Int = 30; //the width of the map
     static let mapHeight: Int = 30; //the height of the map/
     

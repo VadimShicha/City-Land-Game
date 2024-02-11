@@ -17,6 +17,22 @@ class GameScene: SKScene {
     let minCameraScale: CGFloat = 0.5; //the minimum you can zoom the camera out
     let maxCameraScale: CGFloat = 15; //the maximum you can zoom the camera out/
     
+    var attackBackgroundNode = SKShapeNode();
+    var attackButtonLabel = SKLabelNode();
+    var attackTitleLabel = SKLabelNode();
+    
+    var currentAttackSelected = LandTileData();
+    
+    func showStartAttackMenu(landTileData: LandTileData) {
+        attackBackgroundNode.isHidden = false;
+        
+        attackButtonLabel.isHidden = false;
+        attackTitleLabel.text = "Battle in " + landTileData.landType.rawValue;
+        attackTitleLabel.isHidden = false;
+        
+        currentAttackSelected = landTileData;
+    }
+    
     override func didMove(to view: SKView) {
         let generatedLandNodes = LandGenerator.generateLandMap(); //generate the land map
         for i in 0..<generatedLandNodes.count {
@@ -58,6 +74,47 @@ class GameScene: SKScene {
         let pinchGesture = UIPinchGestureRecognizer();
         pinchGesture.addTarget(self, action: #selector(pinchGestureAction(_:)));
         view.addGestureRecognizer(pinchGesture);
+        
+        attackBackgroundNode = SKShapeNode(rect: CGRect(
+            x: -self.size.width / 1.25 / 2,
+            y: -self.size.height / 1.25 / 2,
+            width: self.size.width / 1.25,
+            height: self.size.height / 1.25
+        ), cornerRadius: 14);
+        attackBackgroundNode.zPosition = 90;
+        attackBackgroundNode.lineWidth = 10;
+        attackBackgroundNode.fillColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1);
+        attackBackgroundNode.strokeColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1);
+        attackBackgroundNode.isHidden = true;
+        self.camera?.addChild(attackBackgroundNode);
+        
+        attackButtonLabel.position = CGPoint(x: 0, y: -self.size.height / 3);
+        attackButtonLabel.zPosition = 100;
+        attackButtonLabel.text = "Start War";
+        attackButtonLabel.fontName = "ChalkboardSE-Bold";
+        attackButtonLabel.fontSize = 20;
+        attackButtonLabel.isHidden = true;
+        self.camera?.addChild(attackButtonLabel);
+        
+        let attackButtonLabelBackground = SKShapeNode(rect: CGRect(
+            x: -attackButtonLabel.frame.width / 2,
+            y: 0,
+            width: attackButtonLabel.frame.width,
+            height: attackButtonLabel.frame.height
+        ), cornerRadius: 5);
+        attackButtonLabelBackground.lineWidth = 10;
+        attackButtonLabelBackground.fillColor = GameTools.uiColor;
+        attackButtonLabelBackground.strokeColor = GameTools.uiColor;
+        attackButtonLabel.addChild(attackButtonLabelBackground);
+        
+        attackTitleLabel.position = CGPoint(x: 0, y: self.size.height / 3);
+        attackTitleLabel.zPosition = 100;
+        attackTitleLabel.text = "Battle in Greenlands";
+        attackTitleLabel.fontColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1);
+        attackTitleLabel.fontName = "ChalkboardSE-Bold";
+        attackTitleLabel.fontSize = 30;
+        attackTitleLabel.isHidden = true;
+        self.camera?.addChild(attackTitleLabel);
     }
     
     var lastCameraScale: CGFloat = 0; //the camera scale when the pinch gesture began
@@ -100,6 +157,20 @@ class GameScene: SKScene {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         lastTouch = nil;
         
+        if(touches.count == 1) {
+            let touchLocation = touches[touches.index(touches.startIndex, offsetBy: 0)].location(in: self);
+            
+            if(self.nodes(at: touchLocation).contains(attackButtonLabel)) {
+                print("attack");
+                
+                GameTools.currentBattleLandType = currentAttackSelected.landType;
+                GameTools.currentBattleData = BattleGenerator.getFixedBattle(generatorType: currentAttackSelected.battleGeneratorType);
+                
+                Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Battle);
+                return;
+            }
+        }
+        
         for i in 0..<touches.count {
             let touchingNodes = self.nodes(at: touches[touches.index(touches.startIndex, offsetBy: i)].location(in: self));
             
@@ -132,7 +203,8 @@ class GameScene: SKScene {
                         GameTools.currentBattleLandType = GameTools.capturedLands[posX][posY].landType;
                         GameTools.currentBattleData = BattleGenerator.getFixedBattle(generatorType: GameTools.capturedLands[posX][posY].battleGeneratorType);
                         
-                        Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Battle);
+                        showStartAttackMenu(landTileData: GameTools.capturedLands[posX][posY]);
+                        //Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Battle);
                     }
                 }
             }
