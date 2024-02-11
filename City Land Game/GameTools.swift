@@ -11,6 +11,7 @@ import SpriteKit;
 struct LandTileData {
     var texture: SKTexture = SKTexture(imageNamed: "NoLandData");
     var landType: BattleLandType = BattleLandType.GrassLands;
+    var battleGeneratorType: BattleGeneratorType = BattleGeneratorType.EasyGreen1;
     var captured: Bool = false;
 }
 
@@ -46,18 +47,18 @@ struct SpecialLandData {
 
 //class for managing all the game variables and functions
 class GameTools {
-    static let mapWidth: Int = 50; //the width of the map
-    static let mapHeight: Int = 50; //the height of the map/
+    static let mapWidth: Int = 30; //the width of the map
+    static let mapHeight: Int = 30; //the height of the map/
     
-    static let mapSpawnX: Int = 25; //x-position of spawn tile
-    static let mapSpawnY: Int = 25; //y-position of spawn tile/
+    static let mapSpawnX: Int = 15; //x-position of spawn tile
+    static let mapSpawnY: Int = 15; //y-position of spawn tile/
     
     //list of all the special levels on the map (they will spawn no matter what happens with generation)
     static let mapSpecialLands: [SpecialLandData] = [
         SpecialLandData(
             landData: LandTileData(texture: SKTexture(imageNamed: "Land/CannonValleyLand"), landType: BattleLandType.CannonValley, captured: false),
-            x: mapSpawnX + 6,
-            y: mapSpawnY + 3
+            x: mapSpawnX + 3,
+            y: mapSpawnY + 2
         )
     ];
     

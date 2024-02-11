@@ -40,7 +40,7 @@ class LandGenerator {
                 var tileTexture = SKTexture();
                 tileTexture = SKTexture(imageNamed: "Land/GrassLand");
                 
-                if(noiseValue > 0.85) {
+                if(noiseValue > 0.925) { //0.85
                     tileTexture = SKTexture(imageNamed: "Land/WaterLand");
                     landType = BattleLandType.Ocean;
                 }
@@ -82,6 +82,28 @@ class LandGenerator {
                 
                 GameTools.capturedLands[x][y].texture = tileTexture;
                 GameTools.capturedLands[x][y].landType = landType;
+                
+                let tileDistanceXFromSpawn = abs(x - GameTools.mapSpawnX);
+                let tileDistanceYFromSpawn = abs(y - GameTools.mapSpawnY);
+                var biggerTileDistanceFromSpawn = tileDistanceXFromSpawn;
+                
+                if(tileDistanceYFromSpawn > tileDistanceYFromSpawn) { biggerTileDistanceFromSpawn = tileDistanceYFromSpawn; }
+                
+                var battleGeneratorType = BattleGeneratorType.EasyGreen1;
+                if(biggerTileDistanceFromSpawn <= 3) {
+                    battleGeneratorType = BattleGeneratorType.EasyGreen1;
+                }
+                else if(biggerTileDistanceFromSpawn <= 4) {
+                    battleGeneratorType = BattleGeneratorType.MediumGreen1;
+                }
+                else if(biggerTileDistanceFromSpawn <= 5) {
+                    battleGeneratorType = BattleGeneratorType.EasyTan1;
+                }
+                else {
+                    battleGeneratorType = BattleGeneratorType.MediumTan1;
+                }
+                
+                GameTools.capturedLands[x][y].battleGeneratorType = battleGeneratorType;
                 
                 let landNode = SKSpriteNode(texture: tileTexture, size: CGSize(width: GameTools.landTileSize, height: GameTools.landTileSize));
                 landNode.position = CGPoint(x: x * GameTools.landTileSize, y: y * GameTools.landTileSize);

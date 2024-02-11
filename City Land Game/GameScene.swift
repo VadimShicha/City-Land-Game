@@ -23,8 +23,8 @@ class GameScene: SKScene {
             self.addChild(generatedLandNodes[i]); //add the land node to the view
         }
         
-        for x in 0...3 {
-            for y in -2...1 {
+        for x in -1...1 {
+            for y in -1...1 {
                 GameTools.capturedLands[GameTools.mapSpawnX + x][GameTools.mapSpawnY + y].captured = true;
             }
         }
@@ -128,7 +128,10 @@ class GameScene: SKScene {
                             GameTools.borderNodesParent.addChild(borderNodes[k]);
                         }
                         
+                        print(GameTools.capturedLands[posX][posY].battleGeneratorType);
                         GameTools.currentBattleLandType = GameTools.capturedLands[posX][posY].landType;
+                        GameTools.currentBattleData = BattleGenerator.getFixedBattle(generatorType: GameTools.capturedLands[posX][posY].battleGeneratorType);
+                        
                         Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Battle);
                     }
                 }
