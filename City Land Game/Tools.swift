@@ -43,6 +43,21 @@ class Tools {
         return value * .pi / 180;
     }
     
+    static func createDigitSeparatedString(_ number: Int, seperator: String) -> String {
+        var separatedString = String("");
+        let numberString = String(number);
+        
+        for i in stride(from: numberString.count - 1, through: 0, by: -1) {
+            separatedString += String(numberString[numberString.index(numberString.startIndex, offsetBy: numberString.count - 1 - i)]);
+            
+            if(i % 3 != 0 || i == 0) { continue; }
+            
+            separatedString += seperator;
+        }
+        
+        return separatedString;
+    }
+    
     static func changeScenes(fromScene: SKScene, toSceneType: SceneType) {
         let scene = getScene(sceneType: toSceneType); //get the SKScene from the to-scene
         scene.scaleMode = .aspectFill; //set the scene scale mode

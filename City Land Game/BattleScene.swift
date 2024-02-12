@@ -19,13 +19,13 @@ struct TankData {
     static func getTank(_ tank: TankDataEnum) -> TankData {
         switch(tank.rawValue) {
             case 0:
-                return TankData(name: "GreenTank", sizeTiles: 3, baseHealth: 50, metal: 2, texture: SKTexture(imageNamed: "Tanks/Tank"))
+                return TankData(name: "Green Tank", sizeTiles: 3, baseHealth: 50, metal: 2, texture: SKTexture(imageNamed: "Tanks/Tank"))
             case 1:
-                return TankData(name: "TanTank", sizeTiles: 3, baseHealth: 100, metal: 4, texture: SKTexture(imageNamed: "Tanks/TanTank"))
+                return TankData(name: "Tan Tank", sizeTiles: 3, baseHealth: 100, metal: 4, texture: SKTexture(imageNamed: "Tanks/TanTank"))
             case 2:
-                return TankData(name: "RedTank", sizeTiles: 3, baseHealth: 500, metal: 6, texture: SKTexture(imageNamed: "Tanks/RedTank"))
+                return TankData(name: "Red Tank", sizeTiles: 3, baseHealth: 500, metal: 6, texture: SKTexture(imageNamed: "Tanks/RedTank"))
             case 3:
-                return TankData(name: "BlueTank", sizeTiles: 3, baseHealth: 1000, metal: 10, texture: SKTexture(imageNamed: "Tanks/BlueTank"))
+                return TankData(name: "Blue Tank", sizeTiles: 3, baseHealth: 1000, metal: 10, texture: SKTexture(imageNamed: "Tanks/BlueTank"))
             default:
                 return getTank(TankDataEnum.GreenTank);
         }

@@ -11,7 +11,7 @@ import SpriteKit;
 struct LandTileData {
     var texture: SKTexture = SKTexture(imageNamed: "NoLandData");
     var landType: BattleLandType = BattleLandType.GrassLands;
-    var battleGeneratorType: BattleGeneratorType = BattleGeneratorType.EasyGreen1;
+    var battleGeneratorData: BattleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Easy, forcesType: TankDataEnum.GreenTank, id: 1);
     var captured: Bool = false;
 }
 
@@ -78,6 +78,10 @@ class GameTools {
     
     static var currentBattleRound: Int = -1; //-1 if not in battle
     static var currentBattleLives: Int = 3;
+    
+    static var brickAmount: Int = 10000;
+    static var planksAmount: Int = 100;
+    static var diamondAmount: Int = 10;
     
     static var currentBattleData: BattleData = BattleData(
         rounds: [

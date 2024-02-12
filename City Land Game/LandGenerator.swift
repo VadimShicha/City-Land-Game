@@ -83,27 +83,28 @@ class LandGenerator {
                 GameTools.capturedLands[x][y].texture = tileTexture;
                 GameTools.capturedLands[x][y].landType = landType;
                 
-                let tileDistanceXFromSpawn = abs(x - GameTools.mapSpawnX);
-                let tileDistanceYFromSpawn = abs(y - GameTools.mapSpawnY);
-                var biggerTileDistanceFromSpawn = tileDistanceXFromSpawn;
+                let tileDistanceXFromSpawn = abs(x - GameTools.mapSpawnX); //tile distance of the current tile from the spawn x tile
+                let tileDistanceYFromSpawn = abs(y - GameTools.mapSpawnY); //tile distance of the current tile from the spawn y tile
+                var biggerTileDistanceFromSpawn = tileDistanceXFromSpawn; //biggest distance of the x and y from the spawn tile
                 
                 if(tileDistanceYFromSpawn > tileDistanceYFromSpawn) { biggerTileDistanceFromSpawn = tileDistanceYFromSpawn; }
                 
-                var battleGeneratorType = BattleGeneratorType.EasyGreen1;
+                var battleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Easy, forcesType: TankDataEnum.GreenTank, id: 1);
+                
                 if(biggerTileDistanceFromSpawn <= 3) {
-                    battleGeneratorType = BattleGeneratorType.EasyGreen1;
+                    battleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Easy, forcesType: TankDataEnum.GreenTank, id: 1);
                 }
                 else if(biggerTileDistanceFromSpawn <= 4) {
-                    battleGeneratorType = BattleGeneratorType.MediumGreen1;
+                    battleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Medium, forcesType: TankDataEnum.GreenTank, id: 1);
                 }
                 else if(biggerTileDistanceFromSpawn <= 5) {
-                    battleGeneratorType = BattleGeneratorType.EasyTan1;
+                    battleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Easy, forcesType: TankDataEnum.TanTank, id: 1);
                 }
                 else {
-                    battleGeneratorType = BattleGeneratorType.MediumTan1;
+                    battleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Medium, forcesType: TankDataEnum.TanTank, id: 1);
                 }
                 
-                GameTools.capturedLands[x][y].battleGeneratorType = battleGeneratorType;
+                GameTools.capturedLands[x][y].battleGeneratorData = battleGeneratorData;
                 
                 let landNode = SKSpriteNode(texture: tileTexture, size: CGSize(width: GameTools.landTileSize, height: GameTools.landTileSize));
                 landNode.position = CGPoint(x: x * GameTools.landTileSize, y: y * GameTools.landTileSize);

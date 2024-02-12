@@ -17,11 +17,93 @@ class GameScene: SKScene {
     let minCameraScale: CGFloat = 0.5; //the minimum you can zoom the camera out
     let maxCameraScale: CGFloat = 15; //the maximum you can zoom the camera out/
     
+    var materialBrickLabel = SKLabelNode();
+    var materialPlanksLabel = SKLabelNode();
+    var materialDiamondLabel = SKLabelNode();
+    
+    var materialBrickNode = SKSpriteNode();
+    var materialPlanksNode = SKSpriteNode();
+    var materialDiamondNode = SKSpriteNode();
+    
     var attackBackgroundNode = SKShapeNode();
     var attackButtonLabel = SKLabelNode();
     var attackTitleLabel = SKLabelNode();
+    var attackUpperBodyLabel = SKLabelNode();
+    var attackBodyLabel = SKLabelNode();
     
     var currentAttackSelected = LandTileData();
+    
+    //creates the material label nodes
+    func setupMaterialLabels() {
+        materialBrickNode = SKSpriteNode(imageNamed: "Materials/Brick");
+        materialBrickNode.size = CGSize(width: 40, height: 40);
+        materialBrickNode.position = CGPoint(
+            x: GameTools.leftCenterWidth + (materialBrickNode.frame.width / 2),
+            y: GameTools.topCenterHeight - (materialBrickNode.frame.height / 2)
+        );
+        self.camera?.addChild(materialBrickNode);
+        
+        materialPlanksNode = SKSpriteNode(imageNamed: "Materials/Planks");
+        materialPlanksNode.size = CGSize(width: 40, height: 40);
+        materialPlanksNode.position = CGPoint(
+            x: GameTools.leftCenterWidth + (materialPlanksNode.frame.width / 2),
+            y: GameTools.topCenterHeight - (materialPlanksNode.frame.height / 2) - 35
+        );
+        self.camera?.addChild(materialPlanksNode);
+
+        materialDiamondNode = SKSpriteNode(imageNamed: "Materials/Diamond");
+        materialDiamondNode.size = CGSize(width: 40, height: 40);
+        materialDiamondNode.position = CGPoint(
+            x: GameTools.leftCenterWidth + (materialDiamondNode.frame.width / 2),
+            y: GameTools.topCenterHeight - (materialDiamondNode.frame.height / 2) - 70
+        );
+        self.camera?.addChild(materialDiamondNode);
+        
+        materialBrickLabel.text = "1 000 000";
+        materialBrickLabel.position = CGPoint(
+            x: GameTools.leftCenterWidth + 40 + 5,
+            y: GameTools.topCenterHeight - materialBrickLabel.frame.height
+        );
+        materialBrickLabel.zPosition = 100;
+        materialBrickLabel.fontColor = #colorLiteral(red: 0.2027758712, green: 0.2182098267, blue: 0.2414048185, alpha: 1);
+        materialBrickLabel.fontName = "ChalkboardSE-Bold";
+        materialBrickLabel.fontSize = 22;
+        materialBrickLabel.horizontalAlignmentMode = .left;
+        self.camera?.addChild(materialBrickLabel);
+        
+        materialPlanksLabel.text = "1 000";
+        materialPlanksLabel.position = CGPoint(
+            x: GameTools.leftCenterWidth + 40 + 5,
+            y: GameTools.topCenterHeight - materialPlanksLabel.frame.height - 35
+        );
+        materialPlanksLabel.zPosition = 100;
+        materialPlanksLabel.fontColor = #colorLiteral(red: 0.2027758712, green: 0.2182098267, blue: 0.2414048185, alpha: 1);
+        materialPlanksLabel.fontName = "ChalkboardSE-Bold";
+        materialPlanksLabel.fontSize = 22;
+        materialPlanksLabel.horizontalAlignmentMode = .left;
+        self.camera?.addChild(materialPlanksLabel);
+        
+        materialDiamondLabel.text = "10";
+        materialDiamondLabel.position = CGPoint(
+            x: GameTools.leftCenterWidth + 40 + 5,
+            y: GameTools.topCenterHeight - materialDiamondLabel.frame.height - 70
+        );
+        materialDiamondLabel.zPosition = 100;
+        materialDiamondLabel.fontColor = #colorLiteral(red: 0.2027758712, green: 0.2182098267, blue: 0.2414048185, alpha: 1);
+        materialDiamondLabel.fontName = "ChalkboardSE-Bold";
+        materialDiamondLabel.fontSize = 22;
+        materialDiamondLabel.horizontalAlignmentMode = .left;
+        self.camera?.addChild(materialDiamondLabel);
+        
+        updateMaterialLabels();
+    }
+    
+    //updates the material labels to show the amount you have
+    func updateMaterialLabels() {
+        materialBrickLabel.text = Tools.createDigitSeparatedString(GameTools.brickAmount, seperator: " ");
+        materialPlanksLabel.text = Tools.createDigitSeparatedString(GameTools.planksAmount, seperator: " ");
+        materialDiamondLabel.text = Tools.createDigitSeparatedString(GameTools.diamondAmount, seperator: " ");
+    }
     
     func showStartAttackMenu(landTileData: LandTileData) {
         attackBackgroundNode.isHidden = false;
@@ -29,6 +111,37 @@ class GameScene: SKScene {
         attackButtonLabel.isHidden = false;
         attackTitleLabel.text = "Battle in " + landTileData.landType.rawValue;
         attackTitleLabel.isHidden = false;
+        
+        attackUpperBodyLabel.isHidden = false;
+        attackUpperBodyLabel.text = """
+            Coins: 1,000   XP: 10
+        """;
+        
+        let forcesType = TankData.getTank(landTileData.battleGeneratorData.forcesType);
+        
+        let attackBodyLabelText = NSMutableAttributedString(string: """
+            Difficulty: \(landTileData.battleGeneratorData.difficulty)
+            Type of Forces: \(forcesType.name)
+        """);
+        let attackBodyLabelColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
+        let attackBodyValueColor = #colorLiteral(red: 0.9739930458, green: 0.7904064641, blue: 0.115796683, alpha: 1);
+        attackBodyLabelText.addAttribute(.font, value: UIFont(name: "ChalkboardSE-Bold", size: 25) as Any, range: NSRange(location: 0, length: attackBodyLabelText.string.count));
+        attackBodyLabelText.addAttribute(.foregroundColor, value: attackBodyLabelColor, range: NSRange(location: 0, length: attackBodyLabelText.string.count));
+        let splitAttackBodyText = attackBodyLabelText.string.split(separator: "\n");
+        if(splitAttackBodyText.count == 2) {
+            attackBodyLabelText.addAttribute(
+                .foregroundColor,
+                value: attackBodyValueColor,
+                range: NSString(string: attackBodyLabelText.string).range(of: landTileData.battleGeneratorData.difficulty.rawValue)
+            );
+            attackBodyLabelText.addAttribute(
+                .foregroundColor,
+                value: attackBodyValueColor,
+                range: NSString(string: attackBodyLabelText.string).range(of: forcesType.name)
+            );
+        }
+        attackBodyLabel.attributedText = attackBodyLabelText;
+        attackBodyLabel.isHidden = false;
         
         currentAttackSelected = landTileData;
     }
@@ -75,6 +188,8 @@ class GameScene: SKScene {
         pinchGesture.addTarget(self, action: #selector(pinchGestureAction(_:)));
         view.addGestureRecognizer(pinchGesture);
         
+        setupMaterialLabels();
+        
         attackBackgroundNode = SKShapeNode(rect: CGRect(
             x: -self.size.width / 1.25 / 2,
             y: -self.size.height / 1.25 / 2,
@@ -82,9 +197,8 @@ class GameScene: SKScene {
             height: self.size.height / 1.25
         ), cornerRadius: 14);
         attackBackgroundNode.zPosition = 90;
-        attackBackgroundNode.lineWidth = 10;
-        attackBackgroundNode.fillColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1);
-        attackBackgroundNode.strokeColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1);
+        attackBackgroundNode.lineWidth = 0;
+        attackBackgroundNode.fillColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 0.8);
         attackBackgroundNode.isHidden = true;
         self.camera?.addChild(attackBackgroundNode);
         
@@ -115,6 +229,28 @@ class GameScene: SKScene {
         attackTitleLabel.fontSize = 30;
         attackTitleLabel.isHidden = true;
         self.camera?.addChild(attackTitleLabel);
+        
+        attackUpperBodyLabel.position = CGPoint(x: 0, y: self.size.height / 6);
+        attackUpperBodyLabel.zPosition = 100;
+        attackUpperBodyLabel.text = "Upper Body Text";
+        //attackUpperBodyLabel.numberOfLines = 3;
+        attackUpperBodyLabel.fontColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
+        attackUpperBodyLabel.fontName = "ChalkboardSE-Bold";
+        attackUpperBodyLabel.fontSize = 25;
+        attackUpperBodyLabel.horizontalAlignmentMode = .center;
+        attackUpperBodyLabel.isHidden = true;
+        self.camera?.addChild(attackUpperBodyLabel);
+        
+        attackBodyLabel.position = CGPoint(x: 0, y: 0);
+        attackBodyLabel.zPosition = 100;
+        attackBodyLabel.text = "Battle Body Text";
+        attackBodyLabel.numberOfLines = 3;
+        attackBodyLabel.fontColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
+        attackBodyLabel.fontName = "ChalkboardSE-Bold";
+        attackBodyLabel.fontSize = 25;
+        attackBodyLabel.horizontalAlignmentMode = .center;
+        attackBodyLabel.isHidden = true;
+        self.camera?.addChild(attackBodyLabel);
     }
     
     var lastCameraScale: CGFloat = 0; //the camera scale when the pinch gesture began
@@ -145,11 +281,27 @@ class GameScene: SKScene {
                 lastTouch = location;
                 return;
             }
+            
+            var newCameraPositionX = cameraNode.position.x + -(location.x - lastTouch!.x); //the x position of the camera after this touch
+            var newCameraPositionY = cameraNode.position.y + -(location.y - lastTouch!.y); //the y position of the camera after this touch
+            
+            //make the camera positions be based on the center of the map rather than (0, 0)
+            newCameraPositionX -= CGFloat((GameTools.mapWidth * GameTools.landTileSize) / 2);
+            newCameraPositionY -= CGFloat((GameTools.mapHeight * GameTools.landTileSize) / 2);
+            
+            let mapWidth = GameTools.mapWidth * GameTools.landTileSize;
+            let mapHeight = GameTools.mapHeight * GameTools.landTileSize;
+            
+            //prevent the camera from moving too far out
+            if(newCameraPositionX > CGFloat(mapWidth) / 1.25) { return; }
+            if(newCameraPositionX < -CGFloat(mapWidth) / 1.25) { return; }
+            if(newCameraPositionY > CGFloat(mapHeight) / 1.25) { return; }
+            if(newCameraPositionY < -CGFloat(mapHeight) / 1.25) { return; }
 
             let cameraMoveAction = SKAction.move(by: CGVector(dx: -(location.x - lastTouch!.x), dy: -(location.y - lastTouch!.y)), duration: 0.1);
             cameraMoveAction.timingMode = .linear;
             cameraNode.run(cameraMoveAction);
-            
+
             lastTouch = location;
         }
     }
@@ -164,7 +316,7 @@ class GameScene: SKScene {
                 print("attack");
                 
                 GameTools.currentBattleLandType = currentAttackSelected.landType;
-                GameTools.currentBattleData = BattleGenerator.getFixedBattle(generatorType: currentAttackSelected.battleGeneratorType);
+                GameTools.currentBattleData = BattleGenerator.getFixedBattle(generatorData: currentAttackSelected.battleGeneratorData);
                 
                 Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Battle);
                 return;
@@ -199,9 +351,9 @@ class GameScene: SKScene {
                             GameTools.borderNodesParent.addChild(borderNodes[k]);
                         }
                         
-                        print(GameTools.capturedLands[posX][posY].battleGeneratorType);
+                        print(GameTools.capturedLands[posX][posY].battleGeneratorData);
                         GameTools.currentBattleLandType = GameTools.capturedLands[posX][posY].landType;
-                        GameTools.currentBattleData = BattleGenerator.getFixedBattle(generatorType: GameTools.capturedLands[posX][posY].battleGeneratorType);
+                        GameTools.currentBattleData = BattleGenerator.getFixedBattle(generatorData: GameTools.capturedLands[posX][posY].battleGeneratorData);
                         
                         showStartAttackMenu(landTileData: GameTools.capturedLands[posX][posY]);
                         //Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Battle);
