@@ -8,18 +8,41 @@
 import Foundation;
 import SpriteKit;
 
+enum MaterialType {
+    case Mud
+    case Clay
+    case Brick
+    case Wood
+    case FrozenWood
+    case Planks
+    case Diamond
+}
+
+struct MaterialData {
+    var type: MaterialType = MaterialType.Brick;
+    var amount: Int = 0;
+}
+
 struct LandTileData {
     var texture: SKTexture = SKTexture(imageNamed: "NoLandData");
     var landType: BattleLandType = BattleLandType.GrassLands;
     var battleGeneratorData: BattleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Easy, forcesType: TankDataEnum.GreenTank, id: 1);
     var captured: Bool = false;
+    var materials: [MaterialData] = [
+        MaterialData(type: MaterialType.Clay, amount: 10000),
+        MaterialData(type: MaterialType.Wood, amount: 10000000),
+        MaterialData(type: MaterialType.Diamond, amount: 10)
+    ];
 }
 
 enum BattleLandType: String {
     case GrassLands = "Grasslands"
+    case Forest = "Forest"
     case Ocean = "Water Lands"
-    case Sand = "Sand Lands"
-    case StoneyHills = "Stoney Hills"
+    case Sand = "Sandy Lands"
+    case StoneyMountains = "Stoney Mountains"
+    case SnowyFields = "Snowy Fields"
+    case IcePeak = "Ice Peak"
     case CannonValley = "Cannon Valley"
 }
 
@@ -175,4 +198,31 @@ class GameTools {
     static let rightCenterWidth = UIScreen.main.bounds.size.width / 2;
     static let topCenterHeight = UIScreen.main.bounds.size.height / 2;
     static let bottomCenterHeight = -(UIScreen.main.bounds.size.height / 2);
+    
+    static func getMaterialAssetName(_ materialType: MaterialType) -> String {
+        switch(materialType) {
+            case MaterialType.Mud:
+                return "Materials/Mud";
+            case MaterialType.Clay:
+                return "Materials/Clay";
+            case MaterialType.Brick:
+                return "Materials/Brick";
+            case MaterialType.Wood:
+                return "Materials/Wood";
+            case MaterialType.FrozenWood:
+                return "Materials/FrozenWood";
+            case MaterialType.Planks:
+                return "Materials/Planks";
+            case MaterialType.Diamond:
+                return "Materials/Diamond";
+        }
+    }
+    
+    static func getDifficultyIndex(_ battleDifficulty: BattleDifficulty) -> Int {
+//        switch(battleDifficulty) {
+//        case BattleDifficulty.VeryEasy:
+//            return 0
+//        }
+        return 0;
+    }
 }

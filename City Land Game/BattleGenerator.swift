@@ -9,7 +9,7 @@ import Foundation;
 import SpriteKit;
 import GameplayKit;
 
-enum BattleDifficulty: String {
+enum BattleDifficulty: String, CaseIterable {
     case VeryEasy = "Very Easy"
     case Easy = "Easy"
     case Medium = "Medium"

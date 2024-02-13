@@ -40,29 +40,98 @@ class LandGenerator {
                 var tileTexture = SKTexture();
                 tileTexture = SKTexture(imageNamed: "Land/GrassLand");
                 
+                var materialMultiplier: CGFloat = 1; //the multiplier of each material (based on difficulty)
+                
+                let tileDistanceXFromSpawn = abs(x - GameTools.mapSpawnX); //tile distance of the current tile from the spawn x tile
+                let tileDistanceYFromSpawn = abs(y - GameTools.mapSpawnY); //tile distance of the current tile from the spawn y tile
+                var biggerTileDistanceFromSpawn = tileDistanceXFromSpawn; //biggest distance of the x and y from the spawn tile
+                
+                if(tileDistanceYFromSpawn > tileDistanceYFromSpawn) { biggerTileDistanceFromSpawn = tileDistanceYFromSpawn; }
+                
+                var battleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Easy, forcesType: TankDataEnum.GreenTank, id: 1);
+                
+                if(biggerTileDistanceFromSpawn <= 3) {
+                    battleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Easy, forcesType: TankDataEnum.GreenTank, id: 1);
+                }
+                else if(biggerTileDistanceFromSpawn <= 4) {
+                    battleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Medium, forcesType: TankDataEnum.GreenTank, id: 1);
+                    materialMultiplier = 1.5;
+                }
+                else if(biggerTileDistanceFromSpawn <= 5) {
+                    battleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Easy, forcesType: TankDataEnum.TanTank, id: 1);
+                    materialMultiplier = 2.5;
+                }
+                else {
+                    battleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Medium, forcesType: TankDataEnum.TanTank, id: 1);
+                    materialMultiplier = 4;
+                }
+                
+                GameTools.capturedLands[x][y].battleGeneratorData = battleGeneratorData;
+                
+                var materials: [MaterialData] = [];
+                
                 if(noiseValue > 0.925) { //0.85
                     tileTexture = SKTexture(imageNamed: "Land/WaterLand");
                     landType = BattleLandType.Ocean;
+                    materials = [
+                        MaterialData(type: MaterialType.Mud, amount: Int(50 * materialMultiplier)),
+                        MaterialData(type: MaterialType.Clay, amount: Int(50 * materialMultiplier)),
+                        MaterialData(type: MaterialType.Diamond, amount: 1)
+                    ];
                 }
                 else if(noiseValue > 0.75) {
                     tileTexture = SKTexture(imageNamed: "Land/SandLand");
                     landType = BattleLandType.Sand;
+                    materials = [
+                        MaterialData(type: MaterialType.Mud, amount: Int(10 * materialMultiplier)),
+                        MaterialData(type: MaterialType.Wood, amount: Int(30 * materialMultiplier)),
+                        MaterialData(type: MaterialType.Diamond, amount: 1)
+                    ];
                 }
                 else if(noiseValue > 0.07) {
                     tileTexture = SKTexture(imageNamed: "Land/GrassLand"); //other option: "Land/GrassLandWithBorder"
                     landType = BattleLandType.GrassLands;
+                    materials = [
+                        MaterialData(type: MaterialType.Mud, amount: Int(50 * materialMultiplier)),
+                        MaterialData(type: MaterialType.Wood, amount: Int(20 * materialMultiplier)),
+                        MaterialData(type: MaterialType.Diamond, amount: 1)
+                    ];
                 }
                 else if(noiseValue > 0.01) {
                     tileTexture = SKTexture(imageNamed: "Land/ForestLand");
+                    landType = BattleLandType.Forest;
+                    materials = [
+                        MaterialData(type: MaterialType.Mud, amount: Int(5 * materialMultiplier)),
+                        MaterialData(type: MaterialType.Wood, amount: Int(65 * materialMultiplier)),
+                        MaterialData(type: MaterialType.Diamond, amount: 1)
+                    ];
                 }
                 else if(noiseValue > -0.3) {
                     tileTexture = SKTexture(imageNamed: "Land/MountainLand");
+                    landType = BattleLandType.StoneyMountains;
+                    materials = [
+                        MaterialData(type: MaterialType.Clay, amount: Int(55 * materialMultiplier)),
+                        MaterialData(type: MaterialType.Wood, amount: Int(15 * materialMultiplier)),
+                        MaterialData(type: MaterialType.Diamond, amount: 1)
+                    ];
                 }
                 else if(noiseValue > -0.7) {
                     tileTexture = SKTexture(imageNamed: "Land/SnowLand");
+                    landType = BattleLandType.SnowyFields;
+                    materials = [
+                        MaterialData(type: MaterialType.Mud, amount: Int(20 * materialMultiplier)),
+                        MaterialData(type: MaterialType.FrozenWood, amount: Int(50 * materialMultiplier)),
+                        MaterialData(type: MaterialType.Diamond, amount: 1)
+                    ];
                 }
                 else {
                     tileTexture = SKTexture(imageNamed: "Land/IceLand");
+                    landType = BattleLandType.IcePeak;
+                    materials = [
+                        MaterialData(type: MaterialType.Clay, amount: Int(30 * materialMultiplier)),
+                        MaterialData(type: MaterialType.FrozenWood, amount: Int(40 * materialMultiplier)),
+                        MaterialData(type: MaterialType.Diamond, amount: 2)
+                    ];
                 }
                 
                 if(x == 0 || x == GameTools.mapWidth - 1 || y == 0 || y == GameTools.mapHeight - 1) {
@@ -82,29 +151,7 @@ class LandGenerator {
                 
                 GameTools.capturedLands[x][y].texture = tileTexture;
                 GameTools.capturedLands[x][y].landType = landType;
-                
-                let tileDistanceXFromSpawn = abs(x - GameTools.mapSpawnX); //tile distance of the current tile from the spawn x tile
-                let tileDistanceYFromSpawn = abs(y - GameTools.mapSpawnY); //tile distance of the current tile from the spawn y tile
-                var biggerTileDistanceFromSpawn = tileDistanceXFromSpawn; //biggest distance of the x and y from the spawn tile
-                
-                if(tileDistanceYFromSpawn > tileDistanceYFromSpawn) { biggerTileDistanceFromSpawn = tileDistanceYFromSpawn; }
-                
-                var battleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Easy, forcesType: TankDataEnum.GreenTank, id: 1);
-                
-                if(biggerTileDistanceFromSpawn <= 3) {
-                    battleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Easy, forcesType: TankDataEnum.GreenTank, id: 1);
-                }
-                else if(biggerTileDistanceFromSpawn <= 4) {
-                    battleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Medium, forcesType: TankDataEnum.GreenTank, id: 1);
-                }
-                else if(biggerTileDistanceFromSpawn <= 5) {
-                    battleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Easy, forcesType: TankDataEnum.TanTank, id: 1);
-                }
-                else {
-                    battleGeneratorData = BattleGeneratorData(difficulty: BattleDifficulty.Medium, forcesType: TankDataEnum.TanTank, id: 1);
-                }
-                
-                GameTools.capturedLands[x][y].battleGeneratorData = battleGeneratorData;
+                GameTools.capturedLands[x][y].materials = materials;
                 
                 let landNode = SKSpriteNode(texture: tileTexture, size: CGSize(width: GameTools.landTileSize, height: GameTools.landTileSize));
                 landNode.position = CGPoint(x: x * GameTools.landTileSize, y: y * GameTools.landTileSize);
