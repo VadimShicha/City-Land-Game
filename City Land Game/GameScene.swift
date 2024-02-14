@@ -15,9 +15,10 @@ class GameScene: SKScene {
     var lastTouch: CGPoint?; //the point of where the last touch happened. nil if there isn't any touches
     var uiOpen = false;
     
-    
     let minCameraScale: CGFloat = 0.5; //the minimum you can zoom the camera out
     let maxCameraScale: CGFloat = 15; //the maximum you can zoom the camera out/
+    
+    
     
     var materialBrickLabel = SKLabelNode();
     var materialPlanksLabel = SKLabelNode();
@@ -31,13 +32,26 @@ class GameScene: SKScene {
     var attackCloseLabel = SKLabelNode();
     var attackButtonLabel = SKLabelNode();
     var attackTitleLabel = SKLabelNode();
-    //var attackUpperBodyLabel = SKLabelNode();
     var attackBodyLabel = SKLabelNode();
     
     var attackBodyMaterialLabels: [SKLabelNode] = [];
     var attackBodyMaterialNodes: [SKSpriteNode] = [];
     
     var currentAttackSelected = LandTileData();
+    
+    
+    
+    var shopButtonNode = SKSpriteNode();
+    
+    var shopBackgroundNode = SKShapeNode();
+    var shopCloseLabel = SKLabelNode();
+    var shopTitleLabel = SKLabelNode();
+    
+    var shopBodyTabLabels: [SKLabelNode] = [];
+    
+    let shopTabs: [String] = ["Production", "Defenses", "Decorations"];
+    
+    
     
     //creates the material label nodes
     func setupMaterialLabels() {
@@ -121,7 +135,7 @@ class GameScene: SKScene {
             width: self.size.width / 1.25,
             height: self.size.height / 1.25
         ), cornerRadius: 14);
-        attackBackgroundNode.zPosition = 90;
+        attackBackgroundNode.zPosition = 95;
         attackBackgroundNode.lineWidth = 0;
         attackBackgroundNode.fillColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 0.8);
         attackBackgroundNode.isHidden = true;
@@ -306,6 +320,78 @@ class GameScene: SKScene {
         attackBodyLabel.isHidden = true;
     }
     
+    func setupShopMenu() {
+        shopBackgroundNode = SKShapeNode(rect: CGRect(
+            x: -self.size.width / 1.25 / 2,
+            y: -self.size.height / 1.25 / 2,
+            width: self.size.width / 1.25,
+            height: self.size.height / 1.25
+        ), cornerRadius: 14);
+        shopBackgroundNode.zPosition = 95;
+        shopBackgroundNode.lineWidth = 0;
+        shopBackgroundNode.fillColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 0.8);
+        shopBackgroundNode.isHidden = true;
+        self.camera?.addChild(shopBackgroundNode);
+        
+        shopCloseLabel.position = CGPoint(x: (self.size.width / 1.25 / 2) - 15, y: (self.size.height / 1.25 / 2) - 30);
+        shopCloseLabel.zPosition = 100;
+        shopCloseLabel.text = "Close";
+        shopCloseLabel.fontColor = #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1);
+        shopCloseLabel.fontName = "ChalkboardSE-Bold";
+        shopCloseLabel.fontSize = 20;
+        shopCloseLabel.horizontalAlignmentMode = .right;
+        shopCloseLabel.isHidden = true;
+        self.camera?.addChild(shopCloseLabel);
+        
+        shopTitleLabel.position = CGPoint(x: 0, y: self.size.height / 3);
+        shopTitleLabel.zPosition = 100;
+        shopTitleLabel.text = "City Shop";
+        shopTitleLabel.fontColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1);
+        shopTitleLabel.fontName = "ChalkboardSE-Bold";
+        shopTitleLabel.fontSize = 30;
+        shopTitleLabel.isHidden = true;
+        self.camera?.addChild(shopTitleLabel);
+        
+        for i in 0..<shopTabs.count {
+            let tabLabel = SKLabelNode();
+            tabLabel.text = shopTabs[i];
+            tabLabel.position = CGPoint(
+                x: CGFloat((i - 1)) * (self.size.width / 4) + 4,
+                y: self.size.height / 5
+            );
+            tabLabel.zPosition = 100;
+            tabLabel.fontColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
+            tabLabel.fontName = "ChalkboardSE-Bold";
+            tabLabel.fontSize = 25;
+            tabLabel.horizontalAlignmentMode = .center;
+            tabLabel.isHidden = true;
+            self.camera?.addChild(tabLabel);
+            shopBodyTabLabels.append(tabLabel);
+        }
+    }
+    
+    func showShopMenu() {
+        uiOpen = true;
+        shopBackgroundNode.isHidden = false;
+        shopCloseLabel.isHidden = false;
+        shopTitleLabel.isHidden = false;
+        
+        for i in 0..<shopBodyTabLabels.count {
+            shopBodyTabLabels[i].isHidden = false;
+        }
+    }
+    
+    func hideShopMenu() {
+        uiOpen = false;
+        shopBackgroundNode.isHidden = true;
+        shopCloseLabel.isHidden = true;
+        shopTitleLabel.isHidden = true;
+        
+        for i in 0..<shopBodyTabLabels.count {
+            shopBodyTabLabels[i].isHidden = true;
+        }
+    }
+    
     override func didMove(to view: SKView) {
         let generatedLandNodes = LandGenerator.generateLandMap(); //generate the land map
         for i in 0..<generatedLandNodes.count {
@@ -351,11 +437,13 @@ class GameScene: SKScene {
         
         setupAttackMenu();
         
-        let shopNode = SKSpriteNode(imageNamed: "ShopButton");
-        shopNode.position = CGPoint(x: GameTools.rightCenterWidth - (self.size.width / 16) - 3, y: GameTools.bottomCenterHeight + (self.size.width / 16) + 3);
-        shopNode.size = CGSize(width: self.size.width / 8, height: self.size.width / 8);
-        shopNode.zPosition = 100;
-        self.camera?.addChild(shopNode);
+        setupShopMenu();
+        
+        shopButtonNode = SKSpriteNode(imageNamed: "ShopButton");
+        shopButtonNode.position = CGPoint(x: GameTools.rightCenterWidth - (self.size.width / 16) - 3, y: GameTools.bottomCenterHeight + (self.size.width / 16) + 3);
+        shopButtonNode.size = CGSize(width: self.size.width / 8, height: self.size.width / 8);
+        shopButtonNode.zPosition = 90;
+        self.camera?.addChild(shopButtonNode);
     }
     
     var lastCameraScale: CGFloat = 0; //the camera scale when the pinch gesture began
@@ -423,17 +511,25 @@ class GameScene: SKScene {
         if(touches.count == 1) {
             let touchLocation = touches[touches.index(touches.startIndex, offsetBy: 0)].location(in: self);
             
-            if(self.nodes(at: touchLocation).contains(attackButtonLabel)) {
-                print("attack");
-                
+            let touchingNodes = self.nodes(at: touchLocation); //array of all the nodes that have been touched
+            
+            if(touchingNodes.contains(attackButtonLabel)) {
                 GameTools.currentBattleLandType = currentAttackSelected.landType;
                 GameTools.currentBattleData = BattleGenerator.getFixedBattle(generatorData: currentAttackSelected.battleGeneratorData);
                 
                 Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Battle);
                 return;
             }
-            if(self.nodes(at: touchLocation).contains(attackCloseLabel)) {
+            if(touchingNodes.contains(attackCloseLabel)) {
                 hideStartAttackMenu();
+            }
+            if(touchingNodes.contains(shopButtonNode)) {
+                if(!uiOpen) {
+                    showShopMenu();
+                }
+            }
+            if(touchingNodes.contains(shopCloseLabel)) {
+                hideShopMenu();
             }
         }
         
