@@ -433,6 +433,18 @@ class GameScene: SKScene {
         pinchGesture.addTarget(self, action: #selector(pinchGestureAction(_:)));
         view.addGestureRecognizer(pinchGesture);
         
+        //all the swipe directions to listen for
+        let swipeDirections: [UISwipeGestureRecognizer.Direction] = [.left, .right, .up, .down];
+        
+        //loop through each direction and setup a separate gesture for each one
+        for direction in swipeDirections {
+            let swipeGesture = UISwipeGestureRecognizer();
+            swipeGesture.direction = direction;
+            swipeGesture.numberOfTouchesRequired = 1;
+            swipeGesture.addTarget(self, action: #selector(swipeGestureAction(_:)));
+            view.addGestureRecognizer(swipeGesture);
+        }
+        
         setupMaterialLabels();
         
         setupAttackMenu();
@@ -444,6 +456,20 @@ class GameScene: SKScene {
         shopButtonNode.size = CGSize(width: self.size.width / 8, height: self.size.width / 8);
         shopButtonNode.zPosition = 90;
         self.camera?.addChild(shopButtonNode);
+    }
+    
+    @objc func swipeGestureAction(_ sender: UISwipeGestureRecognizer) {
+        if(uiOpen) {
+            if(sender.direction == .up || sender.direction == .down) {
+                let swipeLocation = sender.location(in: sender.view);
+                let swipeViewLocation = self.convertPoint(fromView: swipeLocation);
+                let swipedNodes = self.atPoint(swipeViewLocation);
+                
+                if(swipedNodes.contains(shopBackgroundNode)) {
+                    print("SWIPED!");
+                }
+            }
+        }
     }
     
     var lastCameraScale: CGFloat = 0; //the camera scale when the pinch gesture began
