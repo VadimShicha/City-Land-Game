@@ -8,6 +8,296 @@
 import SpriteKit;
 import GameplayKit;
 
+class AttackMenuUI {
+    var backgroundNode = SKShapeNode();
+    var closeLabel = SKLabelNode();
+    var buttonLabel = SKLabelNode();
+    var titleLabel = SKLabelNode();
+    var bodyLabel = SKLabelNode();
+    
+    var bodyMaterialLabels: [SKLabelNode] = [];
+    var bodyMaterialNodes: [SKSpriteNode] = [];
+    
+    var scene: SKScene;
+    
+    init(_ scene: SKScene) {
+        self.scene = scene;
+    }
+    
+    func setupMenu() {
+        backgroundNode = SKShapeNode(rect: CGRect(
+            x: -scene.size.width / 1.25 / 2,
+            y: -scene.size.height / 1.25 / 2,
+            width: scene.size.width / 1.25,
+            height: scene.size.height / 1.25
+        ), cornerRadius: 14);
+        backgroundNode.zPosition = 95;
+        backgroundNode.lineWidth = 0;
+        backgroundNode.fillColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 0.8);
+        backgroundNode.isHidden = true;
+        scene.camera?.addChild(backgroundNode);
+        
+        closeLabel.position = CGPoint(x: (scene.size.width / 1.25 / 2) - 15, y: (scene.size.height / 1.25 / 2) - 30);
+        closeLabel.zPosition = 100;
+        closeLabel.text = "Close";
+        closeLabel.fontColor = #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1);
+        closeLabel.fontName = "ChalkboardSE-Bold";
+        closeLabel.fontSize = 20;
+        closeLabel.horizontalAlignmentMode = .right;
+        closeLabel.isHidden = true;
+        scene.camera?.addChild(closeLabel);
+        
+        buttonLabel.position = CGPoint(x: 0, y: -scene.size.height / 3);
+        buttonLabel.zPosition = 100;
+        buttonLabel.text = "Start War";
+        buttonLabel.fontName = "ChalkboardSE-Bold";
+        buttonLabel.fontSize = 20;
+        buttonLabel.isHidden = true;
+        scene.camera?.addChild(buttonLabel);
+        
+        let buttonLabelBackground = SKShapeNode(rect: CGRect(
+            x: -buttonLabel.frame.width / 2,
+            y: 0,
+            width: buttonLabel.frame.width,
+            height: buttonLabel.frame.height
+        ), cornerRadius: 5);
+        buttonLabelBackground.lineWidth = 10;
+        buttonLabelBackground.fillColor = GameTools.uiColor;
+        buttonLabelBackground.strokeColor = GameTools.uiColor;
+        buttonLabel.addChild(buttonLabelBackground);
+        
+        titleLabel.position = CGPoint(x: 0, y: scene.size.height / 3);
+        titleLabel.zPosition = 100;
+        titleLabel.text = "Battle in Greenlands";
+        titleLabel.fontColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1);
+        titleLabel.fontName = "ChalkboardSE-Bold";
+        titleLabel.fontSize = 30;
+        titleLabel.isHidden = true;
+        scene.camera?.addChild(titleLabel);
+        
+//        for i in 0..<3 {
+//            let materialLabel = SKLabelNode();
+//            materialLabel.text = "10 000";
+//            materialLabel.position = CGPoint(x: CGFloat((i - 1)) * (self.size.width / 8), y: self.size.height / 6);
+//            materialLabel.zPosition = 100;
+//            materialLabel.fontColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
+//            materialLabel.fontName = "ChalkboardSE-Bold";
+//            materialLabel.fontSize = 25;
+//            materialLabel.horizontalAlignmentMode = .center;
+//            materialLabel.isHidden = true;
+//            self.camera?.addChild(materialLabel);
+//            attackBodyMaterialLabels.append(materialLabel);
+//        }
+        
+//        attackUpperBodyLabel.position = CGPoint(x: 0, y: self.size.height / 6);
+//        attackUpperBodyLabel.zPosition = 100;
+//        attackUpperBodyLabel.text = "Upper Body Text";
+//        //attackUpperBodyLabel.numberOfLines = 3;
+//        attackUpperBodyLabel.fontColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
+//        attackUpperBodyLabel.fontName = "ChalkboardSE-Bold";
+//        attackUpperBodyLabel.fontSize = 25;
+//        attackUpperBodyLabel.horizontalAlignmentMode = .center;
+//        attackUpperBodyLabel.isHidden = true;
+//        self.camera?.addChild(attackUpperBodyLabel);
+        
+        bodyLabel.position = CGPoint(x: 0, y: 0);
+        bodyLabel.zPosition = 100;
+        bodyLabel.text = "Battle Body Text";
+        bodyLabel.numberOfLines = 3;
+        bodyLabel.fontColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
+        bodyLabel.fontName = "ChalkboardSE-Bold";
+        bodyLabel.fontSize = 25;
+        bodyLabel.horizontalAlignmentMode = .center;
+        bodyLabel.isHidden = true;
+        scene.camera?.addChild(bodyLabel);
+    }
+    
+    func showMenu(landTileData: LandTileData) {
+        //remove labels and nodes from the last menu
+        if(bodyMaterialNodes.count > 0) {
+            scene.camera?.removeChildren(in: bodyMaterialLabels);
+            scene.camera?.removeChildren(in: bodyMaterialNodes);
+            
+            bodyMaterialLabels = [];
+            bodyMaterialNodes = [];
+        }
+        
+        backgroundNode.isHidden = false;
+        
+        closeLabel.isHidden = false;
+        
+        buttonLabel.isHidden = false;
+        titleLabel.text = "Battle in " + landTileData.landType.rawValue;
+        titleLabel.isHidden = false;
+        
+//        attackUpperBodyLabel.isHidden = false;
+//        attackUpperBodyLabel.text = """
+//            Coins: 1,000   XP: 10
+//        """;
+        
+//        for i in 0..<landTileData.materials.count {
+//            attackBodyMaterialLabels[i].text = Tools.createDigitSeparatedString(landTileData.materials[i].amount, seperator: " ");
+//            attackBodyMaterialLabels[i].isHidden = false;
+//        }
+        
+        for i in 0..<landTileData.materials.count {
+            let materialSize = scene.size.width / 26;
+            
+            let materialLabel = SKLabelNode();
+            materialLabel.text = Tools.createDigitSeparatedString(landTileData.materials[i].amount, seperator: " ");
+            materialLabel.position = CGPoint(
+                x: CGFloat((i - 1)) * (scene.size.width / 4) + (materialSize / 2) + 4,
+                y: scene.size.height / 5
+            );
+            materialLabel.zPosition = 100;
+            materialLabel.fontColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
+            materialLabel.fontName = "ChalkboardSE-Bold";
+            materialLabel.fontSize = 25;
+            materialLabel.horizontalAlignmentMode = .left;
+            scene.camera?.addChild(materialLabel);
+            bodyMaterialLabels.append(materialLabel);
+            
+            let materialNode = SKSpriteNode(imageNamed: GameTools.getMaterialAssetName(landTileData.materials[i].type));
+            materialNode.size = CGSize(width: materialSize, height: materialSize);
+            materialNode.position = CGPoint(
+                x: CGFloat((i - 1)) * (scene.size.width / 4),
+                y: (scene.size.height / 5) + materialLabel.frame.height / 2
+            );
+            materialNode.zPosition = 100;
+            scene.camera?.addChild(materialNode);
+            bodyMaterialNodes.append(materialNode);
+        }
+        
+        let forcesType = TankData.getTank(landTileData.battleGeneratorData.forcesType);
+        
+        let bodyLabelText = NSMutableAttributedString(string: """
+            Difficulty: \(landTileData.battleGeneratorData.difficulty)
+            Type of Forces: \(forcesType.name)
+        """);
+        let bodyLabelColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
+        let bodyValueColor = #colorLiteral(red: 0.9739930458, green: 0.7904064641, blue: 0.115796683, alpha: 1);
+        bodyLabelText.addAttribute(.font, value: UIFont(name: "ChalkboardSE-Bold", size: 25) as Any, range: NSRange(location: 0, length: bodyLabelText.string.count));
+        bodyLabelText.addAttribute(.foregroundColor, value: bodyLabelColor, range: NSRange(location: 0, length: bodyLabelText.string.count));
+        let splitAttackBodyText = bodyLabelText.string.split(separator: "\n");
+        if(splitAttackBodyText.count == 2) {
+            bodyLabelText.addAttribute(
+                .foregroundColor,
+                value: bodyValueColor,
+                range: NSString(string: bodyLabelText.string).range(of: landTileData.battleGeneratorData.difficulty.rawValue)
+            );
+            bodyLabelText.addAttribute(
+                .foregroundColor,
+                value: bodyValueColor,
+                range: NSString(string: bodyLabelText.string).range(of: forcesType.name)
+            );
+        }
+        bodyLabel.attributedText = bodyLabelText;
+        bodyLabel.isHidden = false;
+    }
+    
+    func hideMenu() {
+        backgroundNode.isHidden = true;
+        
+        closeLabel.isHidden = true;
+        
+        for i in 0..<bodyMaterialLabels.count {
+            bodyMaterialLabels[i].isHidden = true;
+            bodyMaterialNodes[i].isHidden = true;
+        }
+        
+        buttonLabel.isHidden = true;
+        titleLabel.isHidden = true;
+        bodyLabel.isHidden = true;
+    }
+    
+}
+
+class ShopMenuUI {
+    var backgroundNode = SKShapeNode();
+    var closeLabel = SKLabelNode();
+    var titleLabel = SKLabelNode();
+    
+    var bodyTabLabels: [SKLabelNode] = [];
+    
+    let shopTabs: [String] = ["Production", "Defenses", "Decorations"];
+    
+    var scene: SKScene;
+    
+    init(_ scene: SKScene) {
+        self.scene = scene;
+    }
+    
+    func setupMenu() {
+        backgroundNode = SKShapeNode(rect: CGRect(
+            x: -scene.size.width / 1.25 / 2,
+            y: -scene.size.height / 1.25 / 2,
+            width: scene.size.width / 1.25,
+            height: scene.size.height / 1.25
+        ), cornerRadius: 14);
+        backgroundNode.zPosition = 95;
+        backgroundNode.lineWidth = 0;
+        backgroundNode.fillColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 0.8);
+        backgroundNode.isHidden = true;
+        scene.camera?.addChild(backgroundNode);
+        
+        closeLabel.position = CGPoint(x: (scene.size.width / 1.25 / 2) - 15, y: (scene.size.height / 1.25 / 2) - 30);
+        closeLabel.zPosition = 100;
+        closeLabel.text = "Close";
+        closeLabel.fontColor = #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1);
+        closeLabel.fontName = "ChalkboardSE-Bold";
+        closeLabel.fontSize = 20;
+        closeLabel.horizontalAlignmentMode = .right;
+        closeLabel.isHidden = true;
+        scene.camera?.addChild(closeLabel);
+        
+        titleLabel.position = CGPoint(x: 0, y: scene.size.height / 3);
+        titleLabel.zPosition = 100;
+        titleLabel.text = "City Shop";
+        titleLabel.fontColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1);
+        titleLabel.fontName = "ChalkboardSE-Bold";
+        titleLabel.fontSize = 30;
+        titleLabel.isHidden = true;
+        scene.camera?.addChild(titleLabel);
+        
+        for i in 0..<shopTabs.count {
+            let tabLabel = SKLabelNode();
+            tabLabel.text = shopTabs[i];
+            tabLabel.position = CGPoint(
+                x: CGFloat((i - 1)) * (scene.size.width / 4) + 4,
+                y: scene.size.height / 5
+            );
+            tabLabel.zPosition = 100;
+            tabLabel.fontColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
+            tabLabel.fontName = "ChalkboardSE-Bold";
+            tabLabel.fontSize = 25;
+            tabLabel.horizontalAlignmentMode = .center;
+            tabLabel.isHidden = true;
+            scene.camera?.addChild(tabLabel);
+            bodyTabLabels.append(tabLabel);
+        }
+    }
+    
+    func showMenu() {
+        backgroundNode.isHidden = false;
+        closeLabel.isHidden = false;
+        titleLabel.isHidden = false;
+        
+        for i in 0..<bodyTabLabels.count {
+            bodyTabLabels[i].isHidden = false;
+        }
+    }
+    
+    func hideMenu() {
+        backgroundNode.isHidden = true;
+        closeLabel.isHidden = true;
+        titleLabel.isHidden = true;
+        
+        for i in 0..<bodyTabLabels.count {
+            bodyTabLabels[i].isHidden = true;
+        }
+    }
+}
+
 class GameScene: SKScene {
     
     var cameraNode = SKCameraNode();
@@ -19,7 +309,6 @@ class GameScene: SKScene {
     let maxCameraScale: CGFloat = 15; //the maximum you can zoom the camera out/
     
     
-    
     var materialBrickLabel = SKLabelNode();
     var materialPlanksLabel = SKLabelNode();
     var materialDiamondLabel = SKLabelNode();
@@ -28,14 +317,15 @@ class GameScene: SKScene {
     var materialPlanksNode = SKSpriteNode();
     var materialDiamondNode = SKSpriteNode();
     
-    var attackBackgroundNode = SKShapeNode();
-    var attackCloseLabel = SKLabelNode();
-    var attackButtonLabel = SKLabelNode();
-    var attackTitleLabel = SKLabelNode();
-    var attackBodyLabel = SKLabelNode();
-    
-    var attackBodyMaterialLabels: [SKLabelNode] = [];
-    var attackBodyMaterialNodes: [SKSpriteNode] = [];
+    var attackMenuUI: AttackMenuUI!;
+//    var attackBackgroundNode = SKShapeNode();
+//    var attackCloseLabel = SKLabelNode();
+//    var attackButtonLabel = SKLabelNode();
+//    var attackTitleLabel = SKLabelNode();
+//    var attackBodyLabel = SKLabelNode();
+//    
+//    var attackBodyMaterialLabels: [SKLabelNode] = [];
+//    var attackBodyMaterialNodes: [SKSpriteNode] = [];
     
     var currentAttackSelected = LandTileData();
     
@@ -50,8 +340,18 @@ class GameScene: SKScene {
     var shopBodyTabLabels: [SKLabelNode] = [];
     
     let shopTabs: [String] = ["Production", "Defenses", "Decorations"];
+    var shopMenuUI: ShopMenuUI!;
     
     
+    
+    var settingsButtonNode = SKSpriteNode();
+    
+    var settingsBackgroundNode = SKShapeNode();
+    var settingsCloseLabel = SKLabelNode();
+    var settingsTitleLabel = SKLabelNode();
+    
+    
+
     
     //creates the material label nodes
     func setupMaterialLabels() {
@@ -128,268 +428,39 @@ class GameScene: SKScene {
         materialDiamondLabel.text = Tools.createDigitSeparatedString(GameTools.diamondAmount, seperator: " ");
     }
     
-    func setupAttackMenu() {
-        attackBackgroundNode = SKShapeNode(rect: CGRect(
+
+    
+    func setupSettingsMenu() {
+        settingsBackgroundNode = SKShapeNode(rect: CGRect(
             x: -self.size.width / 1.25 / 2,
             y: -self.size.height / 1.25 / 2,
             width: self.size.width / 1.25,
             height: self.size.height / 1.25
         ), cornerRadius: 14);
-        attackBackgroundNode.zPosition = 95;
-        attackBackgroundNode.lineWidth = 0;
-        attackBackgroundNode.fillColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 0.8);
-        attackBackgroundNode.isHidden = true;
-        self.camera?.addChild(attackBackgroundNode);
+        settingsBackgroundNode.zPosition = 95;
+        settingsBackgroundNode.lineWidth = 0;
+        settingsBackgroundNode.fillColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 0.8);
+        settingsBackgroundNode.isHidden = true;
+        self.camera?.addChild(settingsBackgroundNode);
         
-        attackCloseLabel.position = CGPoint(x: (self.size.width / 1.25 / 2) - 15, y: (self.size.height / 1.25 / 2) - 30);
-        attackCloseLabel.zPosition = 100;
-        attackCloseLabel.text = "Close";
-        attackCloseLabel.fontColor = #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1);
-        attackCloseLabel.fontName = "ChalkboardSE-Bold";
-        attackCloseLabel.fontSize = 20;
-        attackCloseLabel.horizontalAlignmentMode = .right;
-        attackCloseLabel.isHidden = true;
-        self.camera?.addChild(attackCloseLabel);
+        settingsCloseLabel.position = CGPoint(x: (self.size.width / 1.25 / 2) - 15, y: (self.size.height / 1.25 / 2) - 30);
+        settingsCloseLabel.zPosition = 100;
+        settingsCloseLabel.text = "Close";
+        settingsCloseLabel.fontColor = #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1);
+        settingsCloseLabel.fontName = "ChalkboardSE-Bold";
+        settingsCloseLabel.fontSize = 20;
+        settingsCloseLabel.horizontalAlignmentMode = .right;
+        settingsCloseLabel.isHidden = true;
+        self.camera?.addChild(settingsCloseLabel);
         
-        attackButtonLabel.position = CGPoint(x: 0, y: -self.size.height / 3);
-        attackButtonLabel.zPosition = 100;
-        attackButtonLabel.text = "Start War";
-        attackButtonLabel.fontName = "ChalkboardSE-Bold";
-        attackButtonLabel.fontSize = 20;
-        attackButtonLabel.isHidden = true;
-        self.camera?.addChild(attackButtonLabel);
-        
-        let attackButtonLabelBackground = SKShapeNode(rect: CGRect(
-            x: -attackButtonLabel.frame.width / 2,
-            y: 0,
-            width: attackButtonLabel.frame.width,
-            height: attackButtonLabel.frame.height
-        ), cornerRadius: 5);
-        attackButtonLabelBackground.lineWidth = 10;
-        attackButtonLabelBackground.fillColor = GameTools.uiColor;
-        attackButtonLabelBackground.strokeColor = GameTools.uiColor;
-        attackButtonLabel.addChild(attackButtonLabelBackground);
-        
-        attackTitleLabel.position = CGPoint(x: 0, y: self.size.height / 3);
-        attackTitleLabel.zPosition = 100;
-        attackTitleLabel.text = "Battle in Greenlands";
-        attackTitleLabel.fontColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1);
-        attackTitleLabel.fontName = "ChalkboardSE-Bold";
-        attackTitleLabel.fontSize = 30;
-        attackTitleLabel.isHidden = true;
-        self.camera?.addChild(attackTitleLabel);
-        
-//        for i in 0..<3 {
-//            let materialLabel = SKLabelNode();
-//            materialLabel.text = "10 000";
-//            materialLabel.position = CGPoint(x: CGFloat((i - 1)) * (self.size.width / 8), y: self.size.height / 6);
-//            materialLabel.zPosition = 100;
-//            materialLabel.fontColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
-//            materialLabel.fontName = "ChalkboardSE-Bold";
-//            materialLabel.fontSize = 25;
-//            materialLabel.horizontalAlignmentMode = .center;
-//            materialLabel.isHidden = true;
-//            self.camera?.addChild(materialLabel);
-//            attackBodyMaterialLabels.append(materialLabel);
-//        }
-        
-//        attackUpperBodyLabel.position = CGPoint(x: 0, y: self.size.height / 6);
-//        attackUpperBodyLabel.zPosition = 100;
-//        attackUpperBodyLabel.text = "Upper Body Text";
-//        //attackUpperBodyLabel.numberOfLines = 3;
-//        attackUpperBodyLabel.fontColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
-//        attackUpperBodyLabel.fontName = "ChalkboardSE-Bold";
-//        attackUpperBodyLabel.fontSize = 25;
-//        attackUpperBodyLabel.horizontalAlignmentMode = .center;
-//        attackUpperBodyLabel.isHidden = true;
-//        self.camera?.addChild(attackUpperBodyLabel);
-        
-        attackBodyLabel.position = CGPoint(x: 0, y: 0);
-        attackBodyLabel.zPosition = 100;
-        attackBodyLabel.text = "Battle Body Text";
-        attackBodyLabel.numberOfLines = 3;
-        attackBodyLabel.fontColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
-        attackBodyLabel.fontName = "ChalkboardSE-Bold";
-        attackBodyLabel.fontSize = 25;
-        attackBodyLabel.horizontalAlignmentMode = .center;
-        attackBodyLabel.isHidden = true;
-        self.camera?.addChild(attackBodyLabel);
-    }
-    
-    func showStartAttackMenu(landTileData: LandTileData) {
-        uiOpen = true;
-        
-        //remove labels and nodes from the last menu
-        if(attackBodyMaterialNodes.count > 0) {
-            self.camera?.removeChildren(in: attackBodyMaterialLabels);
-            self.camera?.removeChildren(in: attackBodyMaterialNodes);
-            
-            attackBodyMaterialLabels = [];
-            attackBodyMaterialNodes = [];
-        }
-        
-        attackBackgroundNode.isHidden = false;
-        
-        attackCloseLabel.isHidden = false;
-        
-        attackButtonLabel.isHidden = false;
-        attackTitleLabel.text = "Battle in " + landTileData.landType.rawValue;
-        attackTitleLabel.isHidden = false;
-        
-//        attackUpperBodyLabel.isHidden = false;
-//        attackUpperBodyLabel.text = """
-//            Coins: 1,000   XP: 10
-//        """;
-        
-//        for i in 0..<landTileData.materials.count {
-//            attackBodyMaterialLabels[i].text = Tools.createDigitSeparatedString(landTileData.materials[i].amount, seperator: " ");
-//            attackBodyMaterialLabels[i].isHidden = false;
-//        }
-        
-        for i in 0..<landTileData.materials.count {
-            let materialSize = self.size.width / 26;
-            
-            let materialLabel = SKLabelNode();
-            materialLabel.text = Tools.createDigitSeparatedString(landTileData.materials[i].amount, seperator: " ");
-            materialLabel.position = CGPoint(
-                x: CGFloat((i - 1)) * (self.size.width / 4) + (materialSize / 2) + 4,
-                y: self.size.height / 5
-            );
-            materialLabel.zPosition = 100;
-            materialLabel.fontColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
-            materialLabel.fontName = "ChalkboardSE-Bold";
-            materialLabel.fontSize = 25;
-            materialLabel.horizontalAlignmentMode = .left;
-            self.camera?.addChild(materialLabel);
-            attackBodyMaterialLabels.append(materialLabel);
-            
-            let materialNode = SKSpriteNode(imageNamed: GameTools.getMaterialAssetName(landTileData.materials[i].type));
-            materialNode.size = CGSize(width: materialSize, height: materialSize);
-            materialNode.position = CGPoint(
-                x: CGFloat((i - 1)) * (self.size.width / 4),
-                y: (self.size.height / 5) + materialLabel.frame.height / 2
-            );
-            materialNode.zPosition = 100;
-            self.camera?.addChild(materialNode);
-            attackBodyMaterialNodes.append(materialNode);
-        }
-        
-        let forcesType = TankData.getTank(landTileData.battleGeneratorData.forcesType);
-        
-        let attackBodyLabelText = NSMutableAttributedString(string: """
-            Difficulty: \(landTileData.battleGeneratorData.difficulty)
-            Type of Forces: \(forcesType.name)
-        """);
-        let attackBodyLabelColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
-        let attackBodyValueColor = #colorLiteral(red: 0.9739930458, green: 0.7904064641, blue: 0.115796683, alpha: 1);
-        attackBodyLabelText.addAttribute(.font, value: UIFont(name: "ChalkboardSE-Bold", size: 25) as Any, range: NSRange(location: 0, length: attackBodyLabelText.string.count));
-        attackBodyLabelText.addAttribute(.foregroundColor, value: attackBodyLabelColor, range: NSRange(location: 0, length: attackBodyLabelText.string.count));
-        let splitAttackBodyText = attackBodyLabelText.string.split(separator: "\n");
-        if(splitAttackBodyText.count == 2) {
-            attackBodyLabelText.addAttribute(
-                .foregroundColor,
-                value: attackBodyValueColor,
-                range: NSString(string: attackBodyLabelText.string).range(of: landTileData.battleGeneratorData.difficulty.rawValue)
-            );
-            attackBodyLabelText.addAttribute(
-                .foregroundColor,
-                value: attackBodyValueColor,
-                range: NSString(string: attackBodyLabelText.string).range(of: forcesType.name)
-            );
-        }
-        attackBodyLabel.attributedText = attackBodyLabelText;
-        attackBodyLabel.isHidden = false;
-        
-        currentAttackSelected = landTileData;
-    }
-    
-    func hideStartAttackMenu() {
-        uiOpen = false;
-        
-        attackBackgroundNode.isHidden = true;
-        
-        attackCloseLabel.isHidden = true;
-        
-        for i in 0..<attackBodyMaterialLabels.count {
-            attackBodyMaterialLabels[i].isHidden = true;
-            attackBodyMaterialNodes[i].isHidden = true;
-        }
-        
-        attackButtonLabel.isHidden = true;
-        attackTitleLabel.isHidden = true;
-        attackBodyLabel.isHidden = true;
-    }
-    
-    func setupShopMenu() {
-        shopBackgroundNode = SKShapeNode(rect: CGRect(
-            x: -self.size.width / 1.25 / 2,
-            y: -self.size.height / 1.25 / 2,
-            width: self.size.width / 1.25,
-            height: self.size.height / 1.25
-        ), cornerRadius: 14);
-        shopBackgroundNode.zPosition = 95;
-        shopBackgroundNode.lineWidth = 0;
-        shopBackgroundNode.fillColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 0.8);
-        shopBackgroundNode.isHidden = true;
-        self.camera?.addChild(shopBackgroundNode);
-        
-        shopCloseLabel.position = CGPoint(x: (self.size.width / 1.25 / 2) - 15, y: (self.size.height / 1.25 / 2) - 30);
-        shopCloseLabel.zPosition = 100;
-        shopCloseLabel.text = "Close";
-        shopCloseLabel.fontColor = #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1);
-        shopCloseLabel.fontName = "ChalkboardSE-Bold";
-        shopCloseLabel.fontSize = 20;
-        shopCloseLabel.horizontalAlignmentMode = .right;
-        shopCloseLabel.isHidden = true;
-        self.camera?.addChild(shopCloseLabel);
-        
-        shopTitleLabel.position = CGPoint(x: 0, y: self.size.height / 3);
-        shopTitleLabel.zPosition = 100;
-        shopTitleLabel.text = "City Shop";
-        shopTitleLabel.fontColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1);
-        shopTitleLabel.fontName = "ChalkboardSE-Bold";
-        shopTitleLabel.fontSize = 30;
-        shopTitleLabel.isHidden = true;
-        self.camera?.addChild(shopTitleLabel);
-        
-        for i in 0..<shopTabs.count {
-            let tabLabel = SKLabelNode();
-            tabLabel.text = shopTabs[i];
-            tabLabel.position = CGPoint(
-                x: CGFloat((i - 1)) * (self.size.width / 4) + 4,
-                y: self.size.height / 5
-            );
-            tabLabel.zPosition = 100;
-            tabLabel.fontColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
-            tabLabel.fontName = "ChalkboardSE-Bold";
-            tabLabel.fontSize = 25;
-            tabLabel.horizontalAlignmentMode = .center;
-            tabLabel.isHidden = true;
-            self.camera?.addChild(tabLabel);
-            shopBodyTabLabels.append(tabLabel);
-        }
-    }
-    
-    func showShopMenu() {
-        uiOpen = true;
-        shopBackgroundNode.isHidden = false;
-        shopCloseLabel.isHidden = false;
-        shopTitleLabel.isHidden = false;
-        
-        for i in 0..<shopBodyTabLabels.count {
-            shopBodyTabLabels[i].isHidden = false;
-        }
-    }
-    
-    func hideShopMenu() {
-        uiOpen = false;
-        shopBackgroundNode.isHidden = true;
-        shopCloseLabel.isHidden = true;
-        shopTitleLabel.isHidden = true;
-        
-        for i in 0..<shopBodyTabLabels.count {
-            shopBodyTabLabels[i].isHidden = true;
-        }
+        settingsTitleLabel.position = CGPoint(x: 0, y: self.size.height / 3);
+        settingsTitleLabel.zPosition = 100;
+        settingsTitleLabel.text = "City Settings";
+        settingsTitleLabel.fontColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1);
+        settingsTitleLabel.fontName = "ChalkboardSE-Bold";
+        settingsTitleLabel.fontSize = 30;
+        settingsTitleLabel.isHidden = true;
+        self.camera?.addChild(settingsTitleLabel);
     }
     
     override func didMove(to view: SKView) {
@@ -434,28 +505,42 @@ class GameScene: SKScene {
         view.addGestureRecognizer(pinchGesture);
         
         //all the swipe directions to listen for
-        let swipeDirections: [UISwipeGestureRecognizer.Direction] = [.left, .right, .up, .down];
+        //let swipeDirections: [UISwipeGestureRecognizer.Direction] = [.left, .right, .up, .down];
         
         //loop through each direction and setup a separate gesture for each one
-        for direction in swipeDirections {
-            let swipeGesture = UISwipeGestureRecognizer();
-            swipeGesture.direction = direction;
-            swipeGesture.numberOfTouchesRequired = 1;
-            swipeGesture.addTarget(self, action: #selector(swipeGestureAction(_:)));
-            view.addGestureRecognizer(swipeGesture);
-        }
+//        for direction in swipeDirections {
+//            let swipeGesture = UISwipeGestureRecognizer();
+//            swipeGesture.direction = direction;
+//            swipeGesture.numberOfTouchesRequired = 1;
+//            swipeGesture.addTarget(self, action: #selector(swipeGestureAction(_:)));
+//            view.addGestureRecognizer(swipeGesture);
+//        }
         
         setupMaterialLabels();
         
-        setupAttackMenu();
-        
-        setupShopMenu();
+        attackMenuUI = AttackMenuUI(self);
+        attackMenuUI.setupMenu();
+        //setupAttackMenu();
+        //setupShopMenu();
+        shopMenuUI = ShopMenuUI(self);
+        shopMenuUI.setupMenu();
+        setupSettingsMenu();
         
         shopButtonNode = SKSpriteNode(imageNamed: "ShopButton");
-        shopButtonNode.position = CGPoint(x: GameTools.rightCenterWidth - (self.size.width / 16) - 3, y: GameTools.bottomCenterHeight + (self.size.width / 16) + 3);
+        let shopButtonNodePositionX = GameTools.rightCenterWidth - (self.size.width / 16) - 3;
+        let shopButtonNodePositionY = GameTools.bottomCenterHeight + (self.size.width / 16) + 3;
+        shopButtonNode.position = CGPoint(x: shopButtonNodePositionX, y: shopButtonNodePositionY);
         shopButtonNode.size = CGSize(width: self.size.width / 8, height: self.size.width / 8);
         shopButtonNode.zPosition = 90;
         self.camera?.addChild(shopButtonNode);
+        
+        settingsButtonNode = SKSpriteNode(imageNamed: "SettingsButton");
+        let settingsButtonNodePositionX = GameTools.rightCenterWidth - (self.size.width / 32) - 1;
+        let settingsButtonNodePositionY = GameTools.topCenterHeight - (self.size.width / 32) - 1;
+        settingsButtonNode.position = CGPoint(x: settingsButtonNodePositionX, y: settingsButtonNodePositionY);
+        settingsButtonNode.size = CGSize(width: self.size.width / 16, height: self.size.width / 16);
+        settingsButtonNode.zPosition = 90;
+        self.camera?.addChild(settingsButtonNode);
     }
     
     @objc func swipeGestureAction(_ sender: UISwipeGestureRecognizer) {
@@ -539,23 +624,29 @@ class GameScene: SKScene {
             
             let touchingNodes = self.nodes(at: touchLocation); //array of all the nodes that have been touched
             
-            if(touchingNodes.contains(attackButtonLabel)) {
+            if(touchingNodes.contains(attackMenuUI.buttonLabel)) {
                 GameTools.currentBattleLandType = currentAttackSelected.landType;
                 GameTools.currentBattleData = BattleGenerator.getFixedBattle(generatorData: currentAttackSelected.battleGeneratorData);
                 
                 Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Battle);
                 return;
             }
-            if(touchingNodes.contains(attackCloseLabel)) {
-                hideStartAttackMenu();
+            if(touchingNodes.contains(attackMenuUI.closeLabel)) {
+                attackMenuUI.hideMenu();
+                uiOpen = false;
             }
             if(touchingNodes.contains(shopButtonNode)) {
                 if(!uiOpen) {
-                    showShopMenu();
+                    shopMenuUI.showMenu();
+                    uiOpen = true;
                 }
             }
-            if(touchingNodes.contains(shopCloseLabel)) {
-                hideShopMenu();
+            if(touchingNodes.contains(shopMenuUI.closeLabel)) {
+                shopMenuUI.hideMenu();
+                uiOpen = false;
+            }
+            if(touchingNodes.contains(settingsButtonNode)) {
+                uiOpen = true;
             }
         }
         
@@ -592,7 +683,9 @@ class GameScene: SKScene {
                             GameTools.currentBattleLandType = GameTools.capturedLands[posX][posY].landType;
                             GameTools.currentBattleData = BattleGenerator.getFixedBattle(generatorData: GameTools.capturedLands[posX][posY].battleGeneratorData);
                             
-                            showStartAttackMenu(landTileData: GameTools.capturedLands[posX][posY]);
+                            currentAttackSelected = GameTools.capturedLands[posX][posY];
+                            attackMenuUI.showMenu(landTileData: GameTools.capturedLands[posX][posY]);
+                            uiOpen = true;
                             //Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Battle);
                         }
                     }
