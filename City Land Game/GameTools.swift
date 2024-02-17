@@ -98,13 +98,19 @@ class GameTools {
     static var borderNodesParent: SKSpriteNode = SKSpriteNode();
     
     static var currentBattleLandType: BattleLandType = BattleLandType.GrassLands;
+    static var currentBattleLandPosition: GameVector2Int = GameVector2Int.zero;
     
     static var currentBattleRound: Int = -1; //-1 if not in battle
     static var currentBattleLives: Int = 3;
     
-    static var brickAmount: Int = 10000;
-    static var planksAmount: Int = 100;
+    static var brickAmount: Int = 100;
+    static var planksAmount: Int = 20;
     static var diamondAmount: Int = 10;
+    
+    static var mudAmount: Int = 10;
+    static var clayAmount: Int = 10;
+    static var woodAmount: Int = 10;
+    static var frozenWoodAmount: Int = 0;
     
     static var currentBattleData: BattleData = BattleData(
         rounds: [

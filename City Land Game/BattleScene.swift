@@ -242,7 +242,7 @@ class BattleScene: SKScene {
     
     func addPlayRoundButton() {
         let nodeSize = self.size.width / 16;
-        playButton = SKSpriteNode(imageNamed: "PlayButton");
+        playButton = SKSpriteNode(imageNamed: "Buttons/PlayButton");
         playButton.size = CGSize(width: nodeSize, height: nodeSize);
         
         let buttonPosX = GameTools.rightCenterWidth - (nodeSize / 2);
@@ -299,12 +299,12 @@ class BattleScene: SKScene {
     
     //updates the texture of the play button based on the game state
     func updatePlayButton() {
-        playButton.texture = (isPlaying ? SKTexture(imageNamed: "PlayingButton") : SKTexture(imageNamed: "PlayButton"));
+        playButton.texture = (isPlaying ? SKTexture(imageNamed: "Buttons/PlayingButton") : SKTexture(imageNamed: "Buttons/PlayButton"));
     }
     
     func addDefenseMenu() {
         let nodeSize = self.size.width / 16;
-        addDefenseButton = SKSpriteNode(imageNamed: "AddButton");
+        addDefenseButton = SKSpriteNode(imageNamed: "Buttons/AddButton");
         addDefenseButton.size = CGSize(width: nodeSize, height: nodeSize);
         
         let buttonPosX = GameTools.leftCenterWidth + (nodeSize / 2);
@@ -468,7 +468,7 @@ class BattleScene: SKScene {
         let negativeCenterHeight = -(self.size.height / 2);
         
         let nodeSize = self.size.width / 16;
-        spawnTankButton = SKSpriteNode(imageNamed: "TankButton");
+        spawnTankButton = SKSpriteNode(imageNamed: "Buttons/TankButton");
         spawnTankButton.size = CGSize(width: nodeSize, height: nodeSize);
         
         let spawnTankButtonPositionX = negativeCenterWidth + (nodeSize / 2);
@@ -771,6 +771,44 @@ class BattleScene: SKScene {
             
             if(GameTools.currentBattleLives <= 0) {
                 Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Village);
+                return; //return to avoid winning although the last tank caused a loss
+            }
+        }
+    }
+    
+    //called when a round is over
+    func roundEnded() {
+        isPlaying = false;
+        updatePlayButton();
+        //check if the final round ended
+        if(GameTools.currentBattleRound == GameTools.currentBattleData.rounds.count - 1) {
+            //check if the battle was won
+            if(GameTools.currentBattleLives > 0) {
+                GameTools.capturedLands[GameTools.currentBattleLandPosition.x][GameTools.currentBattleLandPosition.y].captured = true;
+                let land = GameTools.capturedLands[GameTools.currentBattleLandPosition.x][GameTools.currentBattleLandPosition.y];
+                
+                for i in 0..<land.materials.count {
+                    switch(land.materials[i].type) {
+                        case MaterialType.Mud:
+                            GameTools.mudAmount += land.materials[i].amount;
+                            break;
+                        case MaterialType.Clay:
+                            GameTools.clayAmount += land.materials[i].amount;
+                            break;
+                        case MaterialType.Wood:
+                            GameTools.woodAmount += land.materials[i].amount;
+                            break;
+                        case MaterialType.FrozenWood:
+                            GameTools.frozenWoodAmount += land.materials[i].amount;
+                            break;
+                        case MaterialType.Diamond:
+                            GameTools.diamondAmount += land.materials[i].amount;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Village);
             }
         }
     }
@@ -833,8 +871,7 @@ class BattleScene: SKScene {
             //if all the tanks have no health stop the round early
             if(!tankAlive) {
                 tankMoveWorkItem?.cancel(); //cancel the current scheduled round stop work item
-                isPlaying = false;
-                updatePlayButton();
+                roundEnded();
             }
         }
         
@@ -866,18 +903,17 @@ class BattleScene: SKScene {
                     
                     let tankMove = SKAction.moveBy(x: self.size.width, y: 0, duration: 5);
                     tank.run(tankMove, completion: {
-                        self.tankMoveCompleted(tankIndex: thisTankIndex)
+                        self.tankMoveCompleted(tankIndex: thisTankIndex);
                     });
                     
                     //check if there are more tanks to come
                     if(currentTankIndex + 1 >= currentRoundTanks.count) {
                         //wait for tanks to fully leave before you could start the next round
                         tankMoveWorkItem = DispatchWorkItem { [self] in
-                            isPlaying = false;
-                            updatePlayButton();
+                            roundEnded();
                         }
                         
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: tankMoveWorkItem!)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: tankMoveWorkItem!);
                     }
                     
                     currentTankIndex += 1;
@@ -893,7 +929,7 @@ class BattleScene: SKScene {
     //sets hidden value for the add defense menu
     func setAddDefenseMenuHidden(_ value: Bool) {
         addDefenseParent.isHidden = value;
-        addDefenseButton.texture = SKTexture(imageNamed: addDefenseParent.isHidden ? "AddButton" : "CloseButton");
+        addDefenseButton.texture = SKTexture(imageNamed: addDefenseParent.isHidden ? "Buttons/AddButton" : "Buttons/CloseButton");
         updateDefenseMenu();
     }
     

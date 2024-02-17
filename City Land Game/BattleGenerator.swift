@@ -23,6 +23,9 @@ struct BattleGeneratorData {
     var id: Int = 1;
 }
 
+
+
+
 //enum BattleGeneratorType {
 //    case EasyGreen1
 //    case MediumGreen1

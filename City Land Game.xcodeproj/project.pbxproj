@@ -26,6 +26,9 @@
 		9AC763102B70ACBD0038C257 /* Wind.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9AC7630F2B70ACBC0038C257 /* Wind.mp3 */; };
 		9AC9487C2B5C916C00886A68 /* BattleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC9487B2B5C916C00886A68 /* BattleScene.swift */; };
 		9ACC5BDD2B785BB700777395 /* BattleGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACC5BDC2B785BB700777395 /* BattleGenerator.swift */; };
+		9AE992ED2B80423500D8C9AD /* AttackMenuUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE992EC2B80423500D8C9AD /* AttackMenuUI.swift */; };
+		9AE992EF2B80425900D8C9AD /* ShopMenuUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE992EE2B80425900D8C9AD /* ShopMenuUI.swift */; };
+		9AE992F12B8042A300D8C9AD /* SettingsMenuUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE992F02B8042A300D8C9AD /* SettingsMenuUI.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +71,9 @@
 		9AC7630F2B70ACBC0038C257 /* Wind.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Wind.mp3; sourceTree = "<group>"; };
 		9AC9487B2B5C916C00886A68 /* BattleScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleScene.swift; sourceTree = "<group>"; };
 		9ACC5BDC2B785BB700777395 /* BattleGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleGenerator.swift; sourceTree = "<group>"; };
+		9AE992EC2B80423500D8C9AD /* AttackMenuUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttackMenuUI.swift; sourceTree = "<group>"; };
+		9AE992EE2B80425900D8C9AD /* ShopMenuUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopMenuUI.swift; sourceTree = "<group>"; };
+		9AE992F02B8042A300D8C9AD /* SettingsMenuUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMenuUI.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +124,7 @@
 		9A6CD02E2B59E7420028A5DA /* City Land Game */ = {
 			isa = PBXGroup;
 			children = (
+				9AE992EB2B80422000D8C9AD /* UIComponents */,
 				9AC763112B70ACCC0038C257 /* Sounds */,
 				9A6CD02F2B59E7420028A5DA /* AppDelegate.swift */,
 				9A6CD0352B59E7420028A5DA /* GameScene.swift */,
@@ -161,6 +168,16 @@
 				9AC7630F2B70ACBC0038C257 /* Wind.mp3 */,
 			);
 			path = Sounds;
+			sourceTree = "<group>";
+		};
+		9AE992EB2B80422000D8C9AD /* UIComponents */ = {
+			isa = PBXGroup;
+			children = (
+				9AE992EC2B80423500D8C9AD /* AttackMenuUI.swift */,
+				9AE992EE2B80425900D8C9AD /* ShopMenuUI.swift */,
+				9AE992F02B8042A300D8C9AD /* SettingsMenuUI.swift */,
+			);
+			path = UIComponents;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -300,8 +317,11 @@
 			files = (
 				9A6CD0362B59E7420028A5DA /* GameScene.swift in Sources */,
 				9ACC5BDD2B785BB700777395 /* BattleGenerator.swift in Sources */,
+				9AE992EF2B80425900D8C9AD /* ShopMenuUI.swift in Sources */,
+				9AE992F12B8042A300D8C9AD /* SettingsMenuUI.swift in Sources */,
 				9A3F47252B5B96260069BBED /* GameTools.swift in Sources */,
 				9A6CD0382B59E7420028A5DA /* GameViewController.swift in Sources */,
+				9AE992ED2B80423500D8C9AD /* AttackMenuUI.swift in Sources */,
 				9A6CD0632B59F21E0028A5DA /* MainMenuScene.swift in Sources */,
 				9A3F47272B5BA0E80069BBED /* Tools.swift in Sources */,
 				9A3F47232B5B89770069BBED /* LandGenerator.swift in Sources */,
