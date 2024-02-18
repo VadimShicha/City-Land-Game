@@ -10,6 +10,7 @@ import SpriteKit;
 class SettingsMenuUI {
     var backgroundNode = SKShapeNode();
     var closeLabel = SKLabelNode();
+    var closeLabelBackground = SKShapeNode();
     var titleLabel = SKLabelNode();
     
     var saveDataButtonNode = SKSpriteNode();
@@ -45,6 +46,16 @@ class SettingsMenuUI {
         closeLabel.horizontalAlignmentMode = .right;
         closeLabel.isHidden = true;
         scene.camera?.addChild(closeLabel);
+        closeLabelBackground = SKShapeNode(rect: CGRect(
+            x: -closeLabel.frame.width,
+            y: -3,
+            width: closeLabel.frame.width,
+            height: closeLabel.frame.height
+        ), cornerRadius: 5);
+        closeLabelBackground.lineWidth = 10;
+        closeLabelBackground.fillColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1);
+        closeLabelBackground.strokeColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1);
+        closeLabel.addChild(closeLabelBackground);
         
         titleLabel.position = CGPoint(x: 0, y: scene.size.height / 3);
         titleLabel.zPosition = 100;

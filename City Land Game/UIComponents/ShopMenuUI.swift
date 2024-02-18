@@ -6,16 +6,21 @@
 //
 
 import SpriteKit;
+import SwiftySKScrollView;
 
 class ShopMenuUI {
     var backgroundNode = SKShapeNode();
     var closeLabel = SKLabelNode();
+    var closeLabelBackground = SKShapeNode();
     var titleLabel = SKLabelNode();
     
     var bodyTabLabels: [SKLabelNode] = [];
     
     let shopTabs: [String] = ["Production", "Defenses", "Decorations"];
     
+    var scrollView: SwiftySKScrollView?;
+    var movableScrollNode = SKNode();
+
     var scene: SKScene;
     
     init(_ scene: SKScene) {
@@ -23,6 +28,65 @@ class ShopMenuUI {
     }
     
     func setupMenu() {
+        let cropNode = SKCropNode();
+        let cropMaskNode = SKSpriteNode(color: .yellow, size: CGSize(width: scene.size.width / 1.5, height: scene.size.height / 1.5));
+        cropNode.maskNode = cropMaskNode;
+        cropNode.position = CGPoint.zero;
+        cropNode.zPosition = 105;
+        cropNode.addChild(movableScrollNode);
+        scene.camera?.addChild(cropNode);
+        
+        let scrollViewFrame = CGRect(x: 0, y: 0, width: scene.size.width / 1.5, height: scene.size.height / 1.5);
+        scrollView = SwiftySKScrollView(
+            frame: scrollViewFrame,
+            moveableNode: movableScrollNode,
+            direction: .vertical
+        );
+        guard let scrollView = scrollView else { return; }
+        scrollView.contentSize = CGSize(width: scrollViewFrame.width, height: scrollViewFrame.height * 5);
+        scrollView.center = CGPoint(x: scene.frame.midX, y: scene.frame.midY);
+        scrollView.contentOffset = CGPoint(x: 0, y: 10);
+        scrollView.isDisabled = true;
+        scrollView.isHidden = true;
+        scrollView.showsVerticalScrollIndicator = true;
+        scene.view?.addSubview(scrollView);
+        
+        movableScrollNode.isHidden = true;
+        
+        let scrollNode1 = SKSpriteNode(color: .red, size: CGSize(width: 300, height: 100));
+        scrollNode1.position = CGPoint.zero;
+        movableScrollNode.addChild(scrollNode1);
+        
+        
+//        scene.camera?.addChild(movableNode);
+//        movableNode.zPosition = 101;
+//        scrollView = SwiftySKScrollView(frame: CGRect(x: 0, y: 0, width: scene.size.width, height: scene.size.height), moveableNode: movableNode, direction: .vertical);
+//        scrollView?.contentSize = CGSize(width: scrollView!.frame.width, height: scrollView!.frame.height * 3); // makes it 3 times the height
+//        //scrollView?.backgroundColor = .blue;
+//        scrollView?.center = CGPoint(x: scene.frame.midX, y: scene.frame.midY)
+//        scene.view?.addSubview(scrollView!);
+//        scrollView?.isDisabled = true;
+//        scrollView?.isHidden = true;
+//        scrollView?.showsVerticalScrollIndicator = true;
+//        
+//        guard let scrollView = scrollView else { return } // unwrap  optional
+//
+//        let page1ScrollView = SKSpriteNode(color: .red, size: CGSize(width: 100, height: 100))
+//        page1ScrollView.zPosition = 105;
+//        page1ScrollView.position = CGPoint(x: 0, y: 0)
+//        movableNode.addChild(page1ScrollView)
+//                
+//        let page2ScrollView = SKSpriteNode(color: .yellow, size: CGSize(width: scrollView.frame.width, height: scrollView.frame.size.height / 3))
+//        page2ScrollView.position = CGPoint(x: 0, y: scene.frame.midY)
+//        movableNode.addChild(page2ScrollView)
+//                
+//        let page3ScrollView = SKSpriteNode(color: .green, size: CGSize(width: scrollView.frame.width, height: scrollView.frame.size.height / 3))
+//        page3ScrollView.position = CGPoint(x: 0, y: scene.frame.midY)
+//        movableNode.addChild(page3ScrollView)
+        
+        
+        
+        
         backgroundNode = SKShapeNode(rect: CGRect(
             x: -scene.size.width / 1.25 / 2,
             y: -scene.size.height / 1.25 / 2,
@@ -44,6 +108,16 @@ class ShopMenuUI {
         closeLabel.horizontalAlignmentMode = .right;
         closeLabel.isHidden = true;
         scene.camera?.addChild(closeLabel);
+        closeLabelBackground = SKShapeNode(rect: CGRect(
+            x: -closeLabel.frame.width,
+            y: -3,
+            width: closeLabel.frame.width,
+            height: closeLabel.frame.height
+        ), cornerRadius: 5);
+        closeLabelBackground.lineWidth = 10;
+        closeLabelBackground.fillColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1);
+        closeLabelBackground.strokeColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1);
+        closeLabel.addChild(closeLabelBackground);
         
         titleLabel.position = CGPoint(x: 0, y: scene.size.height / 3);
         titleLabel.zPosition = 100;
@@ -80,6 +154,10 @@ class ShopMenuUI {
         for i in 0..<bodyTabLabels.count {
             bodyTabLabels[i].isHidden = false;
         }
+        
+        scrollView?.isDisabled = false;
+        scrollView?.isHidden = false;
+        movableScrollNode.isHidden = false;
     }
     
     func hideMenu() {
@@ -90,5 +168,9 @@ class ShopMenuUI {
         for i in 0..<bodyTabLabels.count {
             bodyTabLabels[i].isHidden = true;
         }
+        
+        scrollView?.isDisabled = true;
+        scrollView?.isHidden = true;
+        movableScrollNode.isHidden = true;
     }
 }

@@ -10,6 +10,8 @@
 		9A3F47232B5B89770069BBED /* LandGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3F47222B5B89770069BBED /* LandGenerator.swift */; };
 		9A3F47252B5B96260069BBED /* GameTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3F47242B5B96260069BBED /* GameTools.swift */; };
 		9A3F47272B5BA0E80069BBED /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3F47262B5BA0E80069BBED /* Tools.swift */; };
+		9A5766E82B81423500176A46 /* SwiftySKScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = 9A5766E72B81423500176A46 /* SwiftySKScrollView */; };
+		9A5766EA2B814F9D00176A46 /* SKScrollNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5766E92B814F9D00176A46 /* SKScrollNode.swift */; };
 		9A6CD0302B59E7420028A5DA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CD02F2B59E7420028A5DA /* AppDelegate.swift */; };
 		9A6CD0342B59E7420028A5DA /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 9A6CD0332B59E7420028A5DA /* Actions.sks */; };
 		9A6CD0362B59E7420028A5DA /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CD0352B59E7420028A5DA /* GameScene.swift */; };
@@ -52,6 +54,7 @@
 		9A3F47222B5B89770069BBED /* LandGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandGenerator.swift; sourceTree = "<group>"; };
 		9A3F47242B5B96260069BBED /* GameTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTools.swift; sourceTree = "<group>"; };
 		9A3F47262B5BA0E80069BBED /* Tools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
+		9A5766E92B814F9D00176A46 /* SKScrollNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKScrollNode.swift; sourceTree = "<group>"; };
 		9A6CD02C2B59E7420028A5DA /* City Land Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "City Land Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A6CD02F2B59E7420028A5DA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9A6CD0332B59E7420028A5DA /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
@@ -81,6 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A5766E82B81423500176A46 /* SwiftySKScrollView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,6 +180,7 @@
 				9AE992EC2B80423500D8C9AD /* AttackMenuUI.swift */,
 				9AE992EE2B80425900D8C9AD /* ShopMenuUI.swift */,
 				9AE992F02B8042A300D8C9AD /* SettingsMenuUI.swift */,
+				9A5766E92B814F9D00176A46 /* SKScrollNode.swift */,
 			);
 			path = UIComponents;
 			sourceTree = "<group>";
@@ -196,6 +201,9 @@
 			dependencies = (
 			);
 			name = "City Land Game";
+			packageProductDependencies = (
+				9A5766E72B81423500176A46 /* SwiftySKScrollView */,
+			);
 			productName = "City Land Game";
 			productReference = 9A6CD02C2B59E7420028A5DA /* City Land Game.app */;
 			productType = "com.apple.product-type.application";
@@ -268,6 +276,9 @@
 				Base,
 			);
 			mainGroup = 9A6CD0232B59E7420028A5DA;
+			packageReferences = (
+				9A5766E62B81423500176A46 /* XCRemoteSwiftPackageReference "swifty-sk-scroll-view" */,
+			);
 			productRefGroup = 9A6CD02D2B59E7420028A5DA /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -322,6 +333,7 @@
 				9A3F47252B5B96260069BBED /* GameTools.swift in Sources */,
 				9A6CD0382B59E7420028A5DA /* GameViewController.swift in Sources */,
 				9AE992ED2B80423500D8C9AD /* AttackMenuUI.swift in Sources */,
+				9A5766EA2B814F9D00176A46 /* SKScrollNode.swift in Sources */,
 				9A6CD0632B59F21E0028A5DA /* MainMenuScene.swift in Sources */,
 				9A3F47272B5BA0E80069BBED /* Tools.swift in Sources */,
 				9A3F47232B5B89770069BBED /* LandGenerator.swift in Sources */,
@@ -679,6 +691,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9A5766E62B81423500176A46 /* XCRemoteSwiftPackageReference "swifty-sk-scroll-view" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/crashoverride777/swifty-sk-scroll-view.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9A5766E72B81423500176A46 /* SwiftySKScrollView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9A5766E62B81423500176A46 /* XCRemoteSwiftPackageReference "swifty-sk-scroll-view" */;
+			productName = SwiftySKScrollView;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9A6CD0242B59E7420028A5DA /* Project object */;
 }

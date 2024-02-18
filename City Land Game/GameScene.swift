@@ -383,7 +383,7 @@ class GameScene: SKScene {
                 Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Battle);
                 return;
             }
-            if(touchingNodes.contains(attackMenuUI.closeLabel)) {
+            if(touchingNodes.contains(attackMenuUI.closeLabelBackground)) {
                 attackMenuUI.hideMenu();
                 uiOpen = false;
                 
@@ -402,7 +402,7 @@ class GameScene: SKScene {
                     uiOpen = true;
                 }
             }
-            if(touchingNodes.contains(shopMenuUI.closeLabel)) {
+            if(touchingNodes.contains(shopMenuUI.closeLabelBackground)) {
                 shopMenuUI.hideMenu();
                 uiOpen = false;
             }
@@ -411,7 +411,7 @@ class GameScene: SKScene {
                 settingsMenuUI.showMenu();
                 uiOpen = true;
             }
-            if(touchingNodes.contains(settingsMenuUI.closeLabel)) {
+            if(touchingNodes.contains(settingsMenuUI.closeLabelBackground)) {
                 settingsMenuUI.hideMenu();
                 uiOpen = false;
             }
