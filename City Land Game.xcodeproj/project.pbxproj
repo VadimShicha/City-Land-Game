@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9A0BEFE92B82F1F500B3F4FA /* ShopMenuItemUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0BEFE82B82F1F500B3F4FA /* ShopMenuItemUI.swift */; };
+		9A0BEFEB2B83265700B3F4FA /* MaterialItemUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0BEFEA2B83265700B3F4FA /* MaterialItemUI.swift */; };
 		9A3F47232B5B89770069BBED /* LandGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3F47222B5B89770069BBED /* LandGenerator.swift */; };
 		9A3F47252B5B96260069BBED /* GameTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3F47242B5B96260069BBED /* GameTools.swift */; };
 		9A3F47272B5BA0E80069BBED /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3F47262B5BA0E80069BBED /* Tools.swift */; };
@@ -51,6 +53,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9A0BEFE82B82F1F500B3F4FA /* ShopMenuItemUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopMenuItemUI.swift; sourceTree = "<group>"; };
+		9A0BEFEA2B83265700B3F4FA /* MaterialItemUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialItemUI.swift; sourceTree = "<group>"; };
 		9A3F47222B5B89770069BBED /* LandGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandGenerator.swift; sourceTree = "<group>"; };
 		9A3F47242B5B96260069BBED /* GameTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTools.swift; sourceTree = "<group>"; };
 		9A3F47262B5BA0E80069BBED /* Tools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
@@ -181,6 +185,8 @@
 				9AE992EE2B80425900D8C9AD /* ShopMenuUI.swift */,
 				9AE992F02B8042A300D8C9AD /* SettingsMenuUI.swift */,
 				9A5766E92B814F9D00176A46 /* SKScrollNode.swift */,
+				9A0BEFE82B82F1F500B3F4FA /* ShopMenuItemUI.swift */,
+				9A0BEFEA2B83265700B3F4FA /* MaterialItemUI.swift */,
 			);
 			path = UIComponents;
 			sourceTree = "<group>";
@@ -333,9 +339,11 @@
 				9A3F47252B5B96260069BBED /* GameTools.swift in Sources */,
 				9A6CD0382B59E7420028A5DA /* GameViewController.swift in Sources */,
 				9AE992ED2B80423500D8C9AD /* AttackMenuUI.swift in Sources */,
+				9A0BEFE92B82F1F500B3F4FA /* ShopMenuItemUI.swift in Sources */,
 				9A5766EA2B814F9D00176A46 /* SKScrollNode.swift in Sources */,
 				9A6CD0632B59F21E0028A5DA /* MainMenuScene.swift in Sources */,
 				9A3F47272B5BA0E80069BBED /* Tools.swift in Sources */,
+				9A0BEFEB2B83265700B3F4FA /* MaterialItemUI.swift in Sources */,
 				9A3F47232B5B89770069BBED /* LandGenerator.swift in Sources */,
 				9AC9487C2B5C916C00886A68 /* BattleScene.swift in Sources */,
 				9A6CD0302B59E7420028A5DA /* AppDelegate.swift in Sources */,

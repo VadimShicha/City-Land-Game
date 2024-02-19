@@ -33,7 +33,7 @@ class ShopMenuUI {
         
         scrollNode = SKScrollNode(
             scrollViewFrame: CGRect(x: 0, y: -scene.size.height / 8, width: scene.size.width / 1.5, height: scene.size.height / 2),
-            contentSize: CGSize(width: scene.size.width / 1.5, height: scene.size.height * 5),
+            contentSize: CGSize(width: scene.size.width / 1.5, height: scene.size.height * 1),
             sceneCenter: CGPoint(x: scene.frame.midX, y: scene.frame.midY),
             direction: .vertical
         );
@@ -125,19 +125,62 @@ class ShopMenuUI {
         scrollNode.removeAllChildren();
         
         if(currentTabIndex == 0) {
-            let scrollNode1 = SKSpriteNode(color: .green, size: CGSize(width: scrollNode.scrollView.frame.width, height: 100));
-            scrollNode1.position = CGPoint.zero;
-            scrollNode.addChild(scrollNode1);
+            let shopItem = ShopMenuItemUI();
+            shopItem.setupNode(
+                size: CGSize(width: scrollNode.scrollView.frame.width, height: 100),
+                imageName: "SawMill",
+                title: "Saw Mill",
+                materials: [
+                    MaterialData(type: MaterialType.Brick, amount: 50),
+                    MaterialData(type: MaterialType.Planks, amount: 15)
+                ]
+            );
+            shopItem.position = CGPoint(x: 0, y: 50);
+            scrollNode.addChild(shopItem);
+            
+            let shopItem2 = ShopMenuItemUI();
+            shopItem2.setupNode(
+                size: CGSize(width: scrollNode.scrollView.frame.width, height: 100),
+                imageName: "DiamondMine",
+                title: "Diamond Mine",
+                materials: [
+                    MaterialData(type: MaterialType.Brick, amount: 5000),
+                    MaterialData(type: MaterialType.Planks, amount: 1000)
+                ]
+            );
+            shopItem2.position = CGPoint(x: 0, y: -55);
+            scrollNode.addChild(shopItem2);
         }
         else if(currentTabIndex == 1) {
-            let scrollNode1 = SKSpriteNode(color: .blue, size: CGSize(width: scrollNode.scrollView.frame.width, height: 100));
-            scrollNode1.position = CGPoint.zero;
-            scrollNode.addChild(scrollNode1);
+//            let scrollNode1 = SKSpriteNode(color: .blue, size: CGSize(width: scrollNode.scrollView.frame.width, height: 100));
+//            scrollNode1.position = CGPoint.zero;
+//            scrollNode.addChild(scrollNode1);
         }
         else if(currentTabIndex == 2) {
-            let scrollNode1 = SKSpriteNode(color: .red, size: CGSize(width: scrollNode.scrollView.frame.width, height: 100));
-            scrollNode1.position = CGPoint.zero;
-            scrollNode.addChild(scrollNode1);
+            let shopItem = ShopMenuItemUI();
+            shopItem.setupNode(
+                size: CGSize(width: scrollNode.scrollView.frame.width, height: 100),
+                imageName: "BattlePathTiles/StonePathTile",
+                title: "Stone Tile",
+                materials: [
+                    MaterialData(type: MaterialType.Brick, amount: 5)
+                ]
+            );
+            shopItem.position = CGPoint(x: 0, y: 50);
+            scrollNode.addChild(shopItem);
+            
+            let shopItem2 = ShopMenuItemUI();
+            shopItem2.setupNode(
+                size: CGSize(width: scrollNode.scrollView.frame.width, height: 100),
+                imageName: "BattlePathTiles/SandPathTile",
+                title: "Sand Tile",
+                materials: [
+                    MaterialData(type: MaterialType.Brick, amount: 5),
+                    MaterialData(type: MaterialType.Diamond, amount: 1)
+                ]
+            );
+            shopItem2.position = CGPoint(x: 0, y: -55);
+            scrollNode.addChild(shopItem2);
         }
     }
     

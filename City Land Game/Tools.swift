@@ -43,6 +43,18 @@ class Tools {
         return value * .pi / 180;
     }
     
+    //converts pixels to points (pt) (mostly used to set font size based on pixels)
+    //16px = 12pt
+    static func pixelsToPoints(_ value: CGFloat) -> CGFloat {
+        return value / 1.3333333;
+    }
+    
+    //converts points (pt) to pixels
+    //12pt = 16px
+    static func pointsToPixels(_ value: CGFloat) -> CGFloat {
+        return value * 1.3333333;
+    }
+    
     static func createDigitSeparatedString(_ number: Int, seperator: String) -> String {
         var separatedString = String("");
         let numberString = String(number);
