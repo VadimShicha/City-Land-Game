@@ -15,22 +15,30 @@ class ShopMenuUI {
     var titleLabel = SKLabelNode();
     
     var bodyTabLabels: [SKLabelNode] = [];
+    var bodyTabContent: [SKNode] = [];
     
     let shopTabs: [String] = ["Production", "Defenses", "Decorations"];
+    let selectedTabTextColor = #colorLiteral(red: 0.3459514054, green: 0.3769503683, blue: 0.4166447747, alpha: 1);
+    let unselectedTabTextColor = #colorLiteral(red: 0.4612971827, green: 0.4612971827, blue: 0.4612971827, alpha: 1);
+    
+    var currentTabIndex = 0;
     
     var scrollNode: SKScrollNode;
 
     var scene: SKScene;
     
+    
     init(_ scene: SKScene) {
         self.scene = scene;
         
         scrollNode = SKScrollNode(
-            scrollViewFrame: CGRect(x: 0, y: 0, width: scene.size.width / 1.5, height: scene.size.height / 1.5),
+            scrollViewFrame: CGRect(x: 0, y: -scene.size.height / 8, width: scene.size.width / 1.5, height: scene.size.height / 2),
             contentSize: CGSize(width: scene.size.width / 1.5, height: scene.size.height * 5),
-            scrollViewCenter: CGPoint(x: scene.frame.midX, y: scene.frame.midY),
+            sceneCenter: CGPoint(x: scene.frame.midX, y: scene.frame.midY),
             direction: .vertical
         );
+        //scrollNode.scrollView.backgroundColor = #colorLiteral(red: 0.3950564931, green: 0.4677601484, blue: 1, alpha: 0.5);
+        scrollNode.scrollView.backgroundColor = #colorLiteral(red: 0.5717771864, green: 0.393343057, blue: 0.1795284801, alpha: 0.35);
         
         let scrollNode1 = SKSpriteNode(color: .red, size: CGSize(width: 300, height: 100));
         scrollNode1.position = CGPoint.zero;
@@ -92,13 +100,44 @@ class ShopMenuUI {
                 y: scene.size.height / 5
             );
             tabLabel.zPosition = 100;
-            tabLabel.fontColor = #colorLiteral(red: 0.3755322002, green: 0.4041152226, blue: 0.4470713507, alpha: 1);
+            tabLabel.fontColor = unselectedTabTextColor;
             tabLabel.fontName = "ChalkboardSE-Bold";
-            tabLabel.fontSize = 25;
+            tabLabel.fontSize = 23;
             tabLabel.horizontalAlignmentMode = .center;
             tabLabel.isHidden = true;
             scene.camera?.addChild(tabLabel);
             bodyTabLabels.append(tabLabel);
+        }
+        
+        updateSelectedTab(0);
+    }
+    
+    //update the tab labels to the currently selected one
+    func updateSelectedTab(_ index: Int) {
+        currentTabIndex = index;
+        scrollNode.scrollTo(CGPoint(x: 0, y: 0), animated: false);
+        
+        for i in 0..<bodyTabLabels.count {
+            bodyTabLabels[i].fontSize = (i == currentTabIndex ? 30 : 23);
+            bodyTabLabels[i].fontColor = (i == currentTabIndex ? selectedTabTextColor : unselectedTabTextColor);
+        }
+        
+        scrollNode.removeAllChildren();
+        
+        if(currentTabIndex == 0) {
+            let scrollNode1 = SKSpriteNode(color: .green, size: CGSize(width: scrollNode.scrollView.frame.width, height: 100));
+            scrollNode1.position = CGPoint.zero;
+            scrollNode.addChild(scrollNode1);
+        }
+        else if(currentTabIndex == 1) {
+            let scrollNode1 = SKSpriteNode(color: .blue, size: CGSize(width: scrollNode.scrollView.frame.width, height: 100));
+            scrollNode1.position = CGPoint.zero;
+            scrollNode.addChild(scrollNode1);
+        }
+        else if(currentTabIndex == 2) {
+            let scrollNode1 = SKSpriteNode(color: .red, size: CGSize(width: scrollNode.scrollView.frame.width, height: 100));
+            scrollNode1.position = CGPoint.zero;
+            scrollNode.addChild(scrollNode1);
         }
     }
     

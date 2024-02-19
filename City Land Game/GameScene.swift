@@ -406,10 +406,17 @@ class GameScene: SKScene {
                 shopMenuUI.hideMenu();
                 uiOpen = false;
             }
+            for i in 0..<shopMenuUI.bodyTabLabels.count {
+                if(i != shopMenuUI.currentTabIndex && touchingNodes.contains(shopMenuUI.bodyTabLabels[i])) {
+                    shopMenuUI.updateSelectedTab(i);
+                }
+            }
             //settings menu
             if(touchingNodes.contains(settingsButtonNode)) {
-                settingsMenuUI.showMenu();
-                uiOpen = true;
+                if(!uiOpen) {
+                    settingsMenuUI.showMenu();
+                    uiOpen = true;
+                }
             }
             if(touchingNodes.contains(settingsMenuUI.closeLabelBackground)) {
                 settingsMenuUI.hideMenu();
