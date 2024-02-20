@@ -211,4 +211,42 @@ class LandGenerator {
         }
         return borderNodes;
     }
+    
+    static func createCityBuildings() -> [SKSpriteNode] {
+        var buildings: [SKSpriteNode] = [];
+        
+        for i in 0..<GameTools.placedBuildings.count {
+            let buildingData = GameTools.placedBuildings[i].buildingData;
+            let position = GameTools.placedBuildings[i].position;
+            
+            let buildingOffset = (buildingData.sizeTiles % 2 == 0 ? GameTools.landTileSize / 2 : 0);
+            
+            let building = SKSpriteNode(texture: buildingData.texture);
+            building.position = CGPoint(x: (position.x * GameTools.landTileSize) + buildingOffset, y: (position.y * GameTools.landTileSize) + buildingOffset);
+            building.size = CGSize(width: GameTools.landTileSize * buildingData.sizeTiles, height: GameTools.landTileSize * buildingData.sizeTiles);
+            building.zPosition = 1;
+            buildings.append(building);
+        }
+        
+//        for x in 0..<GameTools.capturedLands.count {
+//            for y in 0..<GameTools.capturedLands[x].count {
+//                if(GameTools.capturedLands[x][y].captured) {
+//                    let buildingData = GameTools.capturedLands[x][y].placedBuilding;
+//                    if(buildingData.buildingType == CityBuildingType.Empty) { continue; }
+//                    
+//                    let building = SKSpriteNode(texture: buildingData.texture);
+//                    
+//                    var buildingOffset = 0;
+//                    //check if the size is an odd number
+//                    if(buildingData.sizeTiles % 2 == 0) { buildingOffset = GameTools.landTileSize / 2; }
+//                    
+//                    building.position = CGPoint(x: (x * GameTools.landTileSize) + buildingOffset, y: (y * GameTools.landTileSize) + buildingOffset);
+//                    building.size = CGSize(width: GameTools.landTileSize * buildingData.sizeTiles, height: GameTools.landTileSize * buildingData.sizeTiles);
+//                    building.zPosition = 1;
+//                    buildings.append(building);
+//                }
+//            }
+//        }
+        return buildings;
+    }
 }

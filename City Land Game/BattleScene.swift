@@ -162,18 +162,6 @@ class BattleScene: SKScene {
         return sqrt(xDistanceSqrd + yDistanceSqrd);
     }
     
-    //rounds the given number value to the nearest step amount
-    //(value: 65, stepAmount: 20) -> 60
-    //(value: 70, stepAmount: 20) -> 80
-    //(value: 75, stepAmount: 20) -> 80
-    func roundToStepAmount(value: CGFloat, stepAmount: CGFloat) -> CGFloat {
-        //((69 + 10) - ((69 + 10) % 20)) / 20
-        
-        let newValue = value + (stepAmount / 2);
-        
-        return (newValue - (newValue.truncatingRemainder(dividingBy: stepAmount)));
-    }
-    
     //adds the metal image and metal label display to the scene
     func addMetalLabel() {
         var textColor = UIColor.white;
@@ -677,8 +665,8 @@ class BattleScene: SKScene {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if(moveableDefenseNodeExists) {
             let location = touches[touches.index(touches.startIndex, offsetBy: 0)].location(in: self);
-            let movePositionX = roundToStepAmount(value: location.x, stepAmount: tileSize);
-            let movePositionY = roundToStepAmount(value: location.y, stepAmount: tileSize);
+            let movePositionX = Tools.roundToStepAmount(value: location.x, stepAmount: tileSize);
+            let movePositionY = Tools.roundToStepAmount(value: location.y, stepAmount: tileSize);
             movableDefenseNode.position = CGPoint(x: movePositionX, y: movePositionY);
             
             self.removeChildren(in: [defenseRadiusNode]);

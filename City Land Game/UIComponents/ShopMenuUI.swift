@@ -15,7 +15,7 @@ class ShopMenuUI {
     var titleLabel = SKLabelNode();
     
     var bodyTabLabels: [SKLabelNode] = [];
-    var bodyTabContent: [SKNode] = [];
+    //var bodyTabContent: [SKNode] = [];
     
     let shopTabs: [String] = ["Production", "Defenses", "Decorations"];
     let selectedTabTextColor = #colorLiteral(red: 0.3459514054, green: 0.3769503683, blue: 0.4166447747, alpha: 1);
@@ -125,36 +125,36 @@ class ShopMenuUI {
         scrollNode.removeAllChildren();
         
         if(currentTabIndex == 0) {
-            let shopItem = ShopMenuItemUI();
-            shopItem.setupNode(
+            let sawMillItem = ShopMenuItemUI();
+            sawMillItem.setupNode(
                 size: CGSize(width: scrollNode.scrollView.frame.width, height: 100),
-                imageName: "SawMill",
+                imageName: "CityBuildings/SawMill",
                 title: "Saw Mill",
                 materials: [
                     MaterialData(type: MaterialType.Brick, amount: 50),
                     MaterialData(type: MaterialType.Planks, amount: 15)
                 ]
             );
-            shopItem.position = CGPoint(x: 0, y: 50);
-            scrollNode.addChild(shopItem);
+            sawMillItem.name = "CityShopItem/SawMill";
+            sawMillItem.position = CGPoint(x: 0, y: 50);
+            scrollNode.addChild(sawMillItem);
             
-            let shopItem2 = ShopMenuItemUI();
-            shopItem2.setupNode(
+            let diamondMineItem = ShopMenuItemUI();
+            diamondMineItem.setupNode(
                 size: CGSize(width: scrollNode.scrollView.frame.width, height: 100),
-                imageName: "DiamondMine",
+                imageName: "CityBuildings/DiamondMine",
                 title: "Diamond Mine",
                 materials: [
                     MaterialData(type: MaterialType.Brick, amount: 5000),
                     MaterialData(type: MaterialType.Planks, amount: 1000)
                 ]
             );
-            shopItem2.position = CGPoint(x: 0, y: -55);
-            scrollNode.addChild(shopItem2);
+            diamondMineItem.name = "CityShopItem/DiamondMine";
+            diamondMineItem.position = CGPoint(x: 0, y: -55);
+            scrollNode.addChild(diamondMineItem);
         }
         else if(currentTabIndex == 1) {
-//            let scrollNode1 = SKSpriteNode(color: .blue, size: CGSize(width: scrollNode.scrollView.frame.width, height: 100));
-//            scrollNode1.position = CGPoint.zero;
-//            scrollNode.addChild(scrollNode1);
+
         }
         else if(currentTabIndex == 2) {
             let shopItem = ShopMenuItemUI();

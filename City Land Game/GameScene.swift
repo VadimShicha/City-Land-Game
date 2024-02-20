@@ -12,12 +12,17 @@ class GameScene: SKScene {
     
     var cameraNode = SKCameraNode();
     
+    enum ZLayers: CGFloat, CaseIterable {
+        case PlacedCityBuilding = 0
+        case DraggedCityBuilding = 95
+        case UI = 100
+    }
+    
     var lastTouch: CGPoint?; //the point of where the last touch happened. nil if there isn't any touches
     var uiOpen = false;
     
     let minCameraScale: CGFloat = 0.5; //the minimum you can zoom the camera out
     let maxCameraScale: CGFloat = 15; //the maximum you can zoom the camera out/
-    
     
     var materialBrickLabel = SKLabelNode();
     var materialPlanksLabel = SKLabelNode();
@@ -44,6 +49,9 @@ class GameScene: SKScene {
     var settingsButtonNode = SKSpriteNode();
     var settingsMenuUI: SettingsMenuUI!;
     
+    var draggingBuildingLabel = SKLabelNode();
+
+    
     //creates the material label nodes
     func setupMaterialLabels() {
         let materialNodeSize: CGFloat = 40;
@@ -57,7 +65,7 @@ class GameScene: SKScene {
             x: GameTools.leftCenterWidth + (materialBrickNode.frame.width / 2),
             y: GameTools.topCenterHeight - (materialBrickNode.frame.height / 2)
         );
-        materialBrickNode.zPosition = 100;
+        materialBrickNode.zPosition = ZLayers.UI.rawValue;
         self.camera?.addChild(materialBrickNode);
         
         materialPlanksNode = SKSpriteNode(imageNamed: "Materials/Planks");
@@ -66,7 +74,7 @@ class GameScene: SKScene {
             x: GameTools.leftCenterWidth + (materialPlanksNode.frame.width / 2),
             y: GameTools.topCenterHeight - (materialPlanksNode.frame.height / 2) - (materialNodeSize - 5)
         );
-        materialPlanksNode.zPosition = 100;
+        materialPlanksNode.zPosition = ZLayers.UI.rawValue;
         self.camera?.addChild(materialPlanksNode);
 
         materialDiamondNode = SKSpriteNode(imageNamed: "Materials/Diamond");
@@ -75,7 +83,7 @@ class GameScene: SKScene {
             x: GameTools.leftCenterWidth + (materialDiamondNode.frame.width / 2),
             y: GameTools.topCenterHeight - (materialDiamondNode.frame.height / 2) - ((materialNodeSize * 2) - 10)
         );
-        materialDiamondNode.zPosition = 100;
+        materialDiamondNode.zPosition = ZLayers.UI.rawValue;
         self.camera?.addChild(materialDiamondNode);
         
         
@@ -85,7 +93,7 @@ class GameScene: SKScene {
             x: GameTools.leftCenterWidth + materialNodeSize + 5,
             y: GameTools.topCenterHeight - materialBrickLabel.frame.height
         );
-        materialBrickLabel.zPosition = 100;
+        materialBrickLabel.zPosition = ZLayers.UI.rawValue;
         materialBrickLabel.fontColor = #colorLiteral(red: 0.2027758712, green: 0.2182098267, blue: 0.2414048185, alpha: 1);
         materialBrickLabel.fontName = "ChalkboardSE-Bold";
         materialBrickLabel.fontSize = 22;
@@ -97,7 +105,7 @@ class GameScene: SKScene {
             x: GameTools.leftCenterWidth + materialNodeSize + 5,
             y: GameTools.topCenterHeight - materialPlanksLabel.frame.height - (materialNodeSize - 5)
         );
-        materialPlanksLabel.zPosition = 100;
+        materialPlanksLabel.zPosition = ZLayers.UI.rawValue;
         materialPlanksLabel.fontColor = #colorLiteral(red: 0.2027758712, green: 0.2182098267, blue: 0.2414048185, alpha: 1);
         materialPlanksLabel.fontName = "ChalkboardSE-Bold";
         materialPlanksLabel.fontSize = 22;
@@ -109,7 +117,7 @@ class GameScene: SKScene {
             x: GameTools.leftCenterWidth + materialNodeSize + 5,
             y: GameTools.topCenterHeight - materialDiamondLabel.frame.height - ((materialNodeSize * 2) - 10)
         );
-        materialDiamondLabel.zPosition = 100;
+        materialDiamondLabel.zPosition = ZLayers.UI.rawValue;
         materialDiamondLabel.fontColor = #colorLiteral(red: 0.2027758712, green: 0.2182098267, blue: 0.2414048185, alpha: 1);
         materialDiamondLabel.fontName = "ChalkboardSE-Bold";
         materialDiamondLabel.fontSize = 22;
@@ -124,7 +132,7 @@ class GameScene: SKScene {
             x: GameTools.leftCenterWidth + (materialMudNode.frame.width / 2),
             y: GameTools.topCenterHeight - (materialMudNode.frame.height / 2) - rawMaterialBaseY
         );
-        materialMudNode.zPosition = 100;
+        materialMudNode.zPosition = ZLayers.UI.rawValue;
         self.camera?.addChild(materialMudNode);
         
         materialClayNode = SKSpriteNode(imageNamed: "Materials/Clay");
@@ -133,7 +141,7 @@ class GameScene: SKScene {
             x: GameTools.leftCenterWidth + (materialClayNode.frame.width / 2),
             y: GameTools.topCenterHeight - (materialClayNode.frame.height / 2) - rawMaterialBaseY - rawMaterialNodeSize
         );
-        materialClayNode.zPosition = 100;
+        materialClayNode.zPosition = ZLayers.UI.rawValue;
         self.camera?.addChild(materialClayNode);
         
         materialWoodNode = SKSpriteNode(imageNamed: "Materials/Wood");
@@ -142,7 +150,7 @@ class GameScene: SKScene {
             x: GameTools.leftCenterWidth + (materialWoodNode.frame.width / 2),
             y: GameTools.topCenterHeight - (materialWoodNode.frame.height / 2) - rawMaterialBaseY - (rawMaterialNodeSize * 2)
         );
-        materialWoodNode.zPosition = 100;
+        materialWoodNode.zPosition = ZLayers.UI.rawValue;
         self.camera?.addChild(materialWoodNode);
         
         materialFrozenWoodNode = SKSpriteNode(imageNamed: "Materials/FrozenWood");
@@ -151,7 +159,7 @@ class GameScene: SKScene {
             x: GameTools.leftCenterWidth + (materialFrozenWoodNode.frame.width / 2),
             y: GameTools.topCenterHeight - (materialFrozenWoodNode.frame.height / 2) - rawMaterialBaseY - (rawMaterialNodeSize * 3)
         );
-        materialFrozenWoodNode.zPosition = 100;
+        materialFrozenWoodNode.zPosition = ZLayers.UI.rawValue;
         self.camera?.addChild(materialFrozenWoodNode);
         
         
@@ -161,7 +169,7 @@ class GameScene: SKScene {
             x: GameTools.leftCenterWidth + 25 + 5,
             y: GameTools.topCenterHeight - materialMudLabel.frame.height - (rawMaterialBaseY - 8)
         );
-        materialMudLabel.zPosition = 100;
+        materialMudLabel.zPosition = ZLayers.UI.rawValue;
         materialMudLabel.fontColor = #colorLiteral(red: 0.2027758712, green: 0.2182098267, blue: 0.2414048185, alpha: 1);
         materialMudLabel.fontName = "ChalkboardSE-Bold";
         materialMudLabel.fontSize = rawMaterialFontSize;
@@ -173,7 +181,7 @@ class GameScene: SKScene {
             x: GameTools.leftCenterWidth + 25 + 5,
             y: GameTools.topCenterHeight - materialClayLabel.frame.height - (rawMaterialBaseY - 8) - rawMaterialNodeSize
         );
-        materialClayLabel.zPosition = 100;
+        materialClayLabel.zPosition = ZLayers.UI.rawValue;
         materialClayLabel.fontColor = #colorLiteral(red: 0.2027758712, green: 0.2182098267, blue: 0.2414048185, alpha: 1);
         materialClayLabel.fontName = "ChalkboardSE-Bold";
         materialClayLabel.fontSize = rawMaterialFontSize;
@@ -185,7 +193,7 @@ class GameScene: SKScene {
             x: GameTools.leftCenterWidth + 25 + 5,
             y: GameTools.topCenterHeight - materialWoodLabel.frame.height - (rawMaterialBaseY - 8) - (rawMaterialNodeSize * 2)
         );
-        materialWoodLabel.zPosition = 100;
+        materialWoodLabel.zPosition = ZLayers.UI.rawValue;
         materialWoodLabel.fontColor = #colorLiteral(red: 0.2027758712, green: 0.2182098267, blue: 0.2414048185, alpha: 1);
         materialWoodLabel.fontName = "ChalkboardSE-Bold";
         materialWoodLabel.fontSize = rawMaterialFontSize;
@@ -197,7 +205,7 @@ class GameScene: SKScene {
             x: GameTools.leftCenterWidth + 25 + 5,
             y: GameTools.topCenterHeight - materialFrozenWoodLabel.frame.height - (rawMaterialBaseY - 8) - (rawMaterialNodeSize * 3)
         );
-        materialFrozenWoodLabel.zPosition = 100;
+        materialFrozenWoodLabel.zPosition = ZLayers.UI.rawValue;
         materialFrozenWoodLabel.fontColor = #colorLiteral(red: 0.2027758712, green: 0.2182098267, blue: 0.2414048185, alpha: 1);
         materialFrozenWoodLabel.fontName = "ChalkboardSE-Bold";
         materialFrozenWoodLabel.fontSize = rawMaterialFontSize;
@@ -236,15 +244,19 @@ class GameScene: SKScene {
         for i in 0..<borderNodes.count {
             GameTools.borderNodesParent.addChild(borderNodes[i]);
         }
-        
         self.addChild(GameTools.borderNodesParent);
+
+        GameTools.capturedLands[GameTools.mapSpawnX][GameTools.mapSpawnY].placedBuilding = CityBuilding.getCityBuilding(CityBuildingType.CityHall);
+        GameTools.capturedLands[GameTools.mapSpawnX + 1][GameTools.mapSpawnY].placedBuilding = CityBuilding.getCityBuilding(CityBuildingType.CityHall);
+        GameTools.capturedLands[GameTools.mapSpawnX][GameTools.mapSpawnY + 1].placedBuilding = CityBuilding.getCityBuilding(CityBuildingType.CityHall);
+        GameTools.capturedLands[GameTools.mapSpawnX + 1][GameTools.mapSpawnY + 1].placedBuilding = CityBuilding.getCityBuilding(CityBuildingType.CityHall);
+        GameTools.capturedLands[GameTools.mapSpawnX - 1][GameTools.mapSpawnY].placedBuilding = CityBuilding.getCityBuilding(CityBuildingType.SawMill);
         
-        let cityHall = SKSpriteNode(imageNamed: "CityHall");
-        cityHall.position = CGPoint(x: (GameTools.mapSpawnX * GameTools.landTileSize) + (GameTools.landTileSize / 2), y: (GameTools.mapSpawnY * GameTools.landTileSize) + (GameTools.landTileSize / 2));
-        cityHall.size = CGSize(width: 512, height: 512);
-        cityHall.zPosition = 1;
-        self.addChild(cityHall);
-        
+        let cityBuildings = LandGenerator.createCityBuildings();
+        for i in 0..<cityBuildings.count {
+            self.addChild(cityBuildings[i]);
+        }
+    
         cameraNode.position = CGPoint(x: GameTools.mapWidth * (GameTools.landTileSize / 2), y: GameTools.mapHeight * (GameTools.landTileSize / 2));
         cameraNode.setScale(maxCameraScale / 4);
         self.camera = cameraNode;
@@ -282,7 +294,7 @@ class GameScene: SKScene {
         let shopButtonNodePositionY = GameTools.bottomCenterHeight + (self.size.width / 16) + 3;
         shopButtonNode.position = CGPoint(x: shopButtonNodePositionX, y: shopButtonNodePositionY);
         shopButtonNode.size = CGSize(width: self.size.width / 8, height: self.size.width / 8);
-        shopButtonNode.zPosition = 90;
+        shopButtonNode.zPosition = ZLayers.UI.rawValue;
         self.camera?.addChild(shopButtonNode);
         
         settingsButtonNode = SKSpriteNode(imageNamed: "Buttons/SettingsButton");
@@ -290,8 +302,17 @@ class GameScene: SKScene {
         let settingsButtonNodePositionY = GameTools.topCenterHeight - (self.size.width / 32) - 1;
         settingsButtonNode.position = CGPoint(x: settingsButtonNodePositionX, y: settingsButtonNodePositionY);
         settingsButtonNode.size = CGSize(width: self.size.width / 16, height: self.size.width / 16);
-        settingsButtonNode.zPosition = 90;
+        settingsButtonNode.zPosition = ZLayers.UI.rawValue;
         self.camera?.addChild(settingsButtonNode);
+        
+        draggingBuildingLabel.text = "Drag to an empty tile";
+        draggingBuildingLabel.position = CGPoint(x: 0, y: GameTools.bottomCenterHeight + 8);
+        draggingBuildingLabel.zPosition = ZLayers.UI.rawValue;
+        draggingBuildingLabel.fontColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 0.5);
+        draggingBuildingLabel.fontName = "ChalkboardSE-Bold";
+        draggingBuildingLabel.fontSize = 28;
+        draggingBuildingLabel.isHidden = true;
+        self.camera?.addChild(draggingBuildingLabel);
     }
     
 //    @objc func swipeGestureAction(_ sender: UISwipeGestureRecognizer) {
@@ -323,46 +344,75 @@ class GameScene: SKScene {
     
     var touchBeganPosition: CGPoint = CGPoint.zero; //the last touch position
     
+    var movableCityBuildingNode = SKSpriteNode(color: .red, size: CGSize.zero);
+    var movableCityBuildingData = CityBuilding.getCityBuilding(CityBuildingType.Empty);
+    var movableCityBuildingExists = false;
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if(!uiOpen) {
             touchBeganPosition = touches[touches.index(touches.startIndex, offsetBy: 0)].location(in: self);
         }
+        
+//        if(touches.count == 1) {
+//            let touchLocation = touches[touches.index(touches.startIndex, offsetBy: 0)].location(in: self);
+//            let touchingNodes = self.nodes(at: touchLocation); //array of all the nodes that have been touched
+//        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         let totalTouchCount = event?.allTouches?.count ?? 0;
         
         if(!uiOpen) {
-            //if there is only 1 touch then move the camera
             if(totalTouchCount == 1) {
                 let location = touches[touches.index(touches.startIndex, offsetBy: 0)].location(in: self);
                 
-                if(lastTouch == nil) {
-                    lastTouch = location;
-                    return;
+                //a city building is being dragged
+                if(movableCityBuildingExists) {
+                    let movePositionX = Tools.roundToStepAmount(value: location.x, stepAmount: CGFloat(GameTools.landTileSize));
+                    let movePositionY = Tools.roundToStepAmount(value: location.y, stepAmount: CGFloat(GameTools.landTileSize));
+                    movableCityBuildingNode.position = CGPoint(x: movePositionX, y: movePositionY);
+                    
+                    let landPositionX = Int(movePositionX) / GameTools.landTileSize;
+                    let landPositionY = Int(movePositionY) / GameTools.landTileSize;
+                    if(landPositionX > 0 && landPositionX < GameTools.mapWidth - 1 && landPositionY > 0 && landPositionY < GameTools.mapHeight - 1) {
+                        let landData = GameTools.capturedLands[landPositionX][landPositionY];
+                        if(landData.captured && landData.placedBuilding.buildingType == CityBuildingType.Empty) {
+                            movableCityBuildingNode.color = .green;
+                        }
+                        else {
+                            movableCityBuildingNode.color = .red;
+                        }
+                    }
                 }
-                
-                var newCameraPositionX = cameraNode.position.x + -(location.x - lastTouch!.x); //the x position of the camera after this touch
-                var newCameraPositionY = cameraNode.position.y + -(location.y - lastTouch!.y); //the y position of the camera after this touch
-                
-                //make the camera positions be based on the center of the map rather than (0, 0)
-                newCameraPositionX -= CGFloat((GameTools.mapWidth * GameTools.landTileSize) / 2);
-                newCameraPositionY -= CGFloat((GameTools.mapHeight * GameTools.landTileSize) / 2);
-                
-                let mapWidth = GameTools.mapWidth * GameTools.landTileSize;
-                let mapHeight = GameTools.mapHeight * GameTools.landTileSize;
-                
-                //prevent the camera from moving too far out
-                if(newCameraPositionX > CGFloat(mapWidth) / 1.25) { return; }
-                if(newCameraPositionX < -CGFloat(mapWidth) / 1.25) { return; }
-                if(newCameraPositionY > CGFloat(mapHeight) / 1.25) { return; }
-                if(newCameraPositionY < -CGFloat(mapHeight) / 1.25) { return; }
+                //if a city building isn't selected then move the camera
+                else {
+                    if(lastTouch == nil) {
+                        lastTouch = location;
+                        return;
+                    }
+                    
+                    var newCameraPositionX = cameraNode.position.x + -(location.x - lastTouch!.x); //the x position of the camera after this touch
+                    var newCameraPositionY = cameraNode.position.y + -(location.y - lastTouch!.y); //the y position of the camera after this touch
+                    
+                    //make the camera positions be based on the center of the map rather than (0, 0)
+                    newCameraPositionX -= CGFloat((GameTools.mapWidth * GameTools.landTileSize) / 2);
+                    newCameraPositionY -= CGFloat((GameTools.mapHeight * GameTools.landTileSize) / 2);
+                    
+                    let mapWidth = GameTools.mapWidth * GameTools.landTileSize;
+                    let mapHeight = GameTools.mapHeight * GameTools.landTileSize;
+                    
+                    //prevent the camera from moving too far out
+                    if(newCameraPositionX > CGFloat(mapWidth) / 1.25) { return; }
+                    if(newCameraPositionX < -CGFloat(mapWidth) / 1.25) { return; }
+                    if(newCameraPositionY > CGFloat(mapHeight) / 1.25) { return; }
+                    if(newCameraPositionY < -CGFloat(mapHeight) / 1.25) { return; }
 
-                let cameraMoveAction = SKAction.move(by: CGVector(dx: -(location.x - lastTouch!.x), dy: -(location.y - lastTouch!.y)), duration: 0.1);
-                cameraMoveAction.timingMode = .linear;
-                cameraNode.run(cameraMoveAction);
+                    let cameraMoveAction = SKAction.move(by: CGVector(dx: -(location.x - lastTouch!.x), dy: -(location.y - lastTouch!.y)), duration: 0.1);
+                    cameraMoveAction.timingMode = .linear;
+                    cameraNode.run(cameraMoveAction);
 
-                lastTouch = location;
+                    lastTouch = location;
+                }
             }
         }
     }
@@ -375,57 +425,110 @@ class GameScene: SKScene {
             
             let touchingNodes = self.nodes(at: touchLocation); //array of all the nodes that have been touched
             
-            //attack menu
-            if(touchingNodes.contains(attackMenuUI.buttonLabel)) {
-                GameTools.currentBattleLandType = currentAttackSelected.landType;
-                GameTools.currentBattleData = BattleGenerator.getFixedBattle(generatorData: currentAttackSelected.battleGeneratorData);
+            if(movableCityBuildingExists) {
+                let landPositionX = Int(movableCityBuildingNode.position.x) / GameTools.landTileSize;
+                let landPositionY = Int(movableCityBuildingNode.position.y) / GameTools.landTileSize;
+                if(landPositionX > 0 && landPositionX < GameTools.mapWidth - 1 && landPositionY > 0 && landPositionY < GameTools.mapHeight - 1) {
+                    let landData = GameTools.capturedLands[landPositionX][landPositionY];
+                    if(landData.captured && landData.placedBuilding.buildingType == CityBuildingType.Empty) {
+                        print(landPositionX);
+                        print(landPositionY);
+                        movableCityBuildingExists = false;
+                        draggingBuildingLabel.isHidden = true;
+                        movableCityBuildingNode.zPosition = ZLayers.PlacedCityBuilding.rawValue;
+                        movableCityBuildingNode.colorBlendFactor = 0;
+                        GameTools.capturedLands[landPositionX][landPositionY].placedBuilding = CityBuilding.getCityBuilding(CityBuildingType.SawMill);
+                    }
+                }
+            }
+            else {
+                //attack menu
+                if(touchingNodes.contains(attackMenuUI.buttonLabel)) {
+                    GameTools.currentBattleLandType = currentAttackSelected.landType;
+                    GameTools.currentBattleData = BattleGenerator.getFixedBattle(generatorData: currentAttackSelected.battleGeneratorData);
+                    
+                    Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Battle);
+                    return;
+                }
+                if(touchingNodes.contains(attackMenuUI.closeLabelBackground)) {
+                    attackMenuUI.hideMenu();
+                    uiOpen = false;
+                    
+                    //remove the temp clouds
+                    GameTools.borderNodesParent.removeAllChildren();
+                    let borderNodes = LandGenerator.generateCapturedBorders();
+                    
+                    for k in 0..<borderNodes.count {
+                        GameTools.borderNodesParent.addChild(borderNodes[k]);
+                    }
+                }
+                //shop menu
+                if(touchingNodes.contains(shopButtonNode)) {
+                    if(!uiOpen) {
+                        shopMenuUI.showMenu();
+                        uiOpen = true;
+                    }
+                }
+                if(touchingNodes.contains(shopMenuUI.closeLabelBackground)) {
+                    shopMenuUI.hideMenu();
+                    uiOpen = false;
+                }
+                var cityBuildingType = CityBuildingType.Empty;
+                for i in 0..<touchingNodes.count {
+                    let nodeName = touchingNodes[i].name;
+                    
+                    if(nodeName == "CityShopItem/SawMill") {
+                        cityBuildingType = CityBuildingType.SawMill;
+                    }
+                    else if(nodeName == "CityShopItem/DiamondMine") {
+                        cityBuildingType = CityBuildingType.DiamondMine;
+                    }
+                }
+                if(cityBuildingType != CityBuildingType.Empty) {
+                    shopMenuUI.hideMenu();
+                    uiOpen = false;
+
+                    movableCityBuildingExists = true;
+                    draggingBuildingLabel.isHidden = false;
+                    let cityBuildingData = CityBuilding.getCityBuilding(cityBuildingType);
+                    movableCityBuildingData = cityBuildingData;
+                    
+                    let newBuildingNode = SKSpriteNode(texture: cityBuildingData.texture);
+                    let newNodePositionX = Tools.roundToStepAmount(value: touchLocation.x, stepAmount: CGFloat(GameTools.landTileSize));
+                    let newNodePositionY = Tools.roundToStepAmount(value: touchLocation.y, stepAmount: CGFloat(GameTools.landTileSize));
+                    newBuildingNode.position = CGPoint(x: newNodePositionX, y: newNodePositionY);
+                    let newBuildingNodeSize = cityBuildingData.sizeTiles * GameTools.landTileSize;
+                    newBuildingNode.size = CGSize(width: newBuildingNodeSize, height: newBuildingNodeSize);
+                    newBuildingNode.color = .red;
+                    newBuildingNode.colorBlendFactor = 0.4;
+                    newBuildingNode.zPosition = ZLayers.DraggedCityBuilding.rawValue;
+                    self.addChild(newBuildingNode);
+                    
+                    movableCityBuildingNode = newBuildingNode;
+                }
                 
-                Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Battle);
-                return;
-            }
-            if(touchingNodes.contains(attackMenuUI.closeLabelBackground)) {
-                attackMenuUI.hideMenu();
-                uiOpen = false;
                 
-                //remove the temp clouds
-                GameTools.borderNodesParent.removeAllChildren();
-                let borderNodes = LandGenerator.generateCapturedBorders();
-                
-                for k in 0..<borderNodes.count {
-                    GameTools.borderNodesParent.addChild(borderNodes[k]);
+                for i in 0..<shopMenuUI.bodyTabLabels.count {
+                    if(i != shopMenuUI.currentTabIndex && touchingNodes.contains(shopMenuUI.bodyTabLabels[i])) {
+                        shopMenuUI.updateSelectedTab(i);
+                    }
                 }
-            }
-            //shop menu
-            if(touchingNodes.contains(shopButtonNode)) {
-                if(!uiOpen) {
-                    shopMenuUI.showMenu();
-                    uiOpen = true;
+                //settings menu
+                if(touchingNodes.contains(settingsButtonNode)) {
+                    if(!uiOpen) {
+                        settingsMenuUI.showMenu();
+                        uiOpen = true;
+                    }
                 }
-            }
-            if(touchingNodes.contains(shopMenuUI.closeLabelBackground)) {
-                shopMenuUI.hideMenu();
-                uiOpen = false;
-            }
-            for i in 0..<shopMenuUI.bodyTabLabels.count {
-                if(i != shopMenuUI.currentTabIndex && touchingNodes.contains(shopMenuUI.bodyTabLabels[i])) {
-                    shopMenuUI.updateSelectedTab(i);
+                if(touchingNodes.contains(settingsMenuUI.closeLabelBackground)) {
+                    settingsMenuUI.hideMenu();
+                    uiOpen = false;
                 }
-            }
-            //settings menu
-            if(touchingNodes.contains(settingsButtonNode)) {
-                if(!uiOpen) {
-                    settingsMenuUI.showMenu();
-                    uiOpen = true;
-                }
-            }
-            if(touchingNodes.contains(settingsMenuUI.closeLabelBackground)) {
-                settingsMenuUI.hideMenu();
-                uiOpen = false;
-            }
-            if(touchingNodes.contains(settingsMenuUI.saveDataButtonNode)) {
-                settingsMenuUI.saveDataButtonNode.texture = SKTexture(imageNamed: "Buttons/SavingDataButton");
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [self] in
-                    settingsMenuUI.saveDataButtonNode.texture = SKTexture(imageNamed: "Buttons/SaveDataButton");
+                if(touchingNodes.contains(settingsMenuUI.saveDataButtonNode)) {
+                    settingsMenuUI.saveDataButtonNode.texture = SKTexture(imageNamed: "Buttons/SavingDataButton");
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [self] in
+                        settingsMenuUI.saveDataButtonNode.texture = SKTexture(imageNamed: "Buttons/SaveDataButton");
+                    }
                 }
             }
         }

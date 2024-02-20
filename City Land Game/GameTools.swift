@@ -18,11 +18,42 @@ enum MaterialType {
     case Diamond
 }
 
+enum CityBuildingType: Int, CaseIterable {
+    case Empty = 0
+    case CityHall = 1
+    case SawMill = 2
+    case DiamondMine = 3
+}
+
+struct CityBuilding {
+    var name: String = "City Building";
+    var buildingType = CityBuildingType.Empty;
+    var sizeTiles: Int = 3;
+    var texture = SKTexture();
+    
+    static func getCityBuilding(_ building: CityBuildingType) -> CityBuilding {
+        switch(building.rawValue) {
+            case 1:
+                return CityBuilding(name: "City Hall", buildingType: CityBuildingType.CityHall, sizeTiles: 2, texture: SKTexture(imageNamed: "CityBuildings/CityHall"));
+            case 2:
+                return CityBuilding(name: "Saw Mill", buildingType: CityBuildingType.SawMill, sizeTiles: 1, texture: SKTexture(imageNamed: "CityBuildings/SawMill"));
+            case 3:
+                return CityBuilding(name: "Diamond Mine", buildingType: CityBuildingType.DiamondMine, sizeTiles: 1, texture: SKTexture(imageNamed: "CityBuildings/DiamondMine"));
+            default:
+                return CityBuilding(name: "Empty Building", buildingType: CityBuildingType.Empty, sizeTiles: 1, texture: SKTexture(imageNamed: ""));
+        }
+    }
+}
+
+struct PlacedCityBuilding {
+    var buildingData = CityBuilding();
+    var position = GameVector2Int.zero;
+}
+
 struct MaterialData {
     var type: MaterialType = MaterialType.Brick;
     var amount: Int = 0;
 }
-
 struct LandTileData {
     var texture: SKTexture = SKTexture(imageNamed: "NoLandData");
     var landType: BattleLandType = BattleLandType.GrassLands;
@@ -33,6 +64,7 @@ struct LandTileData {
         MaterialData(type: MaterialType.Wood, amount: 10000000),
         MaterialData(type: MaterialType.Diamond, amount: 10)
     ];
+    var placedBuilding: CityBuilding = CityBuilding.getCityBuilding(CityBuildingType.Empty);
 }
 
 enum BattleLandType: String {
@@ -111,6 +143,17 @@ class GameTools {
     static var clayAmount: Int = 10;
     static var woodAmount: Int = 10;
     static var frozenWoodAmount: Int = 0;
+    
+    static var placedBuildings: [PlacedCityBuilding] = [
+        PlacedCityBuilding(
+            buildingData: CityBuilding.getCityBuilding(CityBuildingType.CityHall),
+            position: GameVector2Int(x: GameTools.mapSpawnX, y: GameTools.mapSpawnY)
+        ),
+        PlacedCityBuilding(
+            buildingData: CityBuilding.getCityBuilding(CityBuildingType.SawMill),
+            position: GameVector2Int(x: GameTools.mapSpawnX - 1, y: GameTools.mapSpawnY)
+        )
+    ];
     
     static var currentBattleData: BattleData = BattleData(
         rounds: [
@@ -199,6 +242,7 @@ class GameTools {
         roundAmount: 7
     );
     
+    
     //variables for scaling nodes to fit screen size
     static let leftCenterWidth = -(UIScreen.main.bounds.size.width / 2);
     static let rightCenterWidth = UIScreen.main.bounds.size.width / 2;
@@ -223,6 +267,19 @@ class GameTools {
                 return "Materials/Diamond";
         }
     }
+    
+//    static func getCityBuildingAssetName(_ cityBuildingType: CityBuildingType) -> String {
+//        switch(cityBuildingType) {
+//            case CityBuildingType.CityHall:
+//                return "CityBuildings/CityHall";
+//            case CityBuildingType.SawMill:
+//                return "CityBuildings/SawMill";
+//            case CityBuildingType.DiamondMine:
+//                return "CityBuildings/DiamondMine";
+//            default:
+//                return "";
+//        }
+//    }
     
     static func getDifficultyIndex(_ battleDifficulty: BattleDifficulty) -> Int {
 //        switch(battleDifficulty) {

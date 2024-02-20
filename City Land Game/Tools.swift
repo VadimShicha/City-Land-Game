@@ -39,6 +39,18 @@ class Tools {
         return value;
     }
     
+    //rounds the given number value to the nearest step amount
+    //(value: 65, stepAmount: 20) -> 60
+    //(value: 70, stepAmount: 20) -> 80
+    //(value: 75, stepAmount: 20) -> 80
+    static func roundToStepAmount(value: CGFloat, stepAmount: CGFloat) -> CGFloat {
+        //((69 + 10) - ((69 + 10) % 20)) / 20
+        
+        let newValue = value + (stepAmount / 2);
+        
+        return (newValue - (newValue.truncatingRemainder(dividingBy: stepAmount)));
+    }
+    
     static func degToRad(_ value: CGFloat) -> CGFloat {
         return value * .pi / 180;
     }
