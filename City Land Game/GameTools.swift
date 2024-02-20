@@ -27,6 +27,7 @@ enum CityBuildingType: Int, CaseIterable {
 
 struct CityBuilding {
     var name: String = "City Building";
+    var nodeName: String = "CityBuilding/Building";
     var buildingType = CityBuildingType.Empty;
     var sizeTiles: Int = 3;
     var texture = SKTexture();
@@ -34,13 +35,13 @@ struct CityBuilding {
     static func getCityBuilding(_ building: CityBuildingType) -> CityBuilding {
         switch(building.rawValue) {
             case 1:
-                return CityBuilding(name: "City Hall", buildingType: CityBuildingType.CityHall, sizeTiles: 2, texture: SKTexture(imageNamed: "CityBuildings/CityHall"));
+            return CityBuilding(name: "City Hall", nodeName: "CityBuilding/CityHall", buildingType: CityBuildingType.CityHall, sizeTiles: 2, texture: SKTexture(imageNamed: "CityBuildings/CityHall"));
             case 2:
-                return CityBuilding(name: "Saw Mill", buildingType: CityBuildingType.SawMill, sizeTiles: 1, texture: SKTexture(imageNamed: "CityBuildings/SawMill"));
+                return CityBuilding(name: "Saw Mill", nodeName: "CityBuilding/SawMill", buildingType: CityBuildingType.SawMill, sizeTiles: 1, texture: SKTexture(imageNamed: "CityBuildings/SawMill"));
             case 3:
-                return CityBuilding(name: "Diamond Mine", buildingType: CityBuildingType.DiamondMine, sizeTiles: 1, texture: SKTexture(imageNamed: "CityBuildings/DiamondMine"));
+                return CityBuilding(name: "Diamond Mine", nodeName: "CityBuilding/DiamondMine", buildingType: CityBuildingType.DiamondMine, sizeTiles: 1, texture: SKTexture(imageNamed: "CityBuildings/DiamondMine"));
             default:
-                return CityBuilding(name: "Empty Building", buildingType: CityBuildingType.Empty, sizeTiles: 1, texture: SKTexture(imageNamed: ""));
+                return CityBuilding(name: "Empty Building", nodeName: "CityBuilding/Building", buildingType: CityBuildingType.Empty, sizeTiles: 1, texture: SKTexture(imageNamed: ""));
         }
     }
 }
@@ -143,6 +144,61 @@ class GameTools {
     static var clayAmount: Int = 10;
     static var woodAmount: Int = 10;
     static var frozenWoodAmount: Int = 0;
+    
+    static func setMaterialAmount(type: MaterialType, amount: Int) {
+        switch(type) {
+            case MaterialType.Brick:
+                brickAmount = amount;
+                break;
+            case MaterialType.Planks:
+                planksAmount = amount;
+                break;
+            case MaterialType.Diamond:
+                diamondAmount = amount;
+                break;
+            case MaterialType.Mud:
+                mudAmount = amount;
+                break;
+            case MaterialType.Clay:
+                clayAmount = amount;
+                break;
+            case MaterialType.Wood:
+                woodAmount = amount;
+                break;
+            case MaterialType.FrozenWood:
+                frozenWoodAmount = amount;
+                break;
+        }
+    }
+    
+    static func getMaterialAmount(type: MaterialType) -> Int {
+        switch(type) {
+            case MaterialType.Brick:
+                return brickAmount;
+            case MaterialType.Planks:
+                return planksAmount;
+            case MaterialType.Diamond:
+                return diamondAmount;
+            case MaterialType.Mud:
+                return mudAmount;
+            case MaterialType.Clay:
+                return clayAmount;
+            case MaterialType.Wood:
+                return woodAmount;
+            case MaterialType.FrozenWood:
+                return frozenWoodAmount;
+        }
+    }
+    
+//    static var materialAmounts: [MaterialData] = [
+//        MaterialData(type: MaterialType.Brick, amount: 100),
+//        MaterialData(type: MaterialType.Planks, amount: 20),
+//        MaterialData(type: MaterialType.Diamond, amount: 10),
+//        MaterialData(type: MaterialType.Mud, amount: 10),
+//        MaterialData(type: MaterialType.Clay, amount: 10),
+//        MaterialData(type: MaterialType.Wood, amount: 10),
+//        MaterialData(type: MaterialType.FrozenWood, amount: 0)
+//    ];
     
     static var placedBuildings: [PlacedCityBuilding] = [
         PlacedCityBuilding(

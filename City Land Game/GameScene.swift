@@ -48,6 +48,8 @@ class GameScene: SKScene {
     
     var settingsButtonNode = SKSpriteNode();
     var settingsMenuUI: SettingsMenuUI!;
+
+    var cityBuildingMenuUI: CityBuildingMenuUI!;
     
     var draggingBuildingLabel = SKLabelNode();
 
@@ -287,6 +289,8 @@ class GameScene: SKScene {
         shopMenuUI.setupMenu();
         settingsMenuUI = SettingsMenuUI(self);
         settingsMenuUI.setupMenu();
+        cityBuildingMenuUI = CityBuildingMenuUI(self);
+        cityBuildingMenuUI.setupMenu();
 
         
         shopButtonNode = SKSpriteNode(imageNamed: "Buttons/ShopButton");
@@ -420,24 +424,41 @@ class GameScene: SKScene {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         lastTouch = nil;
         
+        var buttonTouched = false; //indicates whether a button was touched (used when the land nodes shouldn't be touched)
+        
         if(touches.count == 1) {
             let touchLocation = touches[touches.index(touches.startIndex, offsetBy: 0)].location(in: self);
             
             let touchingNodes = self.nodes(at: touchLocation); //array of all the nodes that have been touched
+            let didTouchMove = (touchLocation != touchBeganPosition ? true : false); //indicates whether the touch that began and ended moved
             
             if(movableCityBuildingExists) {
-                let landPositionX = Int(movableCityBuildingNode.position.x) / GameTools.landTileSize;
-                let landPositionY = Int(movableCityBuildingNode.position.y) / GameTools.landTileSize;
-                if(landPositionX > 0 && landPositionX < GameTools.mapWidth - 1 && landPositionY > 0 && landPositionY < GameTools.mapHeight - 1) {
-                    let landData = GameTools.capturedLands[landPositionX][landPositionY];
-                    if(landData.captured && landData.placedBuilding.buildingType == CityBuildingType.Empty) {
-                        print(landPositionX);
-                        print(landPositionY);
-                        movableCityBuildingExists = false;
-                        draggingBuildingLabel.isHidden = true;
-                        movableCityBuildingNode.zPosition = ZLayers.PlacedCityBuilding.rawValue;
-                        movableCityBuildingNode.colorBlendFactor = 0;
-                        GameTools.capturedLands[landPositionX][landPositionY].placedBuilding = CityBuilding.getCityBuilding(CityBuildingType.SawMill);
+                //shop button is pressed while a building is being dragged
+                if(touchingNodes.contains(shopButtonNode)) {
+                    movableCityBuildingExists = false;
+                    self.removeChildren(in: [movableCityBuildingNode]);
+                    draggingBuildingLabel.isHidden = true;
+                    shopButtonNode.texture = SKTexture(imageNamed: "Buttons/ShopButton");
+                    settingsButtonNode.isHidden = false;
+                    buttonTouched = true;
+                }
+                else {
+                    let landPositionX = Int(movableCityBuildingNode.position.x) / GameTools.landTileSize;
+                    let landPositionY = Int(movableCityBuildingNode.position.y) / GameTools.landTileSize;
+                    if(landPositionX > 0 && landPositionX < GameTools.mapWidth - 1 && landPositionY > 0 && landPositionY < GameTools.mapHeight - 1) {
+                        let landData = GameTools.capturedLands[landPositionX][landPositionY];
+                        if(landData.captured && landData.placedBuilding.buildingType == CityBuildingType.Empty) {
+                            movableCityBuildingExists = false;
+                            
+                            draggingBuildingLabel.isHidden = true;
+                            //shopButtonNode.isHidden = false;
+                            shopButtonNode.texture = SKTexture(imageNamed: "Buttons/ShopButton");
+                            settingsButtonNode.isHidden = false;
+                            
+                            movableCityBuildingNode.zPosition = ZLayers.PlacedCityBuilding.rawValue;
+                            movableCityBuildingNode.colorBlendFactor = 0;
+                            GameTools.capturedLands[landPositionX][landPositionY].placedBuilding = CityBuilding.getCityBuilding(CityBuildingType.SawMill);
+                        }
                     }
                 }
             }
@@ -474,22 +495,35 @@ class GameScene: SKScene {
                     uiOpen = false;
                 }
                 var cityBuildingType = CityBuildingType.Empty;
+                var cityBuildingName = "CityBuilding/Building";
+                
+                //loop through all touches detecting shop menu nodes that got clicked
                 for i in 0..<touchingNodes.count {
                     let nodeName = touchingNodes[i].name;
                     
-                    if(nodeName == "CityShopItem/SawMill") {
+                    if(nodeName == "CityShopItem/CityHall") {
+                        cityBuildingType = CityBuildingType.CityHall;
+                        cityBuildingName = "CityBuilding/CityHall";
+                    }
+                    else if(nodeName == "CityShopItem/SawMill") {
                         cityBuildingType = CityBuildingType.SawMill;
+                        cityBuildingName = "CityBuilding/SawMill";
                     }
                     else if(nodeName == "CityShopItem/DiamondMine") {
                         cityBuildingType = CityBuildingType.DiamondMine;
+                        cityBuildingName = "CityBuilding/DiamondMine";
                     }
                 }
+                //if a building was selected from the shop menu
                 if(cityBuildingType != CityBuildingType.Empty) {
                     shopMenuUI.hideMenu();
                     uiOpen = false;
 
                     movableCityBuildingExists = true;
                     draggingBuildingLabel.isHidden = false;
+                    //shopButtonNode.isHidden = true;
+                    shopButtonNode.texture = SKTexture(imageNamed: "Buttons/CancelButton");
+                    settingsButtonNode.isHidden = true;
                     let cityBuildingData = CityBuilding.getCityBuilding(cityBuildingType);
                     movableCityBuildingData = cityBuildingData;
                     
@@ -502,11 +536,36 @@ class GameScene: SKScene {
                     newBuildingNode.color = .red;
                     newBuildingNode.colorBlendFactor = 0.4;
                     newBuildingNode.zPosition = ZLayers.DraggedCityBuilding.rawValue;
+                    newBuildingNode.name = cityBuildingName;
                     self.addChild(newBuildingNode);
                     
                     movableCityBuildingNode = newBuildingNode;
                 }
                 
+                //loop through all touched nodes and check if a placed building was tapped
+                //this must be checked after the shop node checks to ensure you don't open the building UI while placing the building
+                if(!uiOpen && !didTouchMove) {
+                    for i in 0..<touchingNodes.count {
+                        let nodeName = touchingNodes[i].name;
+                        if(!movableCityBuildingExists) {
+                            if(nodeName == "CityBuilding/CityHall") {
+                                cityBuildingMenuUI.showMenu();
+                                cityBuildingMenuUI.titleLabel.text = CityBuilding.getCityBuilding(CityBuildingType.CityHall).name;
+                                uiOpen = true;
+                            }
+                            else if(nodeName == "CityBuilding/SawMill") {
+                                cityBuildingMenuUI.showMenu();
+                                cityBuildingMenuUI.titleLabel.text = CityBuilding.getCityBuilding(CityBuildingType.SawMill).name;
+                                uiOpen = true;
+                            }
+                            else if(nodeName == "CityBuilding/DiamondMine") {
+                                cityBuildingMenuUI.showMenu();
+                                cityBuildingMenuUI.titleLabel.text = CityBuilding.getCityBuilding(CityBuildingType.DiamondMine).name;
+                                uiOpen = true;
+                            }
+                        }
+                    }
+                }
                 
                 for i in 0..<shopMenuUI.bodyTabLabels.count {
                     if(i != shopMenuUI.currentTabIndex && touchingNodes.contains(shopMenuUI.bodyTabLabels[i])) {
@@ -530,10 +589,16 @@ class GameScene: SKScene {
                         settingsMenuUI.saveDataButtonNode.texture = SKTexture(imageNamed: "Buttons/SaveDataButton");
                     }
                 }
+                
+                //city building menu
+                if(touchingNodes.contains(cityBuildingMenuUI.closeLabelBackground)) {
+                    cityBuildingMenuUI.hideMenu();
+                    uiOpen = false;
+                }
             }
         }
-        
-        if(!uiOpen) {
+
+        if(!uiOpen && !movableCityBuildingExists && !buttonTouched) {
             for i in 0..<touches.count {
                 let touchingNodes = self.nodes(at: touches[touches.index(touches.startIndex, offsetBy: i)].location(in: self));
                 

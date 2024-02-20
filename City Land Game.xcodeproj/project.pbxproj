@@ -12,6 +12,7 @@
 		9A3F47232B5B89770069BBED /* LandGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3F47222B5B89770069BBED /* LandGenerator.swift */; };
 		9A3F47252B5B96260069BBED /* GameTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3F47242B5B96260069BBED /* GameTools.swift */; };
 		9A3F47272B5BA0E80069BBED /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3F47262B5BA0E80069BBED /* Tools.swift */; };
+		9A4AC38C2B8477150015AA44 /* CityBuildingMenuUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4AC38B2B8477150015AA44 /* CityBuildingMenuUI.swift */; };
 		9A5766E82B81423500176A46 /* SwiftySKScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = 9A5766E72B81423500176A46 /* SwiftySKScrollView */; };
 		9A5766EA2B814F9D00176A46 /* SKScrollNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5766E92B814F9D00176A46 /* SKScrollNode.swift */; };
 		9A6CD0302B59E7420028A5DA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CD02F2B59E7420028A5DA /* AppDelegate.swift */; };
@@ -58,6 +59,7 @@
 		9A3F47222B5B89770069BBED /* LandGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandGenerator.swift; sourceTree = "<group>"; };
 		9A3F47242B5B96260069BBED /* GameTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTools.swift; sourceTree = "<group>"; };
 		9A3F47262B5BA0E80069BBED /* Tools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
+		9A4AC38B2B8477150015AA44 /* CityBuildingMenuUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityBuildingMenuUI.swift; sourceTree = "<group>"; };
 		9A5766E92B814F9D00176A46 /* SKScrollNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKScrollNode.swift; sourceTree = "<group>"; };
 		9A6CD02C2B59E7420028A5DA /* City Land Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "City Land Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A6CD02F2B59E7420028A5DA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -187,6 +189,7 @@
 				9A5766E92B814F9D00176A46 /* SKScrollNode.swift */,
 				9A0BEFE82B82F1F500B3F4FA /* ShopMenuItemUI.swift */,
 				9A0BEFEA2B83265700B3F4FA /* MaterialItemUI.swift */,
+				9A4AC38B2B8477150015AA44 /* CityBuildingMenuUI.swift */,
 			);
 			path = UIComponents;
 			sourceTree = "<group>";
@@ -345,6 +348,7 @@
 				9A3F47272B5BA0E80069BBED /* Tools.swift in Sources */,
 				9A0BEFEB2B83265700B3F4FA /* MaterialItemUI.swift in Sources */,
 				9A3F47232B5B89770069BBED /* LandGenerator.swift in Sources */,
+				9A4AC38C2B8477150015AA44 /* CityBuildingMenuUI.swift in Sources */,
 				9AC9487C2B5C916C00886A68 /* BattleScene.swift in Sources */,
 				9A6CD0302B59E7420028A5DA /* AppDelegate.swift in Sources */,
 			);

@@ -45,29 +45,12 @@ class ShopMenuItemUI: SKNode {
                 hasDebugFrame: false
             );
             materialItem.position = CGPoint(x: materialPositionX + (Int(imageNode.size.width) / 2), y: 0);
+            
+            //set the color red if you don't have the needed amount
+            if(GameTools.getMaterialAmount(type: materials[i].type) < materials[i].amount) {
+                materialItem.label.fontColor = #colorLiteral(red: 0.9439326605, green: 0.1655154441, blue: 0.1803022484, alpha: 1);
+            }
             addChild(materialItem);
-//
-//            let materialLabel = SKLabelNode();
-//            var num = 1000;
-//            if(i == 1) {num = 10000} else if(i == 2) {num = 1000000}
-//            materialLabel.text = Tools.createDigitSeparatedString(num, seperator: " ");
-//            materialLabel.position = CGPoint(
-//                x: materialPositionX,
-//                y: 0
-//            );
-//            materialLabel.fontColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1);
-//            materialLabel.fontName = "ChalkboardSE-Bold";
-//            materialLabel.fontSize = 16;
-//            materialLabel.horizontalAlignmentMode = .left;
-//            addChild(materialLabel);
-//            
-//            let materialNode = SKSpriteNode(imageNamed: GameTools.getMaterialAssetName(MaterialType.Wood));
-//            materialNode.size = CGSize(width: materialSize, height: materialSize);
-//            materialNode.position = CGPoint(
-//                x: materialPositionX - 40,
-//                y: 0
-//            );
-//            addChild(materialNode);
         }
     }
 }

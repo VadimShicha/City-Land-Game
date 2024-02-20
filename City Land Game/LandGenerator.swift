@@ -225,6 +225,7 @@ class LandGenerator {
             building.position = CGPoint(x: (position.x * GameTools.landTileSize) + buildingOffset, y: (position.y * GameTools.landTileSize) + buildingOffset);
             building.size = CGSize(width: GameTools.landTileSize * buildingData.sizeTiles, height: GameTools.landTileSize * buildingData.sizeTiles);
             building.zPosition = 1;
+            building.name = buildingData.nodeName;
             buildings.append(building);
         }
         
