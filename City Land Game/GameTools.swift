@@ -109,6 +109,9 @@ struct SpecialLandData {
 class GameTools {
     
     static let uiColor = #colorLiteral(red: 0.5717771864, green: 0.393343057, blue: 0.1795284801, alpha: 1);
+    static let darkUiColor = #colorLiteral(red: 0.4344117469, green: 0.297701099, blue: 0.1380777428, alpha: 1);
+    static let redUiColor = #colorLiteral(red: 0.9439326605, green: 0.1655154441, blue: 0.1803022484, alpha: 1);
+    
     static let mapWidth: Int = 30; //the width of the map
     static let mapHeight: Int = 30; //the height of the map/
     
@@ -142,7 +145,7 @@ class GameTools {
     
     static var mudAmount: Int = 10;
     static var clayAmount: Int = 10;
-    static var woodAmount: Int = 10;
+    static var woodAmount: Int = 100;
     static var frozenWoodAmount: Int = 0;
     
     static func setMaterialAmount(type: MaterialType, amount: Int) {

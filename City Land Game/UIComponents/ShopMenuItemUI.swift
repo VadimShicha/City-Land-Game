@@ -48,7 +48,7 @@ class ShopMenuItemUI: SKNode {
             
             //set the color red if you don't have the needed amount
             if(GameTools.getMaterialAmount(type: materials[i].type) < materials[i].amount) {
-                materialItem.label.fontColor = #colorLiteral(red: 0.9439326605, green: 0.1655154441, blue: 0.1803022484, alpha: 1);
+                materialItem.label.fontColor = GameTools.redUiColor;
             }
             addChild(materialItem);
         }

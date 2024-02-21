@@ -49,10 +49,18 @@ class GameScene: SKScene {
     var settingsButtonNode = SKSpriteNode();
     var settingsMenuUI: SettingsMenuUI!;
 
-    var cityBuildingMenuUI: CityBuildingMenuUI!;
+    //var cityBuildingMenuUI: CityBuildingMenuUI!;
+    var sawMillMenuUI: SawMillMenuUI!;
     
     var draggingBuildingLabel = SKLabelNode();
 
+    
+    func setUiOpen(_ value: Bool) {
+        uiOpen = value;
+        shopButtonNode.isHidden = value;
+        settingsButtonNode.isHidden = value;
+        
+    }
     
     //creates the material label nodes
     func setupMaterialLabels() {
@@ -289,9 +297,10 @@ class GameScene: SKScene {
         shopMenuUI.setupMenu();
         settingsMenuUI = SettingsMenuUI(self);
         settingsMenuUI.setupMenu();
-        cityBuildingMenuUI = CityBuildingMenuUI(self);
-        cityBuildingMenuUI.setupMenu();
-
+        //cityBuildingMenuUI = CityBuildingMenuUI(self);
+        //cityBuildingMenuUI.setupMenu(buildingType: CityBuildingType.Empty);
+        sawMillMenuUI = SawMillMenuUI(self);
+        sawMillMenuUI.setupMenu();
         
         shopButtonNode = SKSpriteNode(imageNamed: "Buttons/ShopButton");
         let shopButtonNodePositionX = GameTools.rightCenterWidth - (self.size.width / 16) - 3;
@@ -458,6 +467,16 @@ class GameScene: SKScene {
                             movableCityBuildingNode.zPosition = ZLayers.PlacedCityBuilding.rawValue;
                             movableCityBuildingNode.colorBlendFactor = 0;
                             GameTools.capturedLands[landPositionX][landPositionY].placedBuilding = CityBuilding.getCityBuilding(CityBuildingType.SawMill);
+                            
+                            GameTools.placedBuildings.append(
+                                PlacedCityBuilding(buildingData: movableCityBuildingData, position: GameVector2Int(x: landPositionX, y: landPositionY))
+                            );
+                            
+                            let bubbles = LandGenerator.createCityBuildingBubbles();
+                            print(bubbles);
+                            for i in 0..<bubbles.count {
+                                self.addChild(bubbles[i]);
+                            }
                         }
                     }
                 }
@@ -473,7 +492,7 @@ class GameScene: SKScene {
                 }
                 if(touchingNodes.contains(attackMenuUI.closeLabelBackground)) {
                     attackMenuUI.hideMenu();
-                    uiOpen = false;
+                    setUiOpen(false);
                     
                     //remove the temp clouds
                     GameTools.borderNodesParent.removeAllChildren();
@@ -487,12 +506,12 @@ class GameScene: SKScene {
                 if(touchingNodes.contains(shopButtonNode)) {
                     if(!uiOpen) {
                         shopMenuUI.showMenu();
-                        uiOpen = true;
+                        setUiOpen(true);
                     }
                 }
                 if(touchingNodes.contains(shopMenuUI.closeLabelBackground)) {
                     shopMenuUI.hideMenu();
-                    uiOpen = false;
+                    setUiOpen(false);
                 }
                 var cityBuildingType = CityBuildingType.Empty;
                 var cityBuildingName = "CityBuilding/Building";
@@ -517,7 +536,7 @@ class GameScene: SKScene {
                 //if a building was selected from the shop menu
                 if(cityBuildingType != CityBuildingType.Empty) {
                     shopMenuUI.hideMenu();
-                    uiOpen = false;
+                    setUiOpen(false);
 
                     movableCityBuildingExists = true;
                     draggingBuildingLabel.isHidden = false;
@@ -549,19 +568,19 @@ class GameScene: SKScene {
                         let nodeName = touchingNodes[i].name;
                         if(!movableCityBuildingExists) {
                             if(nodeName == "CityBuilding/CityHall") {
-                                cityBuildingMenuUI.showMenu();
-                                cityBuildingMenuUI.titleLabel.text = CityBuilding.getCityBuilding(CityBuildingType.CityHall).name;
-                                uiOpen = true;
+                                //sawMillMenuUI.showMenu();
+                                //cityBuildingMenuUI.titleLabel.text = CityBuilding.getCityBuilding(CityBuildingType.CityHall).name;
+                                //setUiOpen(true);
                             }
                             else if(nodeName == "CityBuilding/SawMill") {
-                                cityBuildingMenuUI.showMenu();
-                                cityBuildingMenuUI.titleLabel.text = CityBuilding.getCityBuilding(CityBuildingType.SawMill).name;
-                                uiOpen = true;
+                                sawMillMenuUI.setMenuHidden(false);
+                                //sawMillMenuUI.titleLabel.text = CityBuilding.getCityBuilding(CityBuildingType.SawMill).name;
+                                setUiOpen(true);
                             }
                             else if(nodeName == "CityBuilding/DiamondMine") {
-                                cityBuildingMenuUI.showMenu();
-                                cityBuildingMenuUI.titleLabel.text = CityBuilding.getCityBuilding(CityBuildingType.DiamondMine).name;
-                                uiOpen = true;
+                                //sawMillMenuUI.showMenu();
+                                //sawMillMenuUI.titleLabel.text = CityBuilding.getCityBuilding(CityBuildingType.DiamondMine).name;
+                                //setUiOpen(true);
                             }
                         }
                     }
@@ -576,12 +595,12 @@ class GameScene: SKScene {
                 if(touchingNodes.contains(settingsButtonNode)) {
                     if(!uiOpen) {
                         settingsMenuUI.showMenu();
-                        uiOpen = true;
+                        setUiOpen(true);
                     }
                 }
                 if(touchingNodes.contains(settingsMenuUI.closeLabelBackground)) {
                     settingsMenuUI.hideMenu();
-                    uiOpen = false;
+                    setUiOpen(false);
                 }
                 if(touchingNodes.contains(settingsMenuUI.saveDataButtonNode)) {
                     settingsMenuUI.saveDataButtonNode.texture = SKTexture(imageNamed: "Buttons/SavingDataButton");
@@ -590,10 +609,32 @@ class GameScene: SKScene {
                     }
                 }
                 
-                //city building menu
-                if(touchingNodes.contains(cityBuildingMenuUI.closeLabelBackground)) {
-                    cityBuildingMenuUI.hideMenu();
-                    uiOpen = false;
+                //saw mill city building menu
+                if(touchingNodes.contains(sawMillMenuUI.closeLabelBackground)) {
+                    sawMillMenuUI.setMenuHidden(true);
+                    setUiOpen(false);
+                }
+                if(touchingNodes.contains(sawMillMenuUI.woodMaterialItem)) {
+                    sawMillMenuUI.setWoodTypeSelected(regular: true);
+                }
+                if(touchingNodes.contains(sawMillMenuUI.frozenWoodMaterialItem)) {
+                    sawMillMenuUI.setWoodTypeSelected(regular: false);
+                }
+                if(touchingNodes.contains(sawMillMenuUI.convertLabelBackground)) {
+                    if(sawMillMenuUI.canPurify) {
+                        if(sawMillMenuUI.regularWoodSelected) {
+                            GameTools.woodAmount -= 100;
+                            GameTools.diamondAmount -= 1;
+                            GameTools.planksAmount += 100;
+                        }
+                        else {
+                            GameTools.frozenWoodAmount -= 100;
+                            GameTools.diamondAmount -= 1;
+                            GameTools.planksAmount += 100;
+                        }
+                        updateMaterialLabels();
+                        sawMillMenuUI.updateResources();
+                    }
                 }
             }
         }
@@ -634,7 +675,7 @@ class GameScene: SKScene {
                             
                             currentAttackSelected = GameTools.capturedLands[posX][posY];
                             attackMenuUI.showMenu(landTileData: GameTools.capturedLands[posX][posY]);
-                            uiOpen = true;
+                            setUiOpen(true);
                             //Tools.changeScenes(fromScene: self, toSceneType: Tools.SceneType.Battle);
                         }
                     }

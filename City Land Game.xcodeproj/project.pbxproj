@@ -26,6 +26,7 @@
 		9A6CD0542B59E7460028A5DA /* City_Land_GameUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CD0532B59E7460028A5DA /* City_Land_GameUITests.swift */; };
 		9A6CD0562B59E7460028A5DA /* City_Land_GameUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CD0552B59E7460028A5DA /* City_Land_GameUITestsLaunchTests.swift */; };
 		9A6CD0632B59F21E0028A5DA /* MainMenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6CD0622B59F21E0028A5DA /* MainMenuScene.swift */; };
+		9AC1E8372B855E7600B95814 /* SawMillMenuUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC1E8362B855E7600B95814 /* SawMillMenuUI.swift */; };
 		9AC7630D2B70AC7A0038C257 /* CannonFire.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9AC7630B2B70AC790038C257 /* CannonFire.mp3 */; };
 		9AC7630E2B70AC7A0038C257 /* CatapultFire.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9AC7630C2B70AC7A0038C257 /* CatapultFire.mp3 */; };
 		9AC763102B70ACBD0038C257 /* Wind.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9AC7630F2B70ACBC0038C257 /* Wind.mp3 */; };
@@ -75,6 +76,7 @@
 		9A6CD0532B59E7460028A5DA /* City_Land_GameUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City_Land_GameUITests.swift; sourceTree = "<group>"; };
 		9A6CD0552B59E7460028A5DA /* City_Land_GameUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City_Land_GameUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		9A6CD0622B59F21E0028A5DA /* MainMenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuScene.swift; sourceTree = "<group>"; };
+		9AC1E8362B855E7600B95814 /* SawMillMenuUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SawMillMenuUI.swift; sourceTree = "<group>"; };
 		9AC7630B2B70AC790038C257 /* CannonFire.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = CannonFire.mp3; sourceTree = "<group>"; };
 		9AC7630C2B70AC7A0038C257 /* CatapultFire.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = CatapultFire.mp3; sourceTree = "<group>"; };
 		9AC7630F2B70ACBC0038C257 /* Wind.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Wind.mp3; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 				9A0BEFE82B82F1F500B3F4FA /* ShopMenuItemUI.swift */,
 				9A0BEFEA2B83265700B3F4FA /* MaterialItemUI.swift */,
 				9A4AC38B2B8477150015AA44 /* CityBuildingMenuUI.swift */,
+				9AC1E8362B855E7600B95814 /* SawMillMenuUI.swift */,
 			);
 			path = UIComponents;
 			sourceTree = "<group>";
@@ -339,6 +342,7 @@
 				9ACC5BDD2B785BB700777395 /* BattleGenerator.swift in Sources */,
 				9AE992EF2B80425900D8C9AD /* ShopMenuUI.swift in Sources */,
 				9AE992F12B8042A300D8C9AD /* SettingsMenuUI.swift in Sources */,
+				9AC1E8372B855E7600B95814 /* SawMillMenuUI.swift in Sources */,
 				9A3F47252B5B96260069BBED /* GameTools.swift in Sources */,
 				9A6CD0382B59E7420028A5DA /* GameViewController.swift in Sources */,
 				9AE992ED2B80423500D8C9AD /* AttackMenuUI.swift in Sources */,

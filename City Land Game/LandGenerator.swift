@@ -250,4 +250,29 @@ class LandGenerator {
 //        }
         return buildings;
     }
+    
+    static func createCityBuildingBubbles() -> [SKSpriteNode] {
+        var bubbles: [SKSpriteNode] = [];
+        
+        for i in 0..<GameTools.placedBuildings.count {
+            let buildingData = GameTools.placedBuildings[i].buildingData;
+            if(buildingData.buildingType != CityBuildingType.DiamondMine) { continue; }
+            let position = GameTools.placedBuildings[i].position;
+            
+            let buildingOffset = (buildingData.sizeTiles % 2 == 0 ? GameTools.landTileSize / 2 : 0);
+            
+            let bubble = SKSpriteNode(imageNamed: "DiamondBubble");
+            let buildingPositionX = (position.x * GameTools.landTileSize) + buildingOffset;
+            let buildingPositionY = (position.y * GameTools.landTileSize) + buildingOffset;
+            let bubblePositionY = buildingPositionY + Int(CGFloat(buildingData.sizeTiles * GameTools.landTileSize) / 1.5);
+            
+            bubble.position = CGPoint(x: buildingPositionX, y: bubblePositionY);
+            bubble.size = CGSize(width: GameTools.landTileSize / 2, height: GameTools.landTileSize / 2);
+            bubble.zPosition = 100;
+            bubble.name = buildingData.nodeName;
+            bubbles.append(bubble);
+        }
+
+        return bubbles;
+    }
 }
